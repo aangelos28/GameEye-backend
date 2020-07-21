@@ -9,5 +9,4 @@ public class Game {
     // TODO add lastUpdated date field
     private List<String> genres;
     private List<SourceUrls> sourceUrls;
-
 }

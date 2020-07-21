@@ -19,6 +19,18 @@ public class Secrets {
      */
     private static String igdbKey;
 
+    public static class Auth0 {
+        private static String audience;
+        private static String issuerUri;
+
+        public static String getAudience() {
+            return audience;
+        }
+        public static String getIssuerUri() {
+            return issuerUri;
+        }
+    }
+
     /**
      * Load secrets from a JSON resource file. The file must be
      * in the classpath (for example under resources/). This function must be called
@@ -37,6 +49,11 @@ public class Secrets {
 
             // Read IGDB key
             igdbKey = secretsJson.get("igdb_api_key").textValue();
+
+            // Read Auth0 secrets
+            JsonNode auth0SecretsJson = secretsJson.get("auth0");
+            Auth0.audience = auth0SecretsJson.get("audience").textValue();
+            Auth0.issuerUri = auth0SecretsJson.get("issuer_uri").textValue();
         }
         catch (IOException e) {
             System.err.println("Fatal Error: Could not find secrets.json.");
