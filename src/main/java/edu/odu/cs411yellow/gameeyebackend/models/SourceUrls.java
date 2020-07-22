@@ -1,4 +1,6 @@
-package edu.odu.cs411yellow.gameeyebackend.models.games;
+package edu.odu.cs411yellow.gameeyebackend.models;
+
+import org.springframework.data.annotation.PersistenceConstructor;
 
 /**
  * Holds the source URLs for a game.
@@ -6,10 +8,14 @@ package edu.odu.cs411yellow.gameeyebackend.models.games;
  */
 public class SourceUrls {
     private String gameUrl;
+
     private String steamUrl;
+
     private String subRedditUrl;
+
     private String twitterUrl;
 
+    @PersistenceConstructor
     public SourceUrls(String gameUrl, String steamUrl, String subRedditUrl,
                       String twitterUrl) {
         this.gameUrl = gameUrl;
@@ -25,31 +31,31 @@ public class SourceUrls {
         return this.gameUrl;
     }
 
-    public void setGameUrl(String newGameUrl) {
-        this.gameUrl = newGameUrl;
+    public void setGameUrl(String gameUrl) {
+        this.gameUrl = gameUrl;
     }
 
     public String getSteamUrl() {
         return this.steamUrl;
     }
 
-    public void setSteamUrl(String newSteamUrl) {
-        this.steamUrl = newSteamUrl;
+    public void setSteamUrl(String steamUrl) {
+        this.steamUrl = steamUrl;
     }
 
     public String getSubRedditUrl() {
         return this.subRedditUrl;
     }
 
-    public void setSubRedditUrl(String newSubRedditUrl) {
-        this.subRedditUrl = newSubRedditUrl;
+    public void setSubRedditUrl(String subRedditUrl) {
+        this.subRedditUrl = subRedditUrl;
     }
 
     public String getTwitterUrl() {
         return this.twitterUrl;
     }
 
-    public void setTwitterUrl(String newTwitterUrl) {
-        this.twitterUrl = newTwitterUrl;
+    public void setTwitterUrl(String twitterUrl) {
+        this.twitterUrl = twitterUrl;
     }
 }
