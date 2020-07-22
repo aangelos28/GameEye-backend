@@ -21,14 +21,12 @@ public class IgdbService {
     }
 
     public String getCompanies() {
-        String output = this.webClient.post()
+        return this.webClient.post()
                 .uri("/companies")
                 .contentType(MediaType.TEXT_PLAIN)
                 .bodyValue("fields name; limit 10;")
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
-
-        return output;
     }
 }
