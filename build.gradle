@@ -28,6 +28,7 @@ dependencies {
 	implementation 'org.springframework.security:spring-security-oauth2-jose'
 	implementation 'org.springframework.security:spring-security-config'
 	implementation 'org.springframework.session:spring-session-core'
+	implementation 'com.google.firebase:firebase-admin:6.15.0'
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}

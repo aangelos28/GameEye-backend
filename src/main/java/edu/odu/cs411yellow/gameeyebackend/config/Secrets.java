@@ -31,6 +31,8 @@ public class Secrets {
         }
     }
 
+    private static String firebaseCredentials;
+
     /**
      * Load secrets from a JSON resource file. The file must be
      * in the classpath (for example under resources/). This function must be called
@@ -54,6 +56,9 @@ public class Secrets {
             JsonNode auth0SecretsJson = secretsJson.get("auth0");
             Auth0.audience = auth0SecretsJson.get("audience").textValue();
             Auth0.issuerUri = auth0SecretsJson.get("issuer_uri").textValue();
+
+            // Read Firebase secrets
+            firebaseCredentials = secretsJson.get("firebaseCredentials").toString();
         }
         catch (IOException e) {
             System.err.println("Fatal Error: Could not find secrets.json.");
@@ -64,4 +69,6 @@ public class Secrets {
     public static String getIgdbKey() {
         return igdbKey;
     }
+
+    public static String getFirebaseCredentials() {return firebaseCredentials;}
 }
