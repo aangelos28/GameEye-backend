@@ -24,7 +24,7 @@ public class GameEyeBackendApplication {
 
 		// Initialize firebase
 		try {
-			InputStream firebaseCredentials = new ByteArrayInputStream(Secrets.getFirebaseCredentials().getBytes(StandardCharsets.UTF_8));
+			InputStream firebaseCredentials = new ByteArrayInputStream(Secrets.Firebase.getCredentials().getBytes(StandardCharsets.UTF_8));
 			FirebaseOptions options = new FirebaseOptions.Builder()
 					.setCredentials(GoogleCredentials.fromStream(firebaseCredentials))
 					.setDatabaseUrl("https://gameeye-8eb07.firebaseio.com")
