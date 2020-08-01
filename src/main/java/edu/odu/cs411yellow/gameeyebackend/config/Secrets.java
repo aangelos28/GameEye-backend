@@ -19,18 +19,6 @@ public class Secrets {
      */
     private static String igdbKey;
 
-    public static class Auth0 {
-        private static String audience;
-        private static String issuerUri;
-
-        public static String getAudience() {
-            return audience;
-        }
-        public static String getIssuerUri() {
-            return issuerUri;
-        }
-    }
-
     public static class Firebase {
         private static String audience;
         private static String issuerUri;
@@ -63,11 +51,6 @@ public class Secrets {
 
             // Read IGDB key
             igdbKey = secretsJson.get("igdb_api_key").textValue();
-
-            // Read Auth0 secrets
-            JsonNode auth0SecretsJson = secretsJson.get("auth0");
-            Auth0.audience = auth0SecretsJson.get("audience").textValue();
-            Auth0.issuerUri = auth0SecretsJson.get("issuer_uri").textValue();
 
             // Read Firebase secrets
             JsonNode firebaseSecretsJson = secretsJson.get("firebase");
