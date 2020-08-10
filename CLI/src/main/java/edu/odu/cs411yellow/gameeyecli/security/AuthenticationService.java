@@ -2,23 +2,37 @@ package edu.odu.cs411yellow.gameeyecli.security;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
+import edu.odu.cs411yellow.gameeyecli.model.IdTokenResponse;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import javax.annotation.PostConstruct;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 @Service
 public class AuthenticationService {
     private String idToken;
 
     private final String userId;
-    private final String shortUserId;
 
-    public AuthenticationService() {
-        userId = "cli-" + UUID.randomUUID();
-        shortUserId = this.userId.substring(0, this.userId.indexOf('-', this.userId.indexOf('-') + 1));
+    private final WebClient webClient;
+
+    private class AuthenticationRequest {
+        public String token;
+        public boolean returnSecureToken = true;
+    }
+
+    public AuthenticationService() throws UnknownHostException {
+        userId = "cli-" + InetAddress.getLocalHost().getHostName();
+
+        this.webClient = WebClient.builder()
+                .baseUrl("https://identitytoolkit.googleapis.com")
+                .build();
     }
 
     @PostConstruct
@@ -31,11 +45,21 @@ public class AuthenticationService {
         claims.put("admin", true);
         claims.put("authorizedCli", true);
 
-        this.idToken = FirebaseAuth.getInstance().createCustomToken(userId, claims);
-    }
+        String customToken = FirebaseAuth.getInstance().createCustomToken(userId, claims);
 
-    public String getShortUserId() {
-        return this.shortUserId;
+        // Get ID token
+        AuthenticationRequest authReq = new AuthenticationRequest();
+        authReq.token = customToken;
+        authReq.returnSecureToken = true;
+        IdTokenResponse response = this.webClient.post()
+                .uri("/v1/accounts:signInWithCustomToken?key=" + Secrets.Firebase.getWebApiKey())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(Mono.just(authReq), AuthenticationRequest.class)
+                .retrieve()
+                .bodyToMono(IdTokenResponse.class)
+                .block();
+
+        this.idToken = response.idToken;
     }
 
     public String getUserId() {

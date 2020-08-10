@@ -23,7 +23,6 @@ public class IGDBController {
 
     @GetMapping(path = "/private/companies", produces = "application/json")
     public String getCompanies() {
-        System.out.println("GOT REQUEST!");
         return igdbService.getCompanies();
     }
 

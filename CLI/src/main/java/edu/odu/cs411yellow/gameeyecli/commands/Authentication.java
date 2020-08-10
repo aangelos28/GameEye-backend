@@ -1,6 +1,5 @@
 package edu.odu.cs411yellow.gameeyecli.commands;
 
-import com.google.firebase.auth.FirebaseAuthException;
 import edu.odu.cs411yellow.gameeyecli.security.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.standard.ShellComponent;
@@ -13,12 +12,6 @@ public class Authentication {
     @Autowired
     Authentication(AuthenticationService authService) {
         this.authService = authService;
-    }
-
-    @ShellMethod("Renew the ID token for this CLI instance.")
-    public String cliRenewIdToken() throws FirebaseAuthException {
-        this.authService.acquireIdToken();
-        return "Successfully renewed token.";
     }
 
     @ShellMethod("Gets the user ID for this CLI instance.")

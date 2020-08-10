@@ -20,6 +20,7 @@ public class Secrets {
         private static String audience;
         private static String issuerUri;
         private static String credentials;
+        private static String webApiKey;
 
         public static String getAudience() {
             return audience;
@@ -28,6 +29,7 @@ public class Secrets {
             return issuerUri;
         }
         public static String getCredentials() {return credentials;}
+        public static String getWebApiKey() {return webApiKey;}
     }
 
     /**
@@ -51,6 +53,7 @@ public class Secrets {
             Firebase.audience = firebaseSecretsJson.get("audience").textValue();
             Firebase.issuerUri = firebaseSecretsJson.get("issuer_uri").textValue();
             Firebase.credentials = firebaseSecretsJson.get("credentials").toString();
+            Firebase.webApiKey = firebaseSecretsJson.get("web_api_key").textValue();
         }
         catch (IOException e) {
             System.err.println("Fatal Error: Could not find secrets.json.");

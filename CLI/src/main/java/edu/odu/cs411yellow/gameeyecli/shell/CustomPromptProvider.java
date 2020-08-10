@@ -7,18 +7,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.jline.PromptProvider;
 import org.springframework.stereotype.Component;
 
+import java.net.UnknownHostException;
+
 @Component
 public class CustomPromptProvider implements PromptProvider {
 
     private AuthenticationService authService;
 
     @Autowired
-    public CustomPromptProvider(AuthenticationService authService) {
+    public CustomPromptProvider(AuthenticationService authService) throws UnknownHostException {
         this.authService = authService;
     }
 
     @Override
     public AttributedString getPrompt() {
-        return new AttributedString(this.authService.getShortUserId() + "> ", AttributedStyle.DEFAULT.foreground(AttributedStyle.YELLOW));
+        return new AttributedString(this.authService.getUserId() + "> ", AttributedStyle.DEFAULT.foreground(AttributedStyle.YELLOW));
     }
 }

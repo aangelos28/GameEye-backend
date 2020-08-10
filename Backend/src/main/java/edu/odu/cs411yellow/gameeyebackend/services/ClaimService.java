@@ -77,6 +77,14 @@ public class ClaimService {
     public boolean userEmailVerified(FirebaseToken idToken) {
         Map<String, Object> userRoles = idToken.getClaims();
 
-        return (boolean) userRoles.get("email_verified");
+        Object emailVerified = userRoles.get("email_verified");
+
+        if (emailVerified != null) {
+            return (boolean) emailVerified;
+        }
+
+        // If there is no emailVerified claim then we are likely dealing
+        // with an authorized CLI
+        return (boolean) userRoles.get("authorizedCli");
     }
 }
