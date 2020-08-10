@@ -4,8 +4,10 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import edu.odu.cs411yellow.gameeyecli.security.Secrets;
-import org.springframework.boot.SpringApplication;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -32,7 +34,9 @@ public class GameEyeCliApplication {
 			e.printStackTrace();
 		}
 
-		SpringApplication.run(GameEyeCliApplication.class, args);
+		ConfigurableApplicationContext context = new SpringApplicationBuilder(GameEyeCliApplication.class)
+				.web(WebApplicationType.NONE)
+				.run( args);
 	}
 
 }
