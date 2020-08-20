@@ -1,0 +1,5 @@
+rootProject.name = 'gameeyebackend'
+
+include 'common'
+include 'main-backend'
+include 'cli'
