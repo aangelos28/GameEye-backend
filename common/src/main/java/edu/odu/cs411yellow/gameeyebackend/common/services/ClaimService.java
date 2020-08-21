@@ -95,6 +95,16 @@ public class ClaimService {
     }
 
     /**
+     * Gets the record for the user identified by the passed email.
+     * @param userEmail Email of the user.
+     * @return User record for the user.
+     * @throws FirebaseAuthException Thrown if failed to get the record for the requested user.
+     */
+    public UserRecord getUserRecordByEmail(String userEmail) throws FirebaseAuthException {
+        return FirebaseAuth.getInstance().getUserByEmail(userEmail);
+    }
+
+    /**
      * Gets a user's custom claims. Makes an API call so this method should be used sparingly.
      * @param userId Firebase user ID.
      * @return Map containing the user's custom claims.

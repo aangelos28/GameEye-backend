@@ -39,6 +39,20 @@ public class UserManagement {
         }
     }
 
+    @ShellMethod("Get a user's information.")
+    public void searchUser(@ShellOption() String email) throws FirebaseAuthException {
+        UserRecord user = claimService.getUserRecordByEmail(email);
+
+        System.out.printf("  Uid: %s\n", user.getUid());
+        System.out.printf("  Email: %s\n", user.getEmail());
+
+        Map<String, Object> roles = user.getCustomClaims();
+        System.out.println("  Roles:");
+        for (String role : roles.keySet()) {
+            System.out.printf("   - %s\n", role);
+        }
+    }
+
     @ShellMethod("Add role to user")
     public String addUserRole(@ShellOption() String id, @ShellOption() String role) throws Exception {
         ApiFuture<Void> future = claimService.addUserRoleAsync(id, UserRole.valueOf(role));
