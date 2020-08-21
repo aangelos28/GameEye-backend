@@ -19,14 +19,12 @@ import java.util.*;
 public class ClaimService {
     /**
      * Sets the passed list of roles as the roles for the user
-     * identified by the passed ID token.
-     * @param idToken Firebase ID token for the user.
+     * identified by the passed ID.
+     * @param userId Firebase user ID.
      * @param roles List of roles to set for the user.
      * @return Future that completes once the async request is finished.
      */
-    public ApiFuture<Void> setUserRolesAsync(FirebaseToken idToken, List<UserRole> roles) {
-        String userId = idToken.getUid();
-
+    public ApiFuture<Void> setUserRolesAsync(String userId, List<UserRole> roles) {
         Map<String, Object> userRoles = new HashMap<>();
 
         for (UserRole role : roles) {
@@ -38,15 +36,73 @@ public class ClaimService {
     }
 
     /**
+     * Adds the passed role as a new role for the user identified by the passed ID.
+     * The role will not be added if it already exists.
+     * @param userId Firebase user ID.
+     * @param role Role to add for the user.
+     * @return Future that completes once the async request is finished.
+     * @throws Exception Thrown if roles has already been added for the user.
+     */
+    public ApiFuture<Void> addUserRoleAsync(String userId, UserRole role) throws Exception {
+        Map<String, Object> userRoles = getCustomClaims(userId);
+
+        String roleString = role.name();
+        for (String userRole : userRoles.keySet()) {
+            if (userRole.equals(roleString)) {
+                throw new Exception(String.format("User role %s already exists for user %s", userRole, userId));
+            }
+        }
+
+        Map<String, Object> newUserRoles = new HashMap<String, Object>(userRoles);
+        newUserRoles.put(roleString, true);
+
+        // Set claims in Firebase token
+        return FirebaseAuth.getInstance().setCustomUserClaimsAsync(userId, newUserRoles);
+    }
+
+    /**
+     * Removes the passed role for the user identified by the passed ID.
+     * @param userId Firebase user ID.
+     * @param role Role to remove from the user.
+     * @return Future that completes once the async request is finished.
+     * @throws Exception Thrown if role does not exist for user.
+     */
+    public ApiFuture<Void> removeUserRoleAsync(String userId, UserRole role) throws Exception {
+        Map<String, Object> userRoles = getCustomClaims(userId);
+
+        String roleString = role.name();
+        for (String userRole : userRoles.keySet()) {
+            if (userRole.equals(roleString)) {
+                Map<String, Object> newUserRoles = new HashMap<String, Object>(userRoles);
+                newUserRoles.put(roleString, true);
+                newUserRoles.remove(roleString);
+
+                // Set claims in Firebase token
+                return FirebaseAuth.getInstance().setCustomUserClaimsAsync(userId, newUserRoles);
+            }
+        }
+
+        throw new Exception(String.format("User role %s does not exist for user %s", roleString, userId));
+    }
+
+    /**
+     * Gets the record for the user identified by the passed ID.
+     * @param userId ID of the user.
+     * @return User record for the user.
+     * @throws FirebaseAuthException Thrown if failed to get the record for the requested user.
+     */
+    public UserRecord getUserRecord(String userId) throws FirebaseAuthException {
+        return FirebaseAuth.getInstance().getUser(userId);
+    }
+
+    /**
      * Gets a user's custom claims. Makes an API call so this method should be used sparingly.
-     * @param idToken Firebase ID token for the user.
+     * @param userId Firebase user ID.
      * @return Map containing the user's custom claims.
      * @throws FirebaseAuthException If failed to get custom token.
      */
-    public Map<String, Object> getCustomClaims(FirebaseToken idToken) throws FirebaseAuthException {
-        String userId = idToken.getUid();
-
-        UserRecord user = FirebaseAuth.getInstance().getUser(userId);
+    public Map<String, Object> getCustomClaims(String userId) throws FirebaseAuthException {
+        UserRecord user = getUserRecord(userId);
 
         return user.getCustomClaims();
     }

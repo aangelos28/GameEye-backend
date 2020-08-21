@@ -8,6 +8,7 @@ import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -15,6 +16,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 @SpringBootApplication
+@ComponentScan({"edu.odu.cs411yellow.gameeyebackend.cli", "edu.odu.cs411yellow.gameeyebackend.common"})
 public class CliApplication {
 
 	public static void main(String[] args) {
@@ -36,6 +38,6 @@ public class CliApplication {
 
 		ConfigurableApplicationContext context = new SpringApplicationBuilder(CliApplication.class)
 				.web(WebApplicationType.NONE)
-				.run( args);
+				.run(args);
 	}
 }

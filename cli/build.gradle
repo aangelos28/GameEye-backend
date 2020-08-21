@@ -17,6 +17,7 @@ dependencies {
 	implementation 'org.springframework.shell:spring-shell-starter:2.0.0.RELEASE'
 	implementation 'com.google.firebase:firebase-admin:6.15.0'
 	implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.1'
+	implementation project(':common')
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}

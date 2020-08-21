@@ -2,7 +2,10 @@ package edu.odu.cs411yellow.gameeyebackend.cli.security;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseToken;
 import edu.odu.cs411yellow.gameeyebackend.cli.model.IdTokenResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -17,10 +20,11 @@ import java.util.Map;
 @Service
 public class AuthenticationService {
     private String idToken;
-
+    private FirebaseToken firebaseIdToken;
     private final String userId;
 
     private final WebClient webClient;
+    Logger logger = LoggerFactory.getLogger(AuthenticationService.class);
 
     private class AuthenticationRequest {
         public String token;
@@ -48,6 +52,7 @@ public class AuthenticationService {
         String customToken = FirebaseAuth.getInstance().createCustomToken(userId, claims);
 
         // Get ID token
+        logger.info("Getting ID token");
         AuthenticationRequest authReq = new AuthenticationRequest();
         authReq.token = customToken;
         authReq.returnSecureToken = true;
@@ -59,6 +64,10 @@ public class AuthenticationService {
                 .bodyToMono(IdTokenResponse.class)
                 .block();
 
+        assert response != null;
+        firebaseIdToken = FirebaseAuth.getInstance().verifyIdToken(response.idToken);
+
+        logger.info("Retrieved ID token");
         this.idToken = response.idToken;
     }
 
@@ -68,5 +77,9 @@ public class AuthenticationService {
 
     public String getIdToken() {
         return this.idToken;
+    }
+
+    public FirebaseToken getFirebaseIdToken() {
+        return this.firebaseIdToken;
     }
 }
