@@ -74,7 +74,6 @@ public class ClaimService {
         for (String userRole : userRoles.keySet()) {
             if (userRole.equals(roleString)) {
                 Map<String, Object> newUserRoles = new HashMap<String, Object>(userRoles);
-                newUserRoles.put(roleString, true);
                 newUserRoles.remove(roleString);
 
                 // Set claims in Firebase token
