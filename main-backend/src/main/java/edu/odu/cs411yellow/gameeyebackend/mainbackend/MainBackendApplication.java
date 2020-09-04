@@ -6,6 +6,7 @@ import com.google.firebase.FirebaseOptions;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.security.Secrets;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -13,6 +14,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 @SpringBootApplication
+@ComponentScan({"edu.odu.cs411yellow.gameeyebackend.common"})
 public class MainBackendApplication {
 
 	public static void main(String[] args) {
