@@ -14,7 +14,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 @SpringBootApplication
-@ComponentScan({"edu.odu.cs411yellow.gameeyebackend.common"})
+@ComponentScan({"edu.odu.cs411yellow.gameeyebackend.mainbackend", "edu.odu.cs411yellow.gameeyebackend.common"})
 public class MainBackendApplication {
 
 	public static void main(String[] args) {
