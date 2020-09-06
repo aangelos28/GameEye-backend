@@ -3,7 +3,7 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.security.Secrets;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.security.FirebaseSecrets;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
@@ -18,12 +18,12 @@ import java.nio.charset.StandardCharsets;
 public class MainBackendApplication {
 
 	public static void main(String[] args) {
-		// Load secrets (such as API keys)
-		Secrets.loadSecrets("secrets.json");
+		// Read Firebase secrets
+		FirebaseSecrets.read("firebase.json");
 
 		// Initialize firebase
 		try {
-			InputStream firebaseCredentials = new ByteArrayInputStream(Secrets.Firebase.getCredentials().getBytes(StandardCharsets.UTF_8));
+			InputStream firebaseCredentials = new ByteArrayInputStream(FirebaseSecrets.getCredentials().getBytes(StandardCharsets.UTF_8));
 			FirebaseOptions options = new FirebaseOptions.Builder()
 					.setCredentials(GoogleCredentials.fromStream(firebaseCredentials))
 					.setDatabaseUrl("https://gameeye-8eb07.firebaseio.com")

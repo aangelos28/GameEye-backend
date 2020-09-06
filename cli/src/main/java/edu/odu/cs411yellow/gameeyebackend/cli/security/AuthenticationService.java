@@ -6,6 +6,7 @@ import com.google.firebase.auth.FirebaseToken;
 import edu.odu.cs411yellow.gameeyebackend.cli.model.IdTokenResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -25,6 +26,9 @@ public class AuthenticationService {
 
     private final WebClient webClient;
     Logger logger = LoggerFactory.getLogger(AuthenticationService.class);
+
+    @Value("${apikeys.firebaseWeb}")
+    private String firebaseWebApiKey;
 
     private class AuthenticationRequest {
         public String token;
@@ -57,7 +61,7 @@ public class AuthenticationService {
         authReq.token = customToken;
         authReq.returnSecureToken = true;
         IdTokenResponse response = this.webClient.post()
-                .uri("/v1/accounts:signInWithCustomToken?key=" + Secrets.Firebase.getWebApiKey())
+                .uri("/v1/accounts:signInWithCustomToken?key=" + firebaseWebApiKey)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(Mono.just(authReq), AuthenticationRequest.class)
                 .retrieve()

@@ -33,5 +33,7 @@ out/
 ### VS Code ###
 .vscode/
 
+firebase.json
 secrets.json
+application.properties
 *.log
