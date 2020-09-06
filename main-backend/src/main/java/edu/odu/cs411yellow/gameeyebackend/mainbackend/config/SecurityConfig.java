@@ -1,5 +1,6 @@
-package edu.odu.cs411yellow.gameeyebackend.mainbackend.security;
+package edu.odu.cs411yellow.gameeyebackend.mainbackend.config;
 
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.security.FirebaseIdTokenFilter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
