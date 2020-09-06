@@ -15,6 +15,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -27,7 +28,7 @@ import java.util.List;
  * Request filter that authorizes requests by validating the Bearer token.
  */
 @Component
-public class FirebaseIdTokenFilter extends OncePerRequestFilter {
+public class FirebaseIdTokenFilter extends OncePerRequestFilter implements Filter {
 
     private ClaimService claimService;
 
