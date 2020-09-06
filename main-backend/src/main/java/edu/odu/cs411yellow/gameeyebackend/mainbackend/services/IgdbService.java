@@ -1,6 +1,6 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.services;
 
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.security.Secrets;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -9,14 +9,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class IgdbService {
     private final WebClient webClient;
 
-    private final String BASE_URL = "https://api-v3.igdb.com";
-
-    private final String API_KEY = Secrets.getIgdbKey();
-
-    public IgdbService(WebClient.Builder webClientBuilder) {
+    public IgdbService(WebClient.Builder webClientBuilder, @Value("${igdb.baseurl}") String igdbUrl, @Value("${apikeys.igdb}") String igdbKey) {
         this.webClient = webClientBuilder
-                .baseUrl(BASE_URL)
-                .defaultHeader("user-key", API_KEY)
+                .baseUrl(igdbUrl)
+                .defaultHeader("user-key", igdbKey)
                 .build();
     }
 
