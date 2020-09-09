@@ -20,7 +20,7 @@ public interface WebScraper {
      * Retrieves a list of the extracted news articles by the web scraper
      * @return  A List of Articles
      */
-    List<Article> getList();
+    List<Article> getArticles();
 
     /**
      * Retrieves a specific news article provided an index
