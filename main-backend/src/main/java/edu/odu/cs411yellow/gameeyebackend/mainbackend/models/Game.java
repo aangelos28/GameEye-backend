@@ -8,6 +8,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Class representing a document in the "Games" database collection.
+ */
 @Document("games")
 public class Game {
     @Id

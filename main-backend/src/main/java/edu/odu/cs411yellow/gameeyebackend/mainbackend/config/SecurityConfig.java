@@ -8,9 +8,17 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import javax.servlet.Filter;
 
+/**
+ * Security configuration for endpoint authorization.
+ */
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
+    /**
+     * Configuration for authorizing endpoints.
+     *
+     * @param http HttpSecurity object
+     * @throws Exception
+     */
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
@@ -23,7 +31,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilterBefore(firebaseIdTokenFilterBean(), (Class<? extends Filter>) UsernamePasswordAuthenticationFilter.class);
     }
 
-    public FirebaseIdTokenFilter firebaseIdTokenFilterBean() throws Exception {
+    /**
+     * Creates and returns a {@link edu.odu.cs411yellow.gameeyebackend.mainbackend.security.FirebaseIdTokenFilter} object
+     *
+     * @return FirebaseIdTokenFilter object
+     */
+    public FirebaseIdTokenFilter firebaseIdTokenFilterBean() {
         return new FirebaseIdTokenFilter();
     }
 }

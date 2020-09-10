@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Request filter that authorizes requests by validating the Bearer token.
+ * Request filter that authorizes requests by validating the Firebase Bearer ID token.
  */
 @Component
 public class FirebaseIdTokenFilter extends OncePerRequestFilter implements Filter {
@@ -37,7 +37,7 @@ public class FirebaseIdTokenFilter extends OncePerRequestFilter implements Filte
                                     @NonNull FilterChain filterChain)
             throws ServletException, IOException {
 
-        // Lazy inject claim service since we cannot autowire it
+        // Lazy inject claim service it cannot be autowired
         if (claimService == null) {
             ServletContext servletContext = request.getServletContext();
             WebApplicationContext webApplicationContext = WebApplicationContextUtils.getWebApplicationContext(servletContext);
@@ -63,6 +63,7 @@ public class FirebaseIdTokenFilter extends OncePerRequestFilter implements Filte
 
     /**
      * Gets the Bearer token from a request.
+     *
      * @param request Request object.
      * @return The Bearer token in string format.
      */
@@ -77,6 +78,7 @@ public class FirebaseIdTokenFilter extends OncePerRequestFilter implements Filte
     /**
      * Verifies the passed ID token and returns an instance of FirebaseToken if
      * it is successfully verified.
+     *
      * @param authToken ID token in string format.
      * @return FirebaseToken object if the token is verified.
      * @throws Exception If the token cannot be verified.
@@ -89,6 +91,7 @@ public class FirebaseIdTokenFilter extends OncePerRequestFilter implements Filte
     /**
      * Validates the passed authentication token and creates a Spring Authentication object
      * with authorities (i.e. user roles).
+     *
      * @param authToken Authentication token in string format.
      * @return Spring Authentication object with authorities
      * @throws Exception If the token cannot be verified

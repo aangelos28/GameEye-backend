@@ -7,32 +7,41 @@ import org.springframework.data.annotation.PersistenceConstructor;
  * These are important URLs related to the game, and my be used for web scraping.
  */
 public class SourceUrls {
-    private String gameUrl;
+    /**
+     * URL to a publisher website (i.e. official game website).
+     */
+    private String publisherUrl;
 
+    /**
+     * URL to the Steam store page of a game.
+     */
     private String steamUrl;
 
+    /**
+     * URL to the subreddit of a game.
+     */
     private String subRedditUrl;
 
+    /**
+     * URL to the official Twitter feed of a game.
+     */
     private String twitterUrl;
 
     @PersistenceConstructor
-    public SourceUrls(String gameUrl, String steamUrl, String subRedditUrl,
+    public SourceUrls(String publisherUrl, String steamUrl, String subRedditUrl,
                       String twitterUrl) {
-        this.gameUrl = gameUrl;
+        this.publisherUrl = publisherUrl;
         this.steamUrl = steamUrl;
         this.subRedditUrl = subRedditUrl;
         this.twitterUrl = twitterUrl;
     }
 
-    ///////////////////////////////////////////////
-    // Getters/Setters
-    ///////////////////////////////////////////////
-    public String getGameUrl() {
-        return this.gameUrl;
+    public String getPublisherUrl() {
+        return this.publisherUrl;
     }
 
-    public void setGameUrl(String gameUrl) {
-        this.gameUrl = gameUrl;
+    public void setPublisherUrl(String publisherUrl) {
+        this.publisherUrl = publisherUrl;
     }
 
     public String getSteamUrl() {

@@ -5,13 +5,22 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+/**
+ * Class representing a document in the "Images" collection.
+ */
 @Document("images")
 public class Image {
     @Id
-    private String id;
+    private final String id;
 
+    /**
+     * The type of the image (i.e. logo or thumbnail).
+     */
     private String type;
 
+    /**
+     * Image binary data.
+     */
     private Binary data;
 
     @PersistenceConstructor
@@ -21,9 +30,6 @@ public class Image {
         this.data = data;
     }
 
-    ///////////////////////////////////////////////
-    // Getters/Setters
-    ///////////////////////////////////////////////
     public String getId() {
         return this.id;
     }
