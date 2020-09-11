@@ -6,6 +6,7 @@ import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.sound.midi.spi.SoundbankReader;
 import java.util.Date;
 import java.util.List;
 
@@ -28,52 +29,91 @@ public class Game {
 
     private List<String> genres;
 
-    private List<SourceUrls> sourceUrls;
+    private SourceUrls sourceUrls;
 
     private List<Article> articles;
 
-    private List<Resources> resources;
+    private Resources resources;
 
     @PersistenceConstructor
     public Game(String id, String title, List<String> platforms, String status, Date lastUpdated,
-                List<String> genres, List<Article> articles, List<Resources> resources) {
+                List<String> genres, SourceUrls sourceUrls, List<Article> articles, Resources resources) {
         this.id = id;
         this.title = title;
         this.platforms = platforms;
         this.status = status;
         this.lastUpdated = lastUpdated;
         this.genres = genres;
+        this.sourceUrls = sourceUrls;
         this.articles = articles;
         this.resources = resources;
     }
 
-    public String getId () {return this.id;}
+    public String getId() {
+        return this.id;
+    }
 
-    public String getTitle () {return this.title;}
+    public String getTitle() {
+        return this.title;
+    }
 
-    public void setTitle(String title) {this.title = title;}
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-    public List<String> getPlatforms () {return this.platforms;}
+    public List<String> getPlatforms() {
+        return this.platforms;
+    }
 
-    public void setPlatforms(List<String> platforms) {this.platforms = platforms;}
+    public void setPlatforms(List<String> platforms) {
+        this.platforms = platforms;
+    }
 
-    public String getStatus () {return this.status;}
+    public String getStatus() {
+        return this.status;
+    }
 
-    public void setStatus(String status) {this.status = status;}
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-    public Date getLastUpdated () {return this.lastUpdated;}
+    public Date getLastUpdated() {
+        return this.lastUpdated;
+    }
 
-    public void setLastUpdated(Date lastUpdated) {this.lastUpdated = lastUpdated;}
+    public void setLastUpdated(Date lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
 
-    public List<String> getGenres () {return this.genres;}
+    public List<String> getGenres() {
+        return this.genres;
+    }
 
-    public void setGenres(List<String> genres) {this.genres = genres;}
+    public void setGenres(List<String> genres) {
+        this.genres = genres;
+    }
 
-    public List<Article> getArticles () {return this.articles;}
+    public SourceUrls getSourceUrls() {
+        return this.sourceUrls;
+    }
 
-    public void setArticles(List<Article> articles) {this.articles = articles;}
+    public void setSourceUrls(SourceUrls sourceUrls) {
+        this.sourceUrls = sourceUrls;
+    }
 
-    public List<Resources> getResources () {return this.resources;}
+    public List<Article> getArticles() {
+        return this.articles;
+    }
 
-    public void setResources(List<Resources> resources) {this.resources = resources;}
+    public void setArticles(List<Article> articles) {
+        this.articles = articles;
+    }
+
+    public Resources getResources() {
+        return this.resources;
+    }
+
+    public void setResources(Resources resources) {
+        this.resources = resources;
+    }
 }

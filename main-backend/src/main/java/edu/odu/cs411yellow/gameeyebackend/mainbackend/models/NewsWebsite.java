@@ -62,13 +62,21 @@ public class NewsWebsite {
         return this.title;
     }
 
-    public void setTitle(String title) { this.title = title;}
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-    public String getLogo() { return this.logo;}
+    public String getLogo() {
+        return this.logo;
+    }
 
-    public void setLogo(String logo) { this.logo = logo; }
+    public void setLogo(String logo) {
+        this.logo = logo;
+    }
 
-    public String getSiteUrl() { return this.siteUrl;}
+    public String getSiteUrl() {
+        return this.siteUrl;
+    }
 
     public void setSiteUrl(String siteUrl) {
         this.siteUrl = siteUrl;
@@ -90,5 +98,7 @@ public class NewsWebsite {
         this.lastUpdated = lastUpdated;
     }
 
-    public Date getPublicationDate() {return this.publicationDate;}
+    public Date getPublicationDate() {
+        return this.publicationDate;
+    }
 }

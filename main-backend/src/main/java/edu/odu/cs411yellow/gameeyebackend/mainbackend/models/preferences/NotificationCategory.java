@@ -28,18 +28,32 @@ public class NotificationCategory {
         this.resources = resources;
     }
 
-    public String getId() { return this.id; }
+    public String getId() {
+        return this.id;
+    }
 
-    public String getType() {return this.type; }
+    public String getType() {
+        return this.type;
+    }
 
-    public void setType(String type) { this.type = type; }
+    public void setType(String type) {
+        this.type = type;
+    }
 
-    public Integer getCount() {return this.count; }
+    public Integer getCount() {
+        return this.count;
+    }
 
-    public void setCount(Integer count) {this.count = count; }
+    public void setCount(Integer count) {
+        this.count = count;
+    }
 
-    public List<String> getResources() {return this.resources; }
+    public List<String> getResources() {
+        return this.resources;
+    }
 
-    public void setResources (List<String> resources) {this.resources = resources; }
+    public void setResources(List<String> resources) {
+        this.resources = resources;
+    }
 
 }

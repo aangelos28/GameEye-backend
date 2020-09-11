@@ -23,15 +23,21 @@ public class Notifications {
         this.resourceCategories = resourceCategories;
     }
 
-    public String getId() { return this.id; }
+    public String getId() {
+        return this.id;
+    }
 
-    public String getNotificationFrequency() { return this.notificationFrequency; }
+    public String getNotificationFrequency() {
+        return this.notificationFrequency;
+    }
 
     public void setNotificationFrequency(String notificationFrequency) {
         this.notificationFrequency = notificationFrequency;
     }
 
-    public List<String> getResourcesCategories() {return this.resourceCategories; }
+    public List<String> getResourcesCategories() {
+        return this.resourceCategories;
+    }
 
     public void setResourceCategories(List<String> resourceCategories) {
         this.resourceCategories = resourceCategories;

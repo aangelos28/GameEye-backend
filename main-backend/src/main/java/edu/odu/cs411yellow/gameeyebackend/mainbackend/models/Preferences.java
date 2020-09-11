@@ -26,14 +26,24 @@ public class Preferences {
         this.notifications = notifications;
     }
 
-    public String getId() { return this.id; }
+    public String getId() {
+        return this.id;
+    }
 
-    public Content getContent() { return this.content; }
+    public Content getContent() {
+        return this.content;
+    }
 
-    public void setContent(Content content) { this.content = content;}
+    public void setContent(Content content) {
+        this.content = content;
+    }
 
-    public Notifications getNotifications() { return this.notifications; }
+    public Notifications getNotifications() {
+        return this.notifications;
+    }
 
-    public void setNotifications(Notifications notifications) { this.notifications = notifications; }
+    public void setNotifications(Notifications notifications) {
+        this.notifications = notifications;
+    }
 
 }

@@ -25,17 +25,31 @@ public class Resources {
         this.tweets = tweets;
     }
 
-    public String getId() { return this.id; }
+    public String getId() {
+        return this.id;
+    }
 
-    public List<String> getImages() { return this.images; }
+    public List<String> getImages() {
+        return this.images;
+    }
 
-    public void setImages(List<String> images) { this.images = images;}
+    public void setImages(List<String> images) {
+        this.images = images;
+    }
 
-    public List<String> getArticles() { return this.articles;}
+    public List<String> getArticles() {
+        return this.articles;
+    }
 
-    public void setArticles(List<String> articles) { this.articles = articles; }
+    public void setArticles(List<String> articles) {
+        this.articles = articles;
+    }
 
-    public List<String> getTweets() { return this.tweets; }
+    public List<String> getTweets() {
+        return this.tweets;
+    }
 
-    public void setTweets(List<String> tweets) { this.tweets = tweets; }
+    public void setTweets(List<String> tweets) {
+        this.tweets = tweets;
+    }
 }

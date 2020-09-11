@@ -24,15 +24,21 @@ public class Content {
         this.blockedContent = blockedContent;
     }
 
-    public String getId() { return this.id; }
+    public String getId() {
+        return this.id;
+    }
 
-    public Boolean getShowArchivedResources() { return this.showArchivedResources; }
+    public Boolean getShowArchivedResources() {
+        return this.showArchivedResources;
+    }
 
     public void setShowArchivedResources(Boolean showArchivedResources) {
         this.showArchivedResources = showArchivedResources;
     }
 
-    public BlockedContent getBlockedContent() {return this.blockedContent; }
+    public BlockedContent getBlockedContent() {
+        return this.blockedContent;
+    }
 
     public void setBlockedContent(BlockedContent blockedContent) {
         this.blockedContent = blockedContent;

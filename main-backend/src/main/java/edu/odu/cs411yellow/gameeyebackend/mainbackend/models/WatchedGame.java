@@ -22,15 +22,25 @@ public class WatchedGame {
         this.notificationCategories = notificationCategories;
     }
 
-    public String getGameId () {return this.gameId;}
+    public String getGameId() {
+        return this.gameId;
+    }
 
-    public void setGameId (String gameId) {this.gameId = gameId;}
+    public void setGameId(String gameId) {
+        this.gameId = gameId;
+    }
 
-    public Integer getNotificationCount () {return this.notificationCount;}
+    public Integer getNotificationCount() {
+        return this.notificationCount;
+    }
 
-    public void setTitle(Integer notificationCount) {this.notificationCount = notificationCount;}
+    public void setTitle(Integer notificationCount) {
+        this.notificationCount = notificationCount;
+    }
 
-    public List<NotificationCategory> getNotificationCategories () {return this.notificationCategories;}
+    public List<NotificationCategory> getNotificationCategories() {
+        return this.notificationCategories;
+    }
 
     public void setNotificationCategories(List<NotificationCategory> notificationCategories) {
         this.notificationCategories = notificationCategories;
