@@ -13,18 +13,18 @@ import java.util.Date;
 @Document("newsWebsites")
 public class NewsWebsite {
     @Id
-    private String id;
+    private final String id;
 
     /**
-     * Name of the news website (e.g. IGN).
+     * Title of the news website (e.g. IGN).
      */
-    private String name;
+    private String title;
 
     /**
      * Reference to the logo of the news website.
      */
     @DBRef
-    private Image logo;
+    private String logo;
 
     /**
      * Home page URL of the news website.
@@ -41,10 +41,13 @@ public class NewsWebsite {
      */
     private Date lastUpdated;
 
+    private Date publicationDate;
+
     @PersistenceConstructor
-    public NewsWebsite(String id, String name, Image logo, String siteUrl, String rssFeedUrl, Date lastUpdated) {
+    public NewsWebsite(String id, String title, String logo, String siteUrl,
+                       String rssFeedUrl, Date lastUpdated, Date publicationDate) {
         this.id = id;
-        this.name = name;
+        this.title = title;
         this.logo = logo;
         this.siteUrl = siteUrl;
         this.rssFeedUrl = rssFeedUrl;
@@ -55,25 +58,17 @@ public class NewsWebsite {
         return this.id;
     }
 
-    public String getName() {
-        return this.name;
+    public String getTitle() {
+        return this.title;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public void setTitle(String title) { this.title = title;}
 
-    public Image getLogo() {
-        return this.logo;
-    }
+    public String getLogo() { return this.logo;}
 
-    public void setLogo(Image logo) {
-        this.logo = logo;
-    }
+    public void setLogo(String logo) { this.logo = logo; }
 
-    public String getSiteUrl() {
-        return this.siteUrl;
-    }
+    public String getSiteUrl() { return this.siteUrl;}
 
     public void setSiteUrl(String siteUrl) {
         this.siteUrl = siteUrl;
@@ -94,4 +89,6 @@ public class NewsWebsite {
     public void setLastUpdated(Date lastUpdated) {
         this.lastUpdated = lastUpdated;
     }
+
+    public Date getPublicationDate() {return this.publicationDate;}
 }

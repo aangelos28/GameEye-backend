@@ -54,13 +54,13 @@ public class Article {
     private Date lastUpdated;
 
     /**
-     * Importance score of the article, computed with machine learning.
+     * Impact score of the article, computed with machine learning.
      */
-    private int importanceScore;
+    private int impactScore;
 
     @PersistenceConstructor
     public Article(String id, String title, String url, NewsWebsite newsWebsite, Image thumbnail, String snippet,
-                   Date publicationDate, Date lastUpdated, int importanceScore) {
+                   Date publicationDate, Date lastUpdated, int impactScore) {
         this.id = id;
         this.title = title;
         this.url = url;
@@ -69,7 +69,7 @@ public class Article {
         this.snippet = snippet;
         this.publicationDate = publicationDate;
         this.lastUpdated = lastUpdated;
-        this.importanceScore = importanceScore;
+        this.impactScore = impactScore;
     }
 
     public String getId() {
@@ -132,11 +132,11 @@ public class Article {
         this.lastUpdated = lastUpdated;
     }
 
-    public int getImportanceScore() {
-        return this.importanceScore;
+    public int getImpactScore() {
+        return this.impactScore;
     }
 
-    public void setImportanceScore(int importanceScore) {
-        this.importanceScore = importanceScore;
+    public void setImpactScore(int impactScore) {
+        this.impactScore = impactScore;
     }
 }

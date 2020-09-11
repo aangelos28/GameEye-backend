@@ -1,0 +1,45 @@
+package edu.odu.cs411yellow.gameeyebackend.mainbackend.models.watchedgame;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceConstructor;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.List;
+
+/**
+ * Class representing a document in the "notificationCategories" array collection.
+ */
+@Document("notificationCategories")
+public class NotificationCategory {
+    @Id
+    private final String id;
+
+    private String type;
+
+    private Integer count;
+
+    private List<String> resources;
+
+    @PersistenceConstructor
+    public NotificationCategory(String id, String type, Integer count, List<String> resources) {
+        this.id = id;
+        this.type = type;
+        this.count = count;
+        this.resources = resources;
+    }
+
+    public String getId() { return this.id; }
+
+    public String getType() {return this.type; }
+
+    public void setType(String type) { this.type = type; }
+
+    public Integer getCount() {return this.count; }
+
+    public void setCount(Integer count) {this.count = count; }
+
+    public List<String> getResources() {return this.resources; }
+
+    public void setResources (List<String> resources) {this.resources = resources; }
+
+}
