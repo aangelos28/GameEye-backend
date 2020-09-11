@@ -1,4 +1,4 @@
-package edu.odu.cs411yellow.gameeyebackend.cli.security;
+package edu.odu.cs411yellow.gameeyebackend.common.security;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -6,9 +6,7 @@ import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -16,8 +14,19 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * Class that contains Firebase secrets.
  */
 public class FirebaseSecrets {
+    /**
+     * Audience of the secrets. This is the application name in Firebase.
+     */
     private static String audience;
+
+    /**
+     * URL to the authority that issues tokens.
+     */
     private static String issuerUri;
+
+    /**
+     * JSON containing Firebase service account credentials.
+     */
     private static String credentials;
 
     /**

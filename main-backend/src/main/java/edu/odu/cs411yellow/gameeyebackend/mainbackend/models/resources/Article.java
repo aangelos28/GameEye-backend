@@ -8,42 +8,70 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import java.util.Date;
 
+/**
+ * Represents a news article resource.
+ */
 public class Article {
     @Id
-    private String id;
+    private final String id;
 
+    /**
+     * Title of the article.
+     */
     private String title;
 
+    /**
+     * URL to the page containing the article.
+     */
     private String url;
 
+    /**
+     * Reference to the news website that this article was retrieved from.
+     */
     @DBRef
     private NewsWebsite newsWebsite;
 
+    /**
+     * Reference to a thumbnail for this article, if any.
+     */
     @DBRef
     private Image thumbnail;
 
+    /**
+     * Small portion of the text body of an article, usually the first few sentences.
+     * Limit to 255 characters.
+     */
     private String snippet;
 
+    /**
+     * Date the article was published.
+     */
+    private Date publicationDate;
+
+    /**
+     * Date the document was last updated.
+     */
     private Date lastUpdated;
 
+    /**
+     * Importance score of the article, computed with machine learning.
+     */
     private int importanceScore;
 
     @PersistenceConstructor
     public Article(String id, String title, String url, NewsWebsite newsWebsite, Image thumbnail, String snippet,
-                   Date lastUpdated, int importanceScore) {
+                   Date publicationDate, Date lastUpdated, int importanceScore) {
         this.id = id;
         this.title = title;
         this.url = url;
         this.newsWebsite = newsWebsite;
         this.thumbnail = thumbnail;
         this.snippet = snippet;
+        this.publicationDate = publicationDate;
         this.lastUpdated = lastUpdated;
         this.importanceScore = importanceScore;
     }
 
-    ///////////////////////////////////////////////
-    // Getters/Setters
-    ///////////////////////////////////////////////
     public String getId() {
         return this.id;
     }
@@ -86,6 +114,14 @@ public class Article {
 
     public void setSnippet(String snippet) {
         this.snippet = snippet;
+    }
+
+    public Date getPublicationDate() {
+        return this.publicationDate;
+    }
+
+    public void setPublicationDate(Date publicationDate) {
+        this.publicationDate = publicationDate;
     }
 
     public Date getLastUpdated() {

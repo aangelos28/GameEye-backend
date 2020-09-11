@@ -18,19 +18,40 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Service for authenticating GameEye CLI with Firebase.
+ */
 @Service
 public class AuthenticationService {
+    /**
+     * String representation of ID token retrieved from Firebase.
+     */
     private String idToken;
+
+    /**
+     * ID token retrieved from Firebase.
+     */
     private FirebaseToken firebaseIdToken;
+
+    /**
+     * User ID of CLI instance.
+     */
     private final String userId;
 
     private final WebClient webClient;
+
     Logger logger = LoggerFactory.getLogger(AuthenticationService.class);
 
+    /**
+     * Firebase web API key.
+     */
     @Value("${apikeys.firebaseWeb}")
     private String firebaseWebApiKey;
 
-    private class AuthenticationRequest {
+    /**
+     * Data for authentication request to Firebase web API.
+     */
+    private static class AuthenticationRequest {
         public String token;
         public boolean returnSecureToken = true;
     }
@@ -48,6 +69,11 @@ public class AuthenticationService {
         this.acquireIdToken();
     }
 
+    /**
+     * Acquired ID token for this CLI instance from Firebase.
+     *
+     * @throws FirebaseAuthException Thrown if failed to acquire ID token.
+     */
     public void acquireIdToken() throws FirebaseAuthException {
         Map<String, Object> claims = new HashMap<>();
         claims.put("admin", true);

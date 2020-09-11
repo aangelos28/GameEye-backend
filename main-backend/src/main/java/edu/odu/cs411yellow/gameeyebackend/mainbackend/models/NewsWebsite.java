@@ -7,45 +7,60 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
 
+/**
+ * Class representing a document in the "News Websites" collection.
+ */
 @Document("newsWebsites")
 public class NewsWebsite {
     @Id
     private String id;
 
-    private String title;
+    /**
+     * Name of the news website (e.g. IGN).
+     */
+    private String name;
 
+    /**
+     * Reference to the logo of the news website.
+     */
     @DBRef
     private Image logo;
 
+    /**
+     * Home page URL of the news website.
+     */
     private String siteUrl;
 
+    /**
+     * RSS feed URL of the news website.
+     */
     private String rssFeedUrl;
 
+    /**
+     * Date the document was last updated.
+     */
     private Date lastUpdated;
 
     @PersistenceConstructor
-    public NewsWebsite(String id, String title, Image logo, String siteUrl, String rssFeedUrl, Date lastUpdated) {
+    public NewsWebsite(String id, String name, Image logo, String siteUrl, String rssFeedUrl, Date lastUpdated) {
         this.id = id;
-        this.title = title;
+        this.name = name;
         this.logo = logo;
         this.siteUrl = siteUrl;
         this.rssFeedUrl = rssFeedUrl;
         this.lastUpdated = lastUpdated;
     }
 
-    ///////////////////////////////////////////////
-    // Getters/Setters
-    ///////////////////////////////////////////////
     public String getId() {
         return this.id;
     }
 
-    public String getTitle() {
-        return this.title;
+    public String getName() {
+        return this.name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Image getLogo() {

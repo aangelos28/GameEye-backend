@@ -6,13 +6,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-//@RequestMapping("/private")
-public class IGDBController {
+public class TestController {
 
     private final IgdbService igdbService;
 
     @Autowired
-    public IGDBController(IgdbService igdbService) {
+    public TestController(IgdbService igdbService) {
         this.igdbService = igdbService;
     }
 
