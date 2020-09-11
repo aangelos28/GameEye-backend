@@ -4,12 +4,7 @@ import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.Content
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.Notifications;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
-import org.springframework.data.mongodb.core.aggregation.BooleanOperators;
-import org.springframework.data.mongodb.core.mapping.DBRef;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Date;
-import java.util.List;
 
 public class Preferences {
     @Id

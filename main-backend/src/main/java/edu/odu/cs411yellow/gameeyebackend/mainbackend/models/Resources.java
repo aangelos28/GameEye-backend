@@ -2,10 +2,6 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.models;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
-import org.springframework.data.mongodb.core.mapping.DBRef;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.util.Date;
 import java.util.List;
 
 public class Resources {
@@ -16,13 +12,10 @@ public class Resources {
 
     private List<String> articles;
 
-    private List<String> tweets;
-
     @PersistenceConstructor
-    public Resources(String id, List<String> images, List<String> articles, List<String> tweets) {
+    public Resources(String id, List<String> images, List<String> articles) {
         this.images = images;
         this.articles = articles;
-        this.tweets = tweets;
     }
 
     public String getId() {
@@ -45,11 +38,4 @@ public class Resources {
         this.articles = articles;
     }
 
-    public List<String> getTweets() {
-        return this.tweets;
-    }
-
-    public void setTweets(List<String> tweets) {
-        this.tweets = tweets;
-    }
 }
