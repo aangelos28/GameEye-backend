@@ -1,19 +1,13 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences;
 
-import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
 /**
  * Class representing a document in the "notificationCategories" array collection.
  */
-@Document("notificationCategories")
 public class NotificationCategory {
-    @Id
-    private final String id;
-
     private String type;
 
     private Integer count;
@@ -21,15 +15,10 @@ public class NotificationCategory {
     private List<String> resources;
 
     @PersistenceConstructor
-    public NotificationCategory(String id, String type, Integer count, List<String> resources) {
-        this.id = id;
+    public NotificationCategory(String type, Integer count, List<String> resources) {
         this.type = type;
         this.count = count;
         this.resources = resources;
-    }
-
-    public String getId() {
-        return this.id;
     }
 
     public String getType() {

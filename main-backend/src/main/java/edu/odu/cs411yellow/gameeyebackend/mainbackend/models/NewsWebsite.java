@@ -2,7 +2,6 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.models;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
@@ -16,15 +15,14 @@ public class NewsWebsite {
     private final String id;
 
     /**
-     * Title of the news website (e.g. IGN).
+     * Name of the news website (e.g. IGN).
      */
-    private String title;
+    private String name;
 
     /**
-     * Reference to the logo of the news website.
+     * Logo image of the news website.
      */
-    @DBRef
-    private String logo;
+    private Image logo;
 
     /**
      * Home page URL of the news website.
@@ -44,10 +42,10 @@ public class NewsWebsite {
     private Date publicationDate;
 
     @PersistenceConstructor
-    public NewsWebsite(String id, String title, String logo, String siteUrl,
+    public NewsWebsite(String id, String name, Image logo, String siteUrl,
                        String rssFeedUrl, Date lastUpdated, Date publicationDate) {
         this.id = id;
-        this.title = title;
+        this.name = name;
         this.logo = logo;
         this.siteUrl = siteUrl;
         this.rssFeedUrl = rssFeedUrl;
@@ -58,19 +56,19 @@ public class NewsWebsite {
         return this.id;
     }
 
-    public String getTitle() {
-        return this.title;
+    public String getName() {
+        return this.name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getLogo() {
+    public Image getLogo() {
         return this.logo;
     }
 
-    public void setLogo(String logo) {
+    public void setLogo(Image logo) {
         this.logo = logo;
     }
 
