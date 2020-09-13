@@ -4,7 +4,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -25,20 +24,20 @@ public class User {
 
     private String plan;
 
-    private Preferences preferences;
+    private ContentPreferences contentPreferences;
 
     private List<WatchedGame> watchList;
 
     @PersistenceConstructor
     public User(String id, String firstName, String lastName, String email, String status,
-                String plan, Preferences preferences, List<WatchedGame> watchList) {
+                String plan, ContentPreferences contentPreferences, List<WatchedGame> watchList) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.status = status;
         this.plan = plan;
-        this.preferences = preferences;
+        this.contentPreferences = contentPreferences;
         this.watchList = watchList;
     }
 
@@ -86,12 +85,12 @@ public class User {
         this.plan = plan;
     }
 
-    public Preferences getPreferences() {
-        return this.preferences;
+    public ContentPreferences getPreferences() {
+        return this.contentPreferences;
     }
 
-    public void setPreferences(Preferences preferences) {
-        this.preferences = preferences;
+    public void setPreferences(ContentPreferences contentPreferences) {
+        this.contentPreferences = contentPreferences;
     }
 
     public List<WatchedGame> getWatchList() {

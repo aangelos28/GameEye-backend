@@ -4,13 +4,13 @@ import org.springframework.data.annotation.PersistenceConstructor;
 
 import java.util.List;
 
-public class Notifications {
+public class NotificationPreferences {
     private String notificationFrequency;
 
     private List<String> resourceCategories;
 
     @PersistenceConstructor
-    public Notifications(String notificationFrequency, List<String> resourceCategories) {
+    public NotificationPreferences(String notificationFrequency, List<String> resourceCategories) {
         this.notificationFrequency = notificationFrequency;
         this.resourceCategories = resourceCategories;
     }

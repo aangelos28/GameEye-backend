@@ -1,5 +1,6 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models;
 
+import org.bson.types.Binary;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -22,7 +23,7 @@ public class NewsWebsite {
     /**
      * Logo image of the news website.
      */
-    private Image logo;
+    private Binary logo;
 
     /**
      * Home page URL of the news website.
@@ -42,7 +43,7 @@ public class NewsWebsite {
     private Date publicationDate;
 
     @PersistenceConstructor
-    public NewsWebsite(String id, String name, Image logo, String siteUrl,
+    public NewsWebsite(String id, String name, Binary logo, String siteUrl,
                        String rssFeedUrl, Date lastUpdated, Date publicationDate) {
         this.id = id;
         this.name = name;
@@ -64,11 +65,11 @@ public class NewsWebsite {
         this.name = name;
     }
 
-    public Image getLogo() {
+    public Binary getLogo() {
         return this.logo;
     }
 
-    public void setLogo(Image logo) {
+    public void setLogo(Binary logo) {
         this.logo = logo;
     }
 
