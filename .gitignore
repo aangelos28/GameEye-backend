@@ -36,4 +36,5 @@ out/
 firebase.json
 secrets.json
 application.properties
+application-test.properties
 *.log
