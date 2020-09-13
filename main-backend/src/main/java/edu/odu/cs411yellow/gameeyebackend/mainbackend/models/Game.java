@@ -30,13 +30,11 @@ public class Game {
 
     private SourceUrls sourceUrls;
 
-    private List<Article> articles;
-
     private Resources resources;
 
     @PersistenceConstructor
     public Game(String id, String title, List<String> platforms, String status, Date lastUpdated,
-                List<String> genres, SourceUrls sourceUrls, List<Article> articles, Resources resources) {
+                List<String> genres, SourceUrls sourceUrls, Resources resources) {
         this.id = id;
         this.title = title;
         this.platforms = platforms;
@@ -44,7 +42,6 @@ public class Game {
         this.lastUpdated = lastUpdated;
         this.genres = genres;
         this.sourceUrls = sourceUrls;
-        this.articles = articles;
         this.resources = resources;
     }
 
@@ -98,14 +95,6 @@ public class Game {
 
     public void setSourceUrls(SourceUrls sourceUrls) {
         this.sourceUrls = sourceUrls;
-    }
-
-    public List<Article> getArticles() {
-        return this.articles;
-    }
-
-    public void setArticles(List<Article> articles) {
-        this.articles = articles;
     }
 
     public Resources getResources() {
