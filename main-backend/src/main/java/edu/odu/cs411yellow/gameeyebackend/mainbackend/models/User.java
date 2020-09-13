@@ -24,20 +24,20 @@ public class User {
 
     private String plan;
 
-    private ContentPreferences contentPreferences;
+    private Preferences preferences;
 
     private List<WatchedGame> watchList;
 
     @PersistenceConstructor
     public User(String id, String firstName, String lastName, String email, String status,
-                String plan, ContentPreferences contentPreferences, List<WatchedGame> watchList) {
+                String plan, Preferences preferences, List<WatchedGame> watchList) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.status = status;
         this.plan = plan;
-        this.contentPreferences = contentPreferences;
+        this.preferences = preferences;
         this.watchList = watchList;
     }
 
@@ -85,12 +85,12 @@ public class User {
         this.plan = plan;
     }
 
-    public ContentPreferences getPreferences() {
-        return this.contentPreferences;
+    public Preferences getPreferences() {
+        return this.preferences;
     }
 
-    public void setPreferences(ContentPreferences contentPreferences) {
-        this.contentPreferences = contentPreferences;
+    public void setPreferences(Preferences preferences) {
+        this.preferences = preferences;
     }
 
     public List<WatchedGame> getWatchList() {
