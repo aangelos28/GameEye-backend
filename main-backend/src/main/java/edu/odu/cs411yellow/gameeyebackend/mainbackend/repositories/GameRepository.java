@@ -1,4 +1,9 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories;
 
-public interface GameRepository {
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface GameRepository extends MongoRepository<Game, String> {
 }
