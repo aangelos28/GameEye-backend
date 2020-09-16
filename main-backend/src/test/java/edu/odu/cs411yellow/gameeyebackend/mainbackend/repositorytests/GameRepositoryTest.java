@@ -1,4 +1,4 @@
-package edu.odu.cs411yellow.gameeyebackend.mainbackend;
+package edu.odu.cs411yellow.gameeyebackend.mainbackend.repositorytests;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.*;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
@@ -14,13 +14,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 @ActiveProfiles("test")
 @TestPropertySource(locations="classpath:application-test.properties")
-public class RepositoryTests {
+public class GameRepositoryTest {
 
     @Autowired
     private GameRepository gameRepository;
 
     @Test
-    public void GameRepositoryTest() {
+    public void saveAndDelete() {
         // Create a game
         Game game = new Game("1234", "Zelda", null, null, null, null, null, null);
 
