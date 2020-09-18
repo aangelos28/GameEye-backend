@@ -22,7 +22,7 @@ public class UserRepositoryTest {
     @Test
     public void saveAndDelete() {
         // Create a user
-        User user = new User("1234", "Angelos", "Angelopoulos", "aange002@odu.edu", "active", "free", null, null);
+        User user = new User("1234", "Angelos", "Angelopoulos", "aange002@odu.edu", UserStatus.active, UserPlan.free, null, null);
 
         // Save user in database
         userRepository.save(user);

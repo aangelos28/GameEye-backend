@@ -20,17 +20,17 @@ public class User {
 
     private String email;
 
-    private String status;
+    private UserStatus status;
 
-    private String plan;
+    private UserPlan plan;
 
     private Preferences preferences;
 
     private List<WatchedGame> watchList;
 
     @PersistenceConstructor
-    public User(String id, String firstName, String lastName, String email, String status,
-                String plan, Preferences preferences, List<WatchedGame> watchList) {
+    public User(String id, String firstName, String lastName, String email, UserStatus status,
+                UserPlan plan, Preferences preferences, List<WatchedGame> watchList) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -69,19 +69,19 @@ public class User {
         this.email = email;
     }
 
-    public String getStatus() {
+    public UserStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(UserStatus status) {
         this.status = status;
     }
 
-    public String getPlan() {
+    public UserPlan getPlan() {
         return this.plan;
     }
 
-    public void setPlan(String plan) {
+    public void setPlan(UserPlan plan) {
         this.plan = plan;
     }
 
