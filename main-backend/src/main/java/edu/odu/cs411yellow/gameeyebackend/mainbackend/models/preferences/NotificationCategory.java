@@ -1,5 +1,6 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.PersistenceConstructor;
 
 import java.util.List;
@@ -12,10 +13,10 @@ public class NotificationCategory {
 
     private Integer count;
 
-    private List<String> resources;
+    private List<ObjectId> resources;
 
     @PersistenceConstructor
-    public NotificationCategory(String type, Integer count, List<String> resources) {
+    public NotificationCategory(String type, Integer count, List<ObjectId> resources) {
         this.type = type;
         this.count = count;
         this.resources = resources;
@@ -37,11 +38,11 @@ public class NotificationCategory {
         this.count = count;
     }
 
-    public List<String> getResources() {
+    public List<ObjectId> getResources() {
         return this.resources;
     }
 
-    public void setResources(List<String> resources) {
+    public void setResources(List<ObjectId> resources) {
         this.resources = resources;
     }
 

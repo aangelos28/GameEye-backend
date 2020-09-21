@@ -8,26 +8,22 @@ import java.util.List;
 
 public class WatchedGame {
     @DBRef
-    private String gameId;
+    private final Game game;
 
     private Integer notificationCount;
 
     private List<NotificationCategory> notificationCategories;
 
     @PersistenceConstructor
-    public WatchedGame(String gameId, Integer notificationCount,
+    public WatchedGame(Game game, Integer notificationCount,
                        List<NotificationCategory> notificationCategories) {
-        this.gameId = gameId;
+        this.game = game;
         this.notificationCount = notificationCount;
         this.notificationCategories = notificationCategories;
     }
 
-    public String getGameId() {
-        return this.gameId;
-    }
-
-    public void setGameId(String gameId) {
-        this.gameId = gameId;
+    public Game getGame() {
+        return this.game;
     }
 
     public Integer getNotificationCount() {
