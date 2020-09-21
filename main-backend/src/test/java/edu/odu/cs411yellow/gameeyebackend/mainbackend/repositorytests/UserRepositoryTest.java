@@ -1,6 +1,5 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.repositorytests;
 
-import com.mongodb.DBRef;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.*;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.ContentPreferences;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.NotificationCategory;
@@ -33,6 +32,7 @@ public class UserRepositoryTest {
 
     @Test
     public void saveAndDelete() {
+        // Declare parameters for user
         String firstName = "Jacob";
         String lastName = "Cook";
         String email = "jcook006@odu.edu";
@@ -48,7 +48,8 @@ public class UserRepositoryTest {
         Preferences preferences = new Preferences(contentPreferences, notificationPreferences);
 
         // Declare parameters for watchList in User constructor
-        Game doomEternal = gameRepository.findGameByTitle("Doom Eternal");
+        String referencedGameName = "Doom Eternal";
+        Game doomEternal = gameRepository.findGameByTitle(referencedGameName);
         String notificationCategoryType = "article";
         Integer notificationCategoryCount = 2;
 
@@ -83,7 +84,7 @@ public class UserRepositoryTest {
         assert(userRepository.existsById(user.getId()));
 
         // Delete user in database
-        userRepository.delete(user);
-        assert(!userRepository.existsById(user.getId()));
+        //userRepository.delete(user);
+        //assert(!userRepository.existsById(user.getId()));
     }
 }

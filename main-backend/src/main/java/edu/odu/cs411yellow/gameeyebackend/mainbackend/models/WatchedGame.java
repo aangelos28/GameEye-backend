@@ -1,5 +1,6 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models;
 
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.NotificationCategories;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.NotificationCategory;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -12,11 +13,11 @@ public class WatchedGame {
 
     private Integer notificationCount;
 
-    private List<NotificationCategory> notificationCategories;
+    private NotificationCategories notificationCategories;
 
     @PersistenceConstructor
     public WatchedGame(Game game, Integer notificationCount,
-                       List<NotificationCategory> notificationCategories) {
+                       NotificationCategories notificationCategories) {
         this.game = game;
         this.notificationCount = notificationCount;
         this.notificationCategories = notificationCategories;
@@ -34,11 +35,11 @@ public class WatchedGame {
         this.notificationCount = notificationCount;
     }
 
-    public List<NotificationCategory> getNotificationCategories() {
+    public NotificationCategories getNotificationCategories() {
         return this.notificationCategories;
     }
 
-    public void setNotificationCategories(List<NotificationCategory> notificationCategories) {
+    public void setNotificationCategories(NotificationCategories notificationCategories) {
         this.notificationCategories = notificationCategories;
     }
 
