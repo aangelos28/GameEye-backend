@@ -40,11 +40,9 @@ public class NewsWebsite {
      */
     private Date lastUpdated;
 
-    private Date publicationDate;
-
     @PersistenceConstructor
     public NewsWebsite(String id, String name, Binary logo, String siteUrl,
-                       String rssFeedUrl, Date lastUpdated, Date publicationDate) {
+                       String rssFeedUrl, Date lastUpdated) {
         this.id = id;
         this.name = name;
         this.logo = logo;
@@ -97,7 +95,4 @@ public class NewsWebsite {
         this.lastUpdated = lastUpdated;
     }
 
-    public Date getPublicationDate() {
-        return this.publicationDate;
-    }
 }

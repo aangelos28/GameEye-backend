@@ -22,7 +22,7 @@ public class NewsWebsiteRepositoryTest {
     @Test
     public void saveAndDelete() {
         // Create a news website
-        NewsWebsite newsWebsite = new NewsWebsite("1234", "IGN", null, null, null, null, null);
+        NewsWebsite newsWebsite = new NewsWebsite("1234", "GameSpot", null, null, null, null);
 
         // Save news website in database
         newsWebsiteRepository.save(newsWebsite);
