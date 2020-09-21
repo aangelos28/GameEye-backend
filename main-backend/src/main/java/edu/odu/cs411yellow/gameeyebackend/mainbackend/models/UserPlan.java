@@ -7,5 +7,3 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.models;
 public enum UserPlan {
     free, paid
 }
-
-
