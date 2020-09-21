@@ -1,11 +1,8 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.NotificationCategories;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.NotificationCategory;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.mapping.DBRef;
-
-import java.util.List;
 
 public class WatchedGame {
     @DBRef
