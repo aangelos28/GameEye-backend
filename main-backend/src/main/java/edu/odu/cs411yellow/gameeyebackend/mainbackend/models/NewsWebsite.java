@@ -1,8 +1,8 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models;
 
+import org.bson.types.Binary;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
@@ -13,7 +13,7 @@ import java.util.Date;
 @Document("newsWebsites")
 public class NewsWebsite {
     @Id
-    private String id;
+    private final String id;
 
     /**
      * Name of the news website (e.g. IGN).
@@ -21,10 +21,9 @@ public class NewsWebsite {
     private String name;
 
     /**
-     * Reference to the logo of the news website.
+     * Logo image of the news website.
      */
-    @DBRef
-    private Image logo;
+    private Binary logo;
 
     /**
      * Home page URL of the news website.
@@ -41,8 +40,11 @@ public class NewsWebsite {
      */
     private Date lastUpdated;
 
+    private Date publicationDate;
+
     @PersistenceConstructor
-    public NewsWebsite(String id, String name, Image logo, String siteUrl, String rssFeedUrl, Date lastUpdated) {
+    public NewsWebsite(String id, String name, Binary logo, String siteUrl,
+                       String rssFeedUrl, Date lastUpdated, Date publicationDate) {
         this.id = id;
         this.name = name;
         this.logo = logo;
@@ -63,11 +65,11 @@ public class NewsWebsite {
         this.name = name;
     }
 
-    public Image getLogo() {
+    public Binary getLogo() {
         return this.logo;
     }
 
-    public void setLogo(Image logo) {
+    public void setLogo(Binary logo) {
         this.logo = logo;
     }
 
@@ -93,5 +95,9 @@ public class NewsWebsite {
 
     public void setLastUpdated(Date lastUpdated) {
         this.lastUpdated = lastUpdated;
+    }
+
+    public Date getPublicationDate() {
+        return this.publicationDate;
     }
 }
