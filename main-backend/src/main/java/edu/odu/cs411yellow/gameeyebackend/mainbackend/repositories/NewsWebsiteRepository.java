@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface NewsWebsiteRepository extends MongoRepository<NewsWebsite, String> {
     NewsWebsite findByName(String name);
+
+    Boolean existsByName(String name);
 }
