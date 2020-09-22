@@ -2,6 +2,8 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.models;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import org.springframework.data.annotation.PersistenceConstructor;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class Resources {
@@ -14,6 +16,10 @@ public class Resources {
     public Resources(List<Image> images, List<Article> articles) {
         this.images = images;
         this.articles = articles;
+    }
+    public Resources() {
+        this.images = new ArrayList<>();
+        this.articles = new ArrayList<>();
     }
 
     public List<Image> getImages() {

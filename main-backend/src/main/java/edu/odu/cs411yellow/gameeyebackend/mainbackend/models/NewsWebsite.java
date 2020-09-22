@@ -51,6 +51,15 @@ public class NewsWebsite {
         this.lastUpdated = lastUpdated;
     }
 
+    public NewsWebsite() {
+        this.id = "";
+        this.name = "";
+        this.logo = new Binary(new byte[1]);
+        this.siteUrl = "";
+        this.rssFeedUrl = "";
+        this.lastUpdated = new Date();
+    }
+
     public String getId() {
         return this.id;
     }

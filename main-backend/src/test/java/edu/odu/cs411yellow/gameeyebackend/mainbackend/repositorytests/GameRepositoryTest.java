@@ -28,6 +28,9 @@ public class GameRepositoryTest {
         gameRepository.save(game);
         assert(gameRepository.existsById("1234"));
 
+        Game game1 = gameRepository.findGameByTitle("Doom Eternal");
+        String title = game1.getTitle();
+
         // Delete game in database
         gameRepository.delete(game);
         assert(!gameRepository.existsById("1234"));

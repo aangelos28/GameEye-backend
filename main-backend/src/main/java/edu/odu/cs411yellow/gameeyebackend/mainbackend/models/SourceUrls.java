@@ -36,6 +36,13 @@ public class SourceUrls {
         this.twitterUrl = twitterUrl;
     }
 
+    public SourceUrls() {
+        this.publisherUrl = "";
+        this.steamUrl = "";
+        this.subRedditUrl = "";
+        this.twitterUrl = "";
+    }
+
     public String getPublisherUrl() {
         return this.publisherUrl;
     }

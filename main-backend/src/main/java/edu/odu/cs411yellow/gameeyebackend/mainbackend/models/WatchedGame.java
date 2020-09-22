@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 
 public class WatchedGame {
     @DBRef
-    private final Game game;
+    private Game game;
 
     private Integer notificationCount;
 
@@ -18,6 +18,11 @@ public class WatchedGame {
         this.game = game;
         this.notificationCount = notificationCount;
         this.notificationCategories = notificationCategories;
+    }
+    public WatchedGame() {
+        this.game = new Game();
+        this.notificationCount = 0;
+        this.notificationCategories = new NotificationCategories();
     }
 
     public Game getGame() {

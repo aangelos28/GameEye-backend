@@ -2,7 +2,7 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.repositorytests;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.*;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.ContentPreferences;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.NotificationCategory;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.ArticlesNotificationCategory;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.NotificationCategories;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.NotificationPreferences;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
@@ -52,16 +52,13 @@ public class UserRepositoryTest {
         // Declare parameters for watchList in User constructor
         String referencedGameName = "Doom Eternal";
         Game doomEternal = gameRepository.findGameByTitle(referencedGameName);
-        String notificationCategoryType = "article";
         Integer notificationCategoryCount = 2;
 
-        List<Article> resources = new ArrayList<>();
+        List<String> resources = new ArrayList<>();
 
-        NotificationCategory notificationCategory = new NotificationCategory( notificationCategoryType,
-                                                                              notificationCategoryCount,
-                                                                              resources );
+        ArticlesNotificationCategory articles =
+                                     new ArticlesNotificationCategory(notificationCategoryCount, resources);
 
-        NotificationCategory articles = new NotificationCategory("News Artcicles");
         NotificationCategories notificationCategories = new NotificationCategories(articles);
 
         WatchedGame watchedGame = new WatchedGame(doomEternal, notificationCategoryCount, notificationCategories);
@@ -80,7 +77,34 @@ public class UserRepositoryTest {
         assert(userRepository.existsById(user.getId()));
 
         // Delete user in database
-        //userRepository.delete(user);
-        //assert(!userRepository.existsById(user.getId()));
+        userRepository.delete(user);
+        assert(!userRepository.existsById(user.getId()));
+    }
+
+    @Test
+    public void queryByEmail() {
+        // Check against mock data in database
+        String userEmail = "jcook006@odu.edu";
+
+        User user = userRepository.findUserByEmail(userEmail);
+        assert(user.getEmail().equals(userEmail));
+
+        List<WatchedGame> watchList = user.getWatchList();
+        WatchedGame watchedGame = watchList.get(0);
+
+        Game game = watchedGame.getGame();
+        String title = game.getTitle();
+
+        assert(title.equals("Doom Eternal"));
+
+        NotificationCategories notificationCategories = watchedGame.getNotificationCategories();
+        ArticlesNotificationCategory articles = notificationCategories.getArticles();
+
+        List<String> articleResources = articles.getResources();
+
+        String actualArticleTitle = game.getResources().getArticles().get(0).getTitle();
+        String expectedArticleTitle = "Doom Eternal Single-Player Review";
+
+        assert(actualArticleTitle.equals(expectedArticleTitle));
     }
 }

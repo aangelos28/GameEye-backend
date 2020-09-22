@@ -5,6 +5,8 @@ import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -42,6 +44,16 @@ public class Game {
         this.genres = genres;
         this.sourceUrls = sourceUrls;
         this.resources = resources;
+    }
+    public Game() {
+        this.id = "";
+        this.title = "";
+        this.platforms = new ArrayList<>();
+        this.status = "";
+        this.lastUpdated = new Date();
+        this.genres = new ArrayList<>();
+        this.sourceUrls = new SourceUrls();
+        this.resources = new Resources();
     }
 
     public String getId() {

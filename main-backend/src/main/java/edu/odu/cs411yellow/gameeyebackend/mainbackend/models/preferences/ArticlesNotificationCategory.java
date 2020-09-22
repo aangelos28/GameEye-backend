@@ -2,35 +2,31 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Class representing a "News Articles" object in collection users.
  */
-public class NotificationCategory {
-    private String type;
-
+public class ArticlesNotificationCategory {
     private Integer count;
 
     @DBRef
-    private List<Article> resources;
+    private List<String> resources;
 
     @PersistenceConstructor
-    public NotificationCategory(String type, Integer count, List<Article> resources) {
-        this.type = type;
+    public ArticlesNotificationCategory(Integer count, List<String> resources) {
         this.count = count;
         this.resources = resources;
     }
 
-    public String getType() {
-        return this.type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
+    public ArticlesNotificationCategory() {
+        this.count = 0;
+        this.resources = new ArrayList<>();
     }
 
     public Integer getCount() {
@@ -41,11 +37,11 @@ public class NotificationCategory {
         this.count = count;
     }
 
-    public List<Article> getResources() {
+    public List<String> getResources() {
         return this.resources;
     }
 
-    public void setResources(List<Article> resources) {
+    public void setResources(List<String> resources) {
         this.resources = resources;
     }
 
