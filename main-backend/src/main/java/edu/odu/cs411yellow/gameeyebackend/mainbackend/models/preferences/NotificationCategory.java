@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Class representing a "News Articles" object in collection users.
  */
-public class ArticleNotificationCategory {
+public class NotificationCategory {
     private String type;
 
     private Integer count;
@@ -19,7 +19,7 @@ public class ArticleNotificationCategory {
     private List<Article> resources;
 
     @PersistenceConstructor
-    public ArticleNotificationCategory(String type, Integer count, List<Article> resources) {
+    public NotificationCategory(String type, Integer count, List<Article> resources) {
         this.type = type;
         this.count = count;
         this.resources = resources;
@@ -41,11 +41,11 @@ public class ArticleNotificationCategory {
         this.count = count;
     }
 
-    public List<String> getResources() {
+    public List<Article> getResources() {
         return this.resources;
     }
 
-    public void setResources(List<String> resources) {
+    public void setResources(List<Article> resources) {
         this.resources = resources;
     }
 

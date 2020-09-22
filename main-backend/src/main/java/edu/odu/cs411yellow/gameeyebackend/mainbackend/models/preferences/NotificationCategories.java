@@ -1,6 +1,13 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences;
 
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Image;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
+
+import java.util.List;
+
 public class NotificationCategories {
-    ArticleNotificationCategory articleNotificationCategory = new ArticleNotificationCategory("News Articles",
-                                                                                               2, null);
+
+    private List<Article> articles;
+    private List<Image> images;
+
 }

@@ -2,8 +2,10 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.repositorytests;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.*;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.ContentPreferences;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.ArticleNotificationCategory;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.NotificationCategory;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.NotificationCategories;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.NotificationPreferences;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.UserRepository;
 import org.bson.types.ObjectId;
@@ -53,20 +55,14 @@ public class UserRepositoryTest {
         String notificationCategoryType = "article";
         Integer notificationCategoryCount = 2;
 
-        List<String> resources = new ArrayList<>();
+        List<Article> resources = new ArrayList<>();
 
-        ObjectId resourceId1 = new ObjectId();
-        ObjectId resourceId2 = new ObjectId();
-
-        resources.add(resourceId1.toString());
-        resources.add(resourceId2.toString());
-
-        ArticleNotificationCategory articleNotificationCategory = new ArticleNotificationCategory( notificationCategoryType,
+        NotificationCategory notificationCategory = new NotificationCategory( notificationCategoryType,
                                                                               notificationCategoryCount,
                                                                               resources );
 
-        List<ArticleNotificationCategory> notificationCategories = new ArrayList<>();
-        notificationCategories.add(articleNotificationCategory);
+        NotificationCategory articles = new NotificationCategory("News Artcicles");
+        NotificationCategories notificationCategories = new NotificationCategories(articles);
 
         WatchedGame watchedGame = new WatchedGame(doomEternal, notificationCategoryCount, notificationCategories);
 
