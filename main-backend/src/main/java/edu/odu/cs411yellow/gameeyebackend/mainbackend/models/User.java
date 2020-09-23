@@ -42,6 +42,28 @@ public class User {
         this.watchList = watchList;
     }
 
+    public User() {
+        this.id = "";
+        this.firstName = "";
+        this.lastName = "";
+        this.email = "";
+        this.status = UserStatus.active;
+        this.plan = UserPlan.free;
+        this.preferences = new Preferences();
+        this.watchList = new ArrayList<>();
+    }
+
+    public User(User user) {
+        this.id = user.getId();
+        this.firstName = user.getFirstName();
+        this.lastName = user.getLastName();
+        this.email = user.getEmail();
+        this.status = user.status;
+        this.plan = user.plan;
+        this.preferences = user.preferences;
+        this.watchList = user.watchList;
+    }
+
     public String getId() {
         return this.id;
     }

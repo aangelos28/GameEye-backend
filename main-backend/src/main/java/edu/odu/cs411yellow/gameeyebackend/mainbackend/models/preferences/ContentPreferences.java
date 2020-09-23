@@ -10,6 +10,10 @@ public class ContentPreferences {
         this.showArchivedResources = showArchivedResources;
     }
 
+    public ContentPreferences() {
+        this.showArchivedResources = false;
+    }
+
     public Boolean getShowArchivedResources() {
         return this.showArchivedResources;
     }

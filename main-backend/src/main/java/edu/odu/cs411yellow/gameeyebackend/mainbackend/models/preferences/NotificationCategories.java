@@ -1,29 +1,25 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences;
 
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Image;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import org.springframework.data.annotation.PersistenceConstructor;
-
-import java.util.List;
 
 public class NotificationCategories {
 
-    private ArticlesNotificationCategory articles;
+    private Articles articles;
 
     @PersistenceConstructor
-    public NotificationCategories(ArticlesNotificationCategory articles) {
+    public NotificationCategories(Articles articles) {
         this.articles = articles;
     };
 
     public NotificationCategories() {
-        this.articles = new ArticlesNotificationCategory();
+        this.articles = new Articles();
     };
 
-    public ArticlesNotificationCategory getArticles() {
+    public Articles getArticles() {
         return articles;
     };
 
-    public void setArticles(ArticlesNotificationCategory articles) {
+    public void setArticles(Articles articles) {
         this.articles = articles;
     }
 

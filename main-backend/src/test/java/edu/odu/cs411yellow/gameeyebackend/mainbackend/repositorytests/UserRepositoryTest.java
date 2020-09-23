@@ -1,23 +1,23 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.repositorytests;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.*;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.ContentPreferences;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.ArticlesNotificationCategory;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.NotificationCategories;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.NotificationPreferences;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.UserRepository;
-import org.bson.types.ObjectId;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.ArrayList;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
@@ -29,89 +29,51 @@ public class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private GameRepository gameRepository;
+    User testUser = new User();
 
-    @Test
-    public void saveAndDelete() {
-        // Declare parameters for user
-        String firstName = "Jacob";
-        String lastName = "Cook";
-        String email = "jcook006@odu.edu";
+    @BeforeEach
+    public void insertTestUserIntoGameEyeTest() throws IOException {
+        Logger logger = LoggerFactory.getLogger(this.getClass());
+        ObjectMapper objectMapper = new ObjectMapper();
 
-        // Declare parameters for preferences in User constructor
-        ContentPreferences contentPreferences = new ContentPreferences(false);
-        List<String> resourceCategories = new ArrayList<>();
-        String resourceCategory = "article";
-        resourceCategories.add(resourceCategory);
+        String resourcesPath = "src/test/resources";
+        String userJsonFileName = "user.json";
+        String userFilePath = resourcesPath + File.separator + userJsonFileName;
 
-        NotificationPreferences notificationPreferences = new NotificationPreferences(resourceCategories);
+        testUser = objectMapper.readValue(new File(userFilePath), User.class);
+        userRepository.insert(testUser);
 
-        Preferences preferences = new Preferences(contentPreferences, notificationPreferences);
+    }
 
-        // Declare parameters for watchList in User constructor
-        String referencedGameName = "Doom Eternal";
-        Game doomEternal = gameRepository.findGameByTitle(referencedGameName);
-        Integer notificationCategoryCount = 2;
-
-        List<String> resources = new ArrayList<>();
-
-        ArticlesNotificationCategory articles =
-                                     new ArticlesNotificationCategory(notificationCategoryCount, resources);
-
-        NotificationCategories notificationCategories = new NotificationCategories(articles);
-
-        WatchedGame watchedGame = new WatchedGame(doomEternal.getId(), notificationCategoryCount, notificationCategories);
-
-        List<WatchedGame> watchList = new ArrayList<>();
-        watchList.add(watchedGame);
-
-        String userId = (new ObjectId()).toString();
-
-        // Create a user
-        User user = new User(userId, firstName, lastName, email, UserStatus.active,
-                             UserPlan.free, preferences, watchList);
-
-        // Save user in database
-        userRepository.save(user);
-        assert(userRepository.existsById(user.getId()));
-
-        // Delete user in database
-        userRepository.delete(user);
-        assert(!userRepository.existsById(user.getId()));
+    @AfterEach
+    public void deleteUserFromGameEyeTest() {
+        String userId = testUser.getId();
+        if (userRepository.existsById(userId))
+            userRepository.deleteById(userId);
     }
 
     @Test
-    public void queryByEmail() {
-        // Check against mock data in database
-        String userEmail = "jcook006@odu.edu";
+    public void findUserByEmail() {
+        User foundUser = userRepository.findUserByEmail(testUser.getEmail());
 
-        User user = userRepository.findUserByEmail(userEmail);
-        assert(user.getEmail().equals(userEmail));
+        assert(foundUser.getEmail().equals(testUser.getEmail()));
 
-        List<WatchedGame> watchList = user.getWatchList();
-        WatchedGame watchedGame = watchList.get(0);
-
-        String watchedGameId = watchedGame.getGameId();
-
-        Game game = gameRepository.findGameById(watchedGameId);
-
-        String expectedGameTitle = "Doom Eternal";
-        String actualGameTitle = game.getTitle();
-
-        assert(expectedGameTitle.equals(actualGameTitle));
-
-        NotificationCategories notificationCategories = watchedGame.getNotificationCategories();
-        ArticlesNotificationCategory articles = notificationCategories.getArticles();
-
-        List<String> articleResourceIds = articles.getResourceIds();
-
-        List<Article> foundArticles = game.getResources().getArticlesByIds(articleResourceIds);
-
-        Article foundArticle = foundArticles.get(0);
-        String actualArticleTitle = foundArticle.getTitle();
-        String expectedArticleTitle = "Doom Eternal Single-Player Review";
-
-        assert(actualArticleTitle.equals(expectedArticleTitle));
     }
+
+    @Test
+    public void findUsersWatchList() {
+        User foundUser = userRepository.findUserByEmail(testUser.getEmail());
+
+        List<WatchedGame> foundUserWatchList = foundUser.getWatchList();
+        List<WatchedGame> testUserWatchList = testUser.getWatchList();
+
+        for (int i = 0; i < foundUserWatchList.size(); i++) {
+            String foundGameId = foundUserWatchList.get(i).getGameId();
+            String testGameId =  testUserWatchList.get(i).getGameId();
+
+            assert(foundGameId.equals(testGameId));
+        }
+
+    }
+
 }

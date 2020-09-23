@@ -12,21 +12,20 @@ import java.util.List;
 /**
  * Class representing a "News Articles" object in collection users.
  */
-public class ArticlesNotificationCategory {
+public class Articles {
     private Integer count;
 
-    @DBRef
-    private List<String> resourceIds;
+    private List<String> articleIds;
 
     @PersistenceConstructor
-    public ArticlesNotificationCategory(Integer count, List<String> resourceIds) {
+    public Articles(Integer count, List<String> articleIds) {
         this.count = count;
-        this.resourceIds = resourceIds;
+        this.articleIds = articleIds;
     }
 
-    public ArticlesNotificationCategory() {
+    public Articles() {
         this.count = 0;
-        this.resourceIds = new ArrayList<>();
+        this.articleIds = new ArrayList<>();
     }
 
     public Integer getCount() {
@@ -37,12 +36,12 @@ public class ArticlesNotificationCategory {
         this.count = count;
     }
 
-    public List<String> getResourceIds() {
-        return this.resourceIds;
+    public List<String> getArticleIds() {
+        return this.articleIds;
     }
 
-    public void setResourceIds(List<String> resourceIds) {
-        this.resourceIds = resourceIds;
+    public void setArticleIds(List<String> articleIds) {
+        this.articleIds = articleIds;
     }
 
 }
