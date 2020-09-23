@@ -45,8 +45,18 @@ public class GameSpotWebScraper implements WebScraper {
                 System.out.println(i.select("description").text());
 
                 //TODO Create List of Articles
+                //parse date
                 String pubDate = i.select("pubDate").text();
                 Date date = format.parse(pubDate);
+
+                //parse snippet
+                Document body = Jsoup.parse(i.select("description").text());
+                Elements paragraph = body.select("p");
+                String snippet = paragraph.text();
+
+                if (snippet.length() > 255)
+                    snippet = snippet.substring(0,255);
+
 
             }
         }
