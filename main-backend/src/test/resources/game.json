@@ -1,0 +1,48 @@
+{
+  "id": "5e98bf94a3464d35b824d04f",
+  "title": "Doom Eternal",
+  "platforms": ["Stadia", "Xbox One", "Nintendo Switch", "PS4", "Mobile"],
+  "status": "Released",
+  "lastUpdated": {
+    "$date": "2020-03-20T17:00:00.000Z"
+  },
+  "genres": ["first-person shooter"],
+  "sourceUrls": {
+    "publisherUrl": "https://bethesda.net/en/game/doom",
+    "steamUrl": "https://store.steampowered.com/app/782330/DOOM_Eternal/",
+    "subRedditUrl": "https://www.reddit.com/r/Doometernal/",
+    "twitterUrl": "https://twitter.com/DOOM?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor"
+  },
+  "resources": {
+    "images": [{
+      "id": "5ea1c2b677dabd049ce92784",
+      "title": "image",
+      "type": "thumbnail",
+      "image": {
+        "$binary": "W29iamVjdCBPYmplY3Rd",
+        "$type": "0"
+      },
+      "lastUpdated": {
+        "$date": "2020-04-21T04:00:00.000Z"
+      }
+    }],
+    "articles": [{
+      "id": "5ea1c2e777dabd049ce92788",
+      "title": "Doom Eternal Single-Player Review",
+      "url": "https://www.ign.com/articles/doom-eternal-single-player-review",
+      "newsWebsite": {
+        "$ref": "newsWebsites",
+        "$id": "5e9fbb092937d83b902ec992"
+      },
+      "thumbnail": {
+        "$ref": "images",
+        "$id": "5ea10b6d34019c1d1c818c03"
+      },
+      "snippet": "Doom Eternal not only retains the wild, high-speed, to-the-brink-of-death-and-back-again ebb and flow of combat that its 2016 predecessor excelled at, it tweaks the formula to introduce more strategy, replayability, and ultimately...",
+      "lastUpdated": {
+        "$date": "2020-04-21T04:00:00.000Z"
+      },
+      "impactScore": 1
+    }]
+  }
+}
