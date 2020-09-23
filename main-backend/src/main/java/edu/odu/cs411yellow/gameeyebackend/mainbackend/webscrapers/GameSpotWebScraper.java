@@ -5,6 +5,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import java.util.List;
 
@@ -12,6 +15,7 @@ public class GameSpotWebScraper implements WebScraper {
 
     private String url = "https://www.gamespot.com/feeds/game-news/";
     private List<Article> articles;
+    private DateFormat format = new SimpleDateFormat("E, d MMMM yyyy kk:mm:ss z");
 
 
 
@@ -41,6 +45,8 @@ public class GameSpotWebScraper implements WebScraper {
                 System.out.println(i.select("description").text());
 
                 //TODO Create List of Articles
+                String pubDate = i.select("pubDate").text();
+                Date date = format.parse(pubDate);
 
             }
         }
