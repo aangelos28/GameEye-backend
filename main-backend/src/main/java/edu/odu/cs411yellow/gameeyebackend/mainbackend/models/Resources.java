@@ -30,12 +30,32 @@ public class Resources {
         this.images = images;
     }
 
-    public List<Article> getArticles() {
+    public List<Article> getAllArticles() {
         return this.articles;
     }
 
-    public void setArticles(List<Article> articles) {
+    public void setAllArticles(List<Article> articles) {
         this.articles = articles;
+    }
+
+    public Article getArticleById(String id) {
+        Article foundArticle = new Article();
+
+        for (Article article: articles) {
+            if (article.getId() == id);
+                foundArticle = article;
+        }
+
+        return foundArticle;
+    }
+
+    public List<Article> getArticlesByIds(List<String> articleResourceIds) {
+        List<Article> foundArticles = new ArrayList<>();
+
+        for (String articleId: articleResourceIds) {
+            foundArticles.add(getArticleById(articleId));
+        }
+        return foundArticles;
     }
 
 }

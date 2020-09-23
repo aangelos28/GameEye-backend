@@ -61,7 +61,7 @@ public class UserRepositoryTest {
 
         NotificationCategories notificationCategories = new NotificationCategories(articles);
 
-        WatchedGame watchedGame = new WatchedGame(doomEternal, notificationCategoryCount, notificationCategories);
+        WatchedGame watchedGame = new WatchedGame(doomEternal.getId(), notificationCategoryCount, notificationCategories);
 
         List<WatchedGame> watchList = new ArrayList<>();
         watchList.add(watchedGame);
@@ -92,17 +92,24 @@ public class UserRepositoryTest {
         List<WatchedGame> watchList = user.getWatchList();
         WatchedGame watchedGame = watchList.get(0);
 
-        Game game = watchedGame.getGame();
-        String title = game.getTitle();
+        String watchedGameId = watchedGame.getGameId();
 
-        assert(title.equals("Doom Eternal"));
+        Game game = gameRepository.findGameById(watchedGameId);
+
+        String expectedGameTitle = "Doom Eternal";
+        String actualGameTitle = game.getTitle();
+
+        assert(expectedGameTitle.equals(actualGameTitle));
 
         NotificationCategories notificationCategories = watchedGame.getNotificationCategories();
         ArticlesNotificationCategory articles = notificationCategories.getArticles();
 
-        List<String> articleResources = articles.getResources();
+        List<String> articleResourceIds = articles.getResourceIds();
 
-        String actualArticleTitle = game.getResources().getArticles().get(0).getTitle();
+        List<Article> foundArticles = game.getResources().getArticlesByIds(articleResourceIds);
+
+        Article foundArticle = foundArticles.get(0);
+        String actualArticleTitle = foundArticle.getTitle();
         String expectedArticleTitle = "Doom Eternal Single-Player Review";
 
         assert(actualArticleTitle.equals(expectedArticleTitle));

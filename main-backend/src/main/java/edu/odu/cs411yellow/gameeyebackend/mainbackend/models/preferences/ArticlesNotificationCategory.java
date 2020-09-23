@@ -16,17 +16,17 @@ public class ArticlesNotificationCategory {
     private Integer count;
 
     @DBRef
-    private List<String> resources;
+    private List<String> resourceIds;
 
     @PersistenceConstructor
-    public ArticlesNotificationCategory(Integer count, List<String> resources) {
+    public ArticlesNotificationCategory(Integer count, List<String> resourceIds) {
         this.count = count;
-        this.resources = resources;
+        this.resourceIds = resourceIds;
     }
 
     public ArticlesNotificationCategory() {
         this.count = 0;
-        this.resources = new ArrayList<>();
+        this.resourceIds = new ArrayList<>();
     }
 
     public Integer getCount() {
@@ -37,12 +37,12 @@ public class ArticlesNotificationCategory {
         this.count = count;
     }
 
-    public List<String> getResources() {
-        return this.resources;
+    public List<String> getResourceIds() {
+        return this.resourceIds;
     }
 
-    public void setResources(List<String> resources) {
-        this.resources = resources;
+    public void setResourceIds(List<String> resourceIds) {
+        this.resourceIds = resourceIds;
     }
 
 }
