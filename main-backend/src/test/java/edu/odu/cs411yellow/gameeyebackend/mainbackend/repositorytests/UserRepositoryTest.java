@@ -1,10 +1,10 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.repositorytests;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.*;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.Articles;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.ContentPreferences;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.NotificationCategories;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.NotificationPreferences;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.UserRepository;
 
@@ -12,16 +12,14 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.File;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
@@ -36,33 +34,56 @@ public class UserRepositoryTest {
     @Autowired
     private GameRepository gameRepository;
 
-    User testUser = new User();
-    Game testGame = new Game();
+    User testUser;
 
     @BeforeEach
-    public void insertTestUserIntoGameEyeTest() throws IOException {
-        Logger logger = LoggerFactory.getLogger(this.getClass());
-        ObjectMapper objectMapper = new ObjectMapper();
+    public void insertTestUserIntoGameEyeTest() {
 
-        String resourcesPath = "src/test/resources";
-        String userJsonFileName = "user.json";
-        String userFilePath = resourcesPath + File.separator + userJsonFileName;
+        String userId = "5e98dc5da3464d35b824d052";
+        String firstName = "Jacob";
+        String lastName = "Cook";
+        String email = "jcook006@odu.edu";
+        UserStatus status = UserStatus.inactive;
+        UserPlan plan = UserPlan.free;
 
-        testUser = objectMapper.readValue(new File(userFilePath), User.class);
+        // Declare preferences
+        boolean showArchivedResources = false;
+        ContentPreferences contentPreferences = new ContentPreferences(showArchivedResources);
+
+        List<String> resourceCategories = new ArrayList<>(Arrays.asList("articles"));
+        NotificationPreferences notificationPreferences = new NotificationPreferences(resourceCategories);
+
+        Preferences preferences = new Preferences(contentPreferences, notificationPreferences);
+
+        // Declare articles
+        int articleCount = 1;
+        String articleId = "5ea1c2e777dabd049ce92788";
+        List<String> articleIds = new ArrayList<>(Arrays.asList(articleId));
+        Articles articles = new Articles(articleCount, articleIds);
+
+        NotificationCategories notificationCategories = new NotificationCategories(articles);
+
+        // Declare watchGame
+        String watchedGameId = "5e98bf94a3464d35b824d04f";
+        int notificationCount = 1;
+        WatchedGame watchedGame = new WatchedGame(watchedGameId, notificationCount, notificationCategories);
+
+        // Declare watchList
+        List<WatchedGame> watchList = new ArrayList<>(Arrays.asList(watchedGame));
+
+        // Set testUser
+        testUser = new User(userId, firstName, lastName, email, status, plan, preferences, watchList);
+
+        // Write testUser to GameEyeTest
         userRepository.insert(testUser);
-
-        String gameJsonFileName = "game.json";
-        String gameFilePath = resourcesPath + File.separator + gameJsonFileName;
-
-        testGame = objectMapper.readValue(new File(gameFilePath), Game.class);
 
     }
 
     @AfterEach
-    public void deleteUserFromGameEyeTest() {
-        String userId = testUser.getId();
-        if (userRepository.existsById(userId))
-            userRepository.deleteById(userId);
+    public void deleteTestUserFromGameEyeTest() {
+        String userEmail = testUser.getEmail();
+        if (userRepository.existsByEmail(userEmail))
+            userRepository.deleteByEmail(userEmail);
     }
 
     @Test
@@ -94,6 +115,7 @@ public class UserRepositoryTest {
     @Test
     public void findArticlesInUsersWatchList() {
         String foundUserEmail = testUser.getEmail();
+        System.out.println(foundUserEmail + "this is the email");
         User foundUser = userRepository.findUserByEmail(foundUserEmail);
 
         List<WatchedGame> foundUserWatchList = foundUser.getWatchList();

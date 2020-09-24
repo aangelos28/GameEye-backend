@@ -2,6 +2,9 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.repositorytests;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.*;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ImageRepository;
+import org.bson.types.Binary;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,17 +22,41 @@ public class ImageRepositoryTest {
     @Autowired
     private ImageRepository imageRepository;
 
-    @Test
-    public void saveAndDelete() {
-        // Create a image
-        Image image = new Image("1234", "logo", null);
+    Image insertedImage;
 
-        // Save image in database
-        imageRepository.save(image);
-        assert(imageRepository.existsById("1234"));
+    @BeforeEach
+    public void insertImageIntoGameEyeTest() {
 
-        // Delete image in database
-        imageRepository.delete(image);
-        assert(!imageRepository.existsById("1234"));
+        String imageId = "5ea108ea34019c1d1c818c02";
+        String imageType = "thumbnail";
+        Binary imageData = new Binary(new byte[1]);
+
+        Image testImage = new Image(imageId, imageType, imageData);
+
+        insertedImage = testImage;
+
+        imageRepository.save(insertedImage);
     }
+
+    @AfterEach
+    public void deleteImageFromGameEyeTest() {
+
+        String imageId = insertedImage.getId();
+
+        if(imageRepository.existsById(imageId))
+            imageRepository.delete(insertedImage);
+
+    }
+
+    @Test
+    public void findImageById() {
+        String imageId = insertedImage.getId();
+
+        Image foundImage = imageRepository.findImageById(imageId);
+
+        assert(foundImage.getId().equals(insertedImage.getId()));
+        assert(foundImage.getType().equals(insertedImage.getType()));
+        assert(foundImage.getData().equals(insertedImage.getData()));
+    }
+
 }

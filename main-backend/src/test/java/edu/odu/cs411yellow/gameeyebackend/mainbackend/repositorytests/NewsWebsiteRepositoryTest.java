@@ -3,7 +3,8 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.repositorytests;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.*;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.NewsWebsiteRepository;
 import org.bson.types.Binary;
-import org.bson.types.ObjectId;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,27 +24,49 @@ public class NewsWebsiteRepositoryTest {
     @Autowired
     private NewsWebsiteRepository newsWebsiteRepository;
 
-    @Test
-    public void saveAndDelete() {
-        // Declare parameters for newsWebsite
-        ObjectId newsWebsiteId = new ObjectId();
-        String newsWebsiteName = "GameSpot";
-        byte [] newsSiteLogoRawData = {(byte)10101010};
-        Binary newsSiteLogoBinaryData = new Binary(newsSiteLogoRawData);
-        String newsSiteUrl = "https://www.gamespot.com/";
-        String newsSiteRssUrl = "https://www.gamespot.com/feeds/game-news/";
-        Date lastUpdated = new Date(2020, 9, 21);
+    NewsWebsite insertedNewsWebsite;
+
+    @BeforeEach
+    public void insertNewsWebsiteIntoGameEyeTest() {
+        // Declare newsWebsite
+        String newsWebsiteId = "5e9fbb092937d83b902ec992";
+        String newsWebsiteName = "IGN";
+        Binary newsWebsiteLogo = new Binary(new byte[1]);
+        String newsWebsiteSiteUrl = "https://www.ign.com/";
+        String newsWebsiteRssFeedUrl = "https://corp.ign.com/feeds";
+        Date newsWebsiteLastUpdated = new Date(2020, 4, 21);
 
         // Create a news website
-        NewsWebsite newsWebsite = new NewsWebsite(newsWebsiteId.toString() ,newsWebsiteName, newsSiteLogoBinaryData,
-                                                  newsSiteUrl, newsSiteRssUrl, lastUpdated);
+        NewsWebsite testNewsWebsite = new NewsWebsite(newsWebsiteId, newsWebsiteName,
+                newsWebsiteLogo, newsWebsiteSiteUrl,
+                newsWebsiteRssFeedUrl, newsWebsiteLastUpdated);
+
+        insertedNewsWebsite = testNewsWebsite;
 
         // Save news website in database
-        newsWebsiteRepository.save(newsWebsite);
-        assert(newsWebsiteRepository.existsByName("GameSpot"));
+        newsWebsiteRepository.save(insertedNewsWebsite);
+    }
 
-        // Delete news website in database
-        newsWebsiteRepository.delete(newsWebsite);
-        assert(!newsWebsiteRepository.existsByName("GameSpot"));
+    @AfterEach
+    public void deleteInsertedNewsWebsiteFromGameEyeTest() {
+        String newsWebsiteId = insertedNewsWebsite.getId();
+
+        if (newsWebsiteRepository.existsNewsWebsiteById(newsWebsiteId));
+            newsWebsiteRepository.delete(insertedNewsWebsite);
+    }
+
+    @Test
+    public void findNewsWebsiteById() {
+        String newsWebsiteId = insertedNewsWebsite.getId();
+
+        NewsWebsite foundNewsWebsite = newsWebsiteRepository.findNewsWebsiteById(newsWebsiteId);
+
+        assert(foundNewsWebsite.getId().equals(insertedNewsWebsite.getId()));
+        assert(foundNewsWebsite.getName().equals(insertedNewsWebsite.getName()));
+        assert(foundNewsWebsite.getLogo().equals(insertedNewsWebsite.getLogo()));
+        assert(foundNewsWebsite.getSiteUrl().equals(insertedNewsWebsite.getSiteUrl()));
+        assert(foundNewsWebsite.getRssFeedUrl().equals(insertedNewsWebsite.getRssFeedUrl()));
+        assert(foundNewsWebsite.getLastUpdated().equals(insertedNewsWebsite.getLastUpdated()));
+
     }
 }

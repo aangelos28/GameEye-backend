@@ -1,11 +1,12 @@
-package edu.odu.cs411yellow.gameeyebackend.mainbackend.repositorytests;
+package edu.odu.cs411yellow.gameeyebackend.mainbackend.modeltests;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.*;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Util;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.GameImage;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import org.bson.types.Binary;
-import org.junit.Before;
+import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,17 +17,17 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.xml.transform.Source;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles("test")
 @TestPropertySource(locations="classpath:application-test.properties")
-public class GameRepositoryTest {
+public class GameTest {
 
     @Autowired
     private GameRepository gameRepository;
@@ -38,7 +39,7 @@ public class GameRepositoryTest {
         String gameId = "5e98bf94a3464d35b824d04f";
         String gameTitle = "Doom Eternal";
         List<String> platforms = new ArrayList<>(Arrays.asList("Stadia", "Xbox One", "Nintendo Switch",
-                                                           "PS4", "Mobile"));
+                "PS4", "Mobile"));
         String status = "Released";
         Date gameLastUpdated = new Date(2020, 9, 23);
         List<String> genres = new ArrayList<>(Arrays.asList("first-person shooter"));
@@ -105,26 +106,44 @@ public class GameRepositoryTest {
         Resources resources = new Resources(images, articles);
 
         Game testGame = new Game(gameId, gameTitle, platforms, status, gameLastUpdated, genres,
-                                 sourceUrls, resources);
+                sourceUrls, resources);
+
         insertedGame = testGame;
 
-        gameRepository.save(testGame);
+        gameRepository.save(insertedGame);
     }
 
     @AfterEach
-    public void deleteInsertedGame() {
+    public void deleteGameFromGameEyeTest () {
+        // Delete game in database
         String gameId = insertedGame.getId();
+        gameRepository.deleteById(gameId);
 
-        if (gameRepository.existsById(gameId))
-            gameRepository.deleteById(gameId);
+        Assert.assertFalse(gameRepository.existsById(gameId));
     }
 
     @Test
-    public void findGameById() {
-        String gameId = insertedGame.getId();
+    public void testFindArticles () {
+        Util util = new Util();
 
+        String gameId = insertedGame.getId();
         Game foundGame = gameRepository.findGameById(gameId);
 
-        assert(foundGame.getId().equals(insertedGame.getId()));
+        Resources actualResources = insertedGame.getResources();
+
+
+        String articleId = "5ea1c2e777dabd049ce92788";
+
+        List<String> articleIds = new ArrayList<>(Arrays.asList(articleId));
+
+        List<Article> actualArticles = actualResources.getArticles();
+        List<Article> foundArticles = util.findArticles(insertedGame.getId(), articleIds);
+
+        for (int i = 0; i < foundArticles.size(); i++) {
+            Article foundArticle = foundArticles.get(i);
+            Article actualArticle = actualArticles.get(i);
+
+            assert(foundArticle.equals(actualArticle));
+        }
     }
 }

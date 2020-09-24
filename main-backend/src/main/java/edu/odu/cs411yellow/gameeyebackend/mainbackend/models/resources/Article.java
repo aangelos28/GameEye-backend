@@ -2,12 +2,10 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Image;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.NewsWebsite;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
-import java.time.LocalDate;
 import java.util.Date;
 
 /**
