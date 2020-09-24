@@ -1,5 +1,7 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.webscrapers;
 
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Image;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.NewsWebsite;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -32,6 +34,7 @@ public class GameSpotWebScraper implements WebScraper {
      */
     @Override
     public void scrape() {
+
         try {
             Document feed = Jsoup.connect(url).get();
 
@@ -39,24 +42,25 @@ public class GameSpotWebScraper implements WebScraper {
 
             for (var i : items){
 
-                System.out.println(i.select("title").text());
-                System.out.println(i.select("link").text());
-                System.out.println(i.select("pubDate").text());
-                System.out.println(i.select("description").text());
+                String title = i.select("title").text();
+                String url = i.select("link").text();
 
-                //TODO Create List of Articles
                 //parse date
                 String pubDate = i.select("pubDate").text();
-                Date date = format.parse(pubDate);
+                Date publicationDate = format.parse(pubDate);
 
                 //parse snippet
                 Document body = Jsoup.parse(i.select("description").text());
                 Elements paragraph = body.select("p");
                 String snippet = paragraph.text();
-
                 if (snippet.length() > 255)
                     snippet = snippet.substring(0,255);
 
+                //TODO Create List of Articles
+
+//                Article toAdd = new Article(0, title, url, null,
+//                        null, snippet, publicationDate, publicationDate, 0);
+//                articles.add(toAdd);
 
             }
         }
@@ -82,6 +86,6 @@ public class GameSpotWebScraper implements WebScraper {
      */
     @Override
     public Article getArticle(int index) {
-        return null;
+        return articles.get(index);
     }
 }
