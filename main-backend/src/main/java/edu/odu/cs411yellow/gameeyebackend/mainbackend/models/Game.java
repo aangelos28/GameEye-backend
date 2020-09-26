@@ -1,13 +1,12 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.repository.Query;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -116,6 +115,19 @@ public class Game {
 
     public void setResources(Resources resources) {
         this.resources = resources;
+    }
+
+    @Query
+    public List<Article> findArticles(String gameId, List<String> articleIds) {
+        List<Article> foundArticles = new ArrayList<>();
+
+        Resources resources = this.getResources();
+
+        for (String articleId: articleIds) {
+            foundArticles.add(resources.findArticle(articleId));
+        }
+
+        return foundArticles;
     }
 
 }

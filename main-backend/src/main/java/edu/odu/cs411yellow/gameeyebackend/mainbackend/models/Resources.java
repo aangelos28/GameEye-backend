@@ -1,7 +1,7 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.GameImage;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.ImageResource;
 import org.springframework.data.annotation.PersistenceConstructor;
 
 import java.util.ArrayList;
@@ -9,26 +9,26 @@ import java.util.List;
 
 public class Resources {
 
-    private List<GameImage> images;
+    private List<ImageResource> imageResources;
 
     private List<Article> articles;
 
     @PersistenceConstructor
-    public Resources(List<GameImage> images, List<Article> articles) {
-        this.images = images;
+    public Resources(List<ImageResource> imageResources, List<Article> articles) {
+        this.imageResources = imageResources;
         this.articles = articles;
     }
     public Resources() {
-        this.images = new ArrayList<>();
+        this.imageResources = new ArrayList<>();
         this.articles = new ArrayList<>();
     }
 
-    public List<GameImage> getImages() {
-        return this.images;
+    public List<ImageResource> getImageResources() {
+        return this.imageResources;
     }
 
-    public void setImages(List<GameImage> images) {
-        this.images = images;
+    public void setImageResources(List<ImageResource> imageResources) {
+        this.imageResources = imageResources;
     }
 
     public List<Article> getArticles() {
@@ -42,8 +42,8 @@ public class Resources {
     public Article findArticle(String id) {
         Article foundArticle = new Article();
 
-        for (Article article: articles) {
-            if (article.getId() == id);
+        for (Article article : articles) {
+            if (article.getId().equals(id))
                 foundArticle = article;
         }
 

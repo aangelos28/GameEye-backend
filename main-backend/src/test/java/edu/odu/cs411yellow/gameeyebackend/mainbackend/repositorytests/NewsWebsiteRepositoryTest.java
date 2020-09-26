@@ -37,11 +37,9 @@ public class NewsWebsiteRepositoryTest {
         Date newsWebsiteLastUpdated = new Date(2020, 4, 21);
 
         // Create a news website
-        NewsWebsite testNewsWebsite = new NewsWebsite(newsWebsiteId, newsWebsiteName,
-                newsWebsiteLogo, newsWebsiteSiteUrl,
-                newsWebsiteRssFeedUrl, newsWebsiteLastUpdated);
-
-        insertedNewsWebsite = testNewsWebsite;
+        insertedNewsWebsite = new NewsWebsite(newsWebsiteId, newsWebsiteName,
+                                              newsWebsiteLogo, newsWebsiteSiteUrl,
+                                              newsWebsiteRssFeedUrl, newsWebsiteLastUpdated);
 
         // Save news website in database
         newsWebsiteRepository.save(insertedNewsWebsite);
@@ -51,8 +49,9 @@ public class NewsWebsiteRepositoryTest {
     public void deleteInsertedNewsWebsiteFromGameEyeTest() {
         String newsWebsiteId = insertedNewsWebsite.getId();
 
-        if (newsWebsiteRepository.existsNewsWebsiteById(newsWebsiteId));
+        if (newsWebsiteRepository.existsNewsWebsiteById(newsWebsiteId))
             newsWebsiteRepository.delete(insertedNewsWebsite);
+
     }
 
     @Test

@@ -2,8 +2,7 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.modeltests;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.*;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Util;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.GameImage;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.ImageResource;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import org.bson.types.Binary;
 import org.junit.Assert;
@@ -57,12 +56,12 @@ public class GameTest {
         String gameImageId = "5ea1c2b677dabd049ce92784";
         String imageTitle = "gameplay";
         String imageRefId = "5ea10b6d34019c1d1c818c03";
-        Date imageLastUpdated = new Date(2020, 04, 21);
+        Date imageLastUpdated = new Date(2020, 4, 21);
 
-        GameImage gameImage = new GameImage(gameImageId, imageTitle,
+        ImageResource imageResource = new ImageResource(gameImageId, imageTitle,
                 imageRefId, imageLastUpdated);
 
-        List<GameImage> images = new ArrayList<>(Arrays.asList(gameImage));
+        List<ImageResource> images = new ArrayList<>(Arrays.asList(imageResource));
 
         // Declare newsWebsite
         String newsWebsiteId = "5e9fbb092937d83b902ec992";
@@ -81,14 +80,13 @@ public class GameTest {
         String type = "thumbnail";
         Binary imageData = new Binary(new byte[1]);
 
-        Image image = new Image(imageId, type, imageData);
+        Image thumbnail = new Image(imageId, type, imageData);
 
         // Declare article object
         String articleId = "5ea1c2e777dabd049ce92788";
         String articleTitle = "Doom Eternal Single-Player Review";
         String articleUrl = "https://www.ign.com/articles/doom-eternal-single-player-review";
 
-        Image thumbnail = image;
         String articleSnippet = "Doom Eternal not only retains the wild, high-speed, to-the-brink-of-" +
                 "death-and-back-again ebb and flow of combat that its 2016 predecessor " +
                 "excelled at, it tweaks the formula to introduce more strategy, replayability," +
@@ -105,26 +103,24 @@ public class GameTest {
 
         Resources resources = new Resources(images, articles);
 
-        Game testGame = new Game(gameId, gameTitle, platforms, status, gameLastUpdated, genres,
-                sourceUrls, resources);
-
-        insertedGame = testGame;
+        insertedGame = new Game(gameId, gameTitle, platforms, status, gameLastUpdated, genres,
+                                sourceUrls, resources);
 
         gameRepository.save(insertedGame);
     }
 
     @AfterEach
     public void deleteGameFromGameEyeTest () {
-        // Delete game in database
         String gameId = insertedGame.getId();
-        gameRepository.deleteById(gameId);
+
+        if (gameRepository.existsById(gameId))
+            gameRepository.deleteById(gameId);
 
         Assert.assertFalse(gameRepository.existsById(gameId));
     }
 
     @Test
     public void testFindArticles () {
-        Util util = new Util();
 
         String gameId = insertedGame.getId();
         Game foundGame = gameRepository.findGameById(gameId);
@@ -137,7 +133,7 @@ public class GameTest {
         List<String> articleIds = new ArrayList<>(Arrays.asList(articleId));
 
         List<Article> actualArticles = actualResources.getArticles();
-        List<Article> foundArticles = util.findArticles(insertedGame.getId(), articleIds);
+        List<Article> foundArticles = foundGame.findArticles(gameId, articleIds);
 
         for (int i = 0; i < foundArticles.size(); i++) {
             Article foundArticle = foundArticles.get(i);

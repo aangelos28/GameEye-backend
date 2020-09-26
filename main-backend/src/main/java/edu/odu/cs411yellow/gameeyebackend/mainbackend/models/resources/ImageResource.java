@@ -5,7 +5,7 @@ import org.springframework.data.annotation.PersistenceConstructor;
 
 import java.util.Date;
 
-public class GameImage {
+public class ImageResource {
     @Id
     private String id;
 
@@ -16,14 +16,14 @@ public class GameImage {
     private Date lastUpdated;
 
     @PersistenceConstructor
-    public GameImage(String id, String title, String imageId, Date lastUpdated) {
+    public ImageResource(String id, String title, String imageId, Date lastUpdated) {
         this.id = id;
         this.title = title;
         this.imageId = imageId;
         this.lastUpdated = lastUpdated;
     }
 
-    public GameImage() {
+    public ImageResource() {
         this.id = "";
         this.title = "";
         this.imageId = "";

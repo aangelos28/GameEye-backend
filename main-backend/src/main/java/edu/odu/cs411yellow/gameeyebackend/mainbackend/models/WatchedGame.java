@@ -1,12 +1,9 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.NotificationCategories;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 
 public class WatchedGame {
-    @Id
     private String gameId;
 
     private Integer notificationCount;
@@ -20,6 +17,7 @@ public class WatchedGame {
         this.notificationCount = notificationCount;
         this.notificationCategories = notificationCategories;
     }
+
     public WatchedGame() {
         this.gameId = "";
         this.notificationCount = 0;

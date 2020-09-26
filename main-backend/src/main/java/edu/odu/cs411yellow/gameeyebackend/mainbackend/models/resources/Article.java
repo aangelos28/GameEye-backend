@@ -12,7 +12,6 @@ import java.util.Date;
  * Represents a news article resource.
  */
 public class Article {
-    @Id
     private final String id;
 
     /**
@@ -84,7 +83,6 @@ public class Article {
         this.lastUpdated = new Date();
         this.impactScore = 0;
     }
-
 
     public String getId() {
         return this.id;

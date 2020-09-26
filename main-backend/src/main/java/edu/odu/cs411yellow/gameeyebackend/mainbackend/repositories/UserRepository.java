@@ -6,8 +6,16 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserRepository extends MongoRepository<User, String> {
-    User findUserByEmail(String email);
+    @Override
     void deleteById(String id);
-    boolean existsByEmail(String email);
-    void deleteByEmail(String email);
+
+    @Override
+    boolean existsById(String id);
+
+    boolean existsByFirebaseId(String firebaseId);
+
+    User findUserById(String id);
+
+    User findUserByFirebaseId(String firebaseId);
+
 }

@@ -1,11 +1,7 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.repositorytests;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.*;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.Articles;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.ContentPreferences;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.NotificationCategories;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.NotificationPreferences;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.*;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.UserRepository;
 
 import org.junit.jupiter.api.AfterEach;
@@ -31,24 +27,21 @@ public class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private GameRepository gameRepository;
-
     User testUser;
 
     @BeforeEach
     public void insertTestUserIntoGameEyeTest() {
 
         String userId = "5e98dc5da3464d35b824d052";
-        String firstName = "Jacob";
-        String lastName = "Cook";
-        String email = "jcook006@odu.edu";
+        String firebaseId = "123456789";
         UserStatus status = UserStatus.inactive;
         UserPlan plan = UserPlan.free;
 
         // Declare preferences
         boolean showArchivedResources = false;
-        ContentPreferences contentPreferences = new ContentPreferences(showArchivedResources);
+        boolean showImpactScores = false;
+
+        ContentPreferences contentPreferences = new ContentPreferences(showArchivedResources, showImpactScores);
 
         List<String> resourceCategories = new ArrayList<>(Arrays.asList("articles"));
         NotificationPreferences notificationPreferences = new NotificationPreferences(resourceCategories);
@@ -59,9 +52,16 @@ public class UserRepositoryTest {
         int articleCount = 1;
         String articleId = "5ea1c2e777dabd049ce92788";
         List<String> articleIds = new ArrayList<>(Arrays.asList(articleId));
-        Articles articles = new Articles(articleCount, articleIds);
+        ArticleCategory articleCategory = new ArticleCategory(articleCount, articleIds);
 
-        NotificationCategories notificationCategories = new NotificationCategories(articles);
+        // Declare images
+        int imageCount = 1;
+        String imageId = "5ea108ea34019c1d1c818c02";
+        List<String> imageIds = new ArrayList<>(Arrays.asList(imageId));
+        ImageCategory imageCategory = new ImageCategory(imageCount, imageIds);
+
+        // Declare notificationCategories
+        NotificationCategories notificationCategories = new NotificationCategories(articleCategory, imageCategory);
 
         // Declare watchGame
         String watchedGameId = "5e98bf94a3464d35b824d04f";
@@ -72,7 +72,7 @@ public class UserRepositoryTest {
         List<WatchedGame> watchList = new ArrayList<>(Arrays.asList(watchedGame));
 
         // Set testUser
-        testUser = new User(userId, firstName, lastName, email, status, plan, preferences, watchList);
+        testUser = new User(userId, firebaseId, status, plan, preferences, watchList);
 
         // Write testUser to GameEyeTest
         userRepository.insert(testUser);
@@ -81,24 +81,33 @@ public class UserRepositoryTest {
 
     @AfterEach
     public void deleteTestUserFromGameEyeTest() {
-        String userEmail = testUser.getEmail();
-        if (userRepository.existsByEmail(userEmail))
-            userRepository.deleteByEmail(userEmail);
+        String userId = testUser.getId();
+        if (userRepository.existsById(userId))
+            userRepository.deleteById(userId);
     }
 
     @Test
-    public void findUserByEmail() {
-        String foundUserEmail = testUser.getEmail();
-        User foundUser = userRepository.findUserByEmail(foundUserEmail);
+    public void findUserById() {
+        String foundUserId = testUser.getId();
+        User foundUser = userRepository.findUserById(foundUserId);
 
-        assert(foundUser.getEmail().equals(testUser.getEmail()));
+        assert(foundUser.getId().equals(testUser.getId()));
+
+    }
+
+    @Test
+    public void findUserByFirebaseId() {
+        String foundUserFirebaseId = testUser.getFirebaseId();
+        User foundUser = userRepository.findUserByFirebaseId(foundUserFirebaseId);
+
+        assert(foundUser.getFirebaseId().equals(testUser.getFirebaseId()));
 
     }
 
     @Test
     public void findUsersWatchListAndCheckAgainstAvailableGames() {
-        String foundUserEmail = testUser.getEmail();
-        User foundUser = userRepository.findUserByEmail(foundUserEmail);
+        String foundUserId = testUser.getId();
+        User foundUser = userRepository.findUserById(foundUserId);
 
         List<WatchedGame> foundUserWatchList = foundUser.getWatchList();
         List<WatchedGame> testUserWatchList = testUser.getWatchList();
@@ -114,9 +123,9 @@ public class UserRepositoryTest {
 
     @Test
     public void findArticlesInUsersWatchList() {
-        String foundUserEmail = testUser.getEmail();
-        System.out.println(foundUserEmail + "this is the email");
-        User foundUser = userRepository.findUserByEmail(foundUserEmail);
+        String foundUserId = testUser.getId();
+
+        User foundUser = userRepository.findUserById(foundUserId);
 
         List<WatchedGame> foundUserWatchList = foundUser.getWatchList();
         List<WatchedGame> testUserWatchList = testUser.getWatchList();
@@ -128,11 +137,11 @@ public class UserRepositoryTest {
             NotificationCategories testNotificationCategories =
                     testUserWatchList.get(i).getNotificationCategories();
 
-            Articles foundArticles = foundNotificationCategories.getArticles();
-            Articles testArticles = testNotificationCategories.getArticles();
+            ArticleCategory foundArticleCategory = foundNotificationCategories.getArticles();
+            ArticleCategory testArticleCategory = testNotificationCategories.getArticles();
 
-            List<String> foundArticleIds = foundArticles.getArticleIds();
-            List<String> testArticleIds = testArticles.getArticleIds();
+            List<String> foundArticleIds = foundArticleCategory.getArticleIds();
+            List<String> testArticleIds = testArticleCategory.getArticleIds();
 
             for (int j = 0; j < foundArticleIds.size(); j++) {
                 String foundArticleId = foundArticleIds.get(j);

@@ -1,29 +1,25 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences;
 
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class representing a "News Articles" object in collection users.
+ * Class representing the articles object in the watchList in the users collection.
  */
-public class Articles {
+public class ArticleCategory {
     private Integer count;
 
     private List<String> articleIds;
 
     @PersistenceConstructor
-    public Articles(Integer count, List<String> articleIds) {
+    public ArticleCategory(Integer count, List<String> articleIds) {
         this.count = count;
         this.articleIds = articleIds;
     }
 
-    public Articles() {
+    public ArticleCategory() {
         this.count = 0;
         this.articleIds = new ArrayList<>();
     }
