@@ -40,8 +40,12 @@ public class UserRepositoryTest {
         // Declare preferences
         boolean showArchivedResources = false;
         boolean showImpactScores = false;
+        List<Boolean> impactScores = new ArrayList<>(Arrays.asList(true, true, true));
 
-        ContentPreferences contentPreferences = new ContentPreferences(showArchivedResources, showImpactScores);
+
+        ContentPreferences contentPreferences = new ContentPreferences(showArchivedResources,
+                                                                       showImpactScores,
+                                                                       impactScores);
 
         boolean showArticleResources = true;
         boolean showImageResources = true;
