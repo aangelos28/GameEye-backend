@@ -40,7 +40,7 @@ public class GameTest {
         List<String> platforms = new ArrayList<>(Arrays.asList("Stadia", "Xbox One", "Nintendo Switch",
                 "PS4", "Mobile"));
         String status = "Released";
-        Date gameLastUpdated = new Date(2020, 9, 23);
+        Date gameLastUpdated = new Date(120, 9, 23);
         List<String> genres = new ArrayList<>(Arrays.asList("first-person shooter"));
 
         // Declare sourceUrls
@@ -56,7 +56,7 @@ public class GameTest {
         String gameImageId = "5ea1c2b677dabd049ce92784";
         String imageTitle = "gameplay";
         String imageRefId = "5ea10b6d34019c1d1c818c03";
-        Date imageLastUpdated = new Date(2020, 4, 21);
+        Date imageLastUpdated = new Date(120, 4, 21);
 
         ImageResource imageResource = new ImageResource(gameImageId, imageTitle,
                 imageRefId, imageLastUpdated);
@@ -69,7 +69,7 @@ public class GameTest {
         Binary newsWebsiteLogo = new Binary(new byte[1]);
         String newsWebsiteUrl = "https://www.ign.com/";
         String newsWebsiteRssFeedUrl = "https://corp.ign.com/feeds";
-        Date newsWebsiteLastUpdated = new Date(2020, 4, 21);
+        Date newsWebsiteLastUpdated = new Date(120, 4, 21);
 
         NewsWebsite newsWebsite = new NewsWebsite(newsWebsiteId, newsWebsiteName,
                 newsWebsiteLogo, newsWebsiteUrl,
@@ -91,8 +91,8 @@ public class GameTest {
                 "death-and-back-again ebb and flow of combat that its 2016 predecessor " +
                 "excelled at, it tweaks the formula to introduce more strategy, replayability," +
                 " and ultimately...";
-        Date publicationDate = new Date(2020, 4, 21);
-        Date articleLastUpdated = new Date(2020, 8, 27);
+        Date publicationDate = new Date(120, 4, 21);
+        Date articleLastUpdated = new Date(120, 8, 27);
         int impactScore = 1;
 
         Article article = new Article(articleId, articleTitle, articleUrl, newsWebsite,

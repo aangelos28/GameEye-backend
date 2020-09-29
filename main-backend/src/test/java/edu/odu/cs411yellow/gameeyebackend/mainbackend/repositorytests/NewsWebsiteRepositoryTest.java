@@ -34,7 +34,7 @@ public class NewsWebsiteRepositoryTest {
         Binary newsWebsiteLogo = new Binary(new byte[1]);
         String newsWebsiteSiteUrl = "https://www.ign.com/";
         String newsWebsiteRssFeedUrl = "https://corp.ign.com/feeds";
-        Date newsWebsiteLastUpdated = new Date(2020, 4, 21);
+        Date newsWebsiteLastUpdated = new Date(120, 4, 21);
 
         // Create a news website
         insertedNewsWebsite = new NewsWebsite(newsWebsiteId, newsWebsiteName,
