@@ -9,26 +9,26 @@ import java.util.List;
 
 public class Resources {
 
-    private List<ImageResource> imageResources;
+    private List<ImageResource> images;
 
     private List<Article> articles;
 
     @PersistenceConstructor
-    public Resources(List<ImageResource> imageResources, List<Article> articles) {
-        this.imageResources = imageResources;
+    public Resources(List<ImageResource> images, List<Article> articles) {
+        this.images = images;
         this.articles = articles;
     }
     public Resources() {
-        this.imageResources = new ArrayList<>();
+        this.images = new ArrayList<>();
         this.articles = new ArrayList<>();
     }
 
-    public List<ImageResource> getImageResources() {
-        return this.imageResources;
+    public List<ImageResource> getImages() {
+        return this.images;
     }
 
-    public void setImageResources(List<ImageResource> imageResources) {
-        this.imageResources = imageResources;
+    public void setImages(List<ImageResource> images) {
+        this.images = images;
     }
 
     public List<Article> getArticles() {
