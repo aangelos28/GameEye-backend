@@ -1,31 +1,30 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences;
 
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Image;
 import org.springframework.data.annotation.PersistenceConstructor;
 
 public class NotificationCategories {
 
-    private ArticleCategory articleCategory;
+    private ArticleNotifications articleNotifications;
 
     private ImageCategory imageCategory;
 
     @PersistenceConstructor
-    public NotificationCategories(ArticleCategory articleCategory, ImageCategory imageCategory) {
-        this.articleCategory = articleCategory;
+    public NotificationCategories(ArticleNotifications articleNotifications, ImageCategory imageCategory) {
+        this.articleNotifications = articleNotifications;
         this.imageCategory = imageCategory;
     }
 
     public NotificationCategories() {
-        this.articleCategory = new ArticleCategory();
+        this.articleNotifications = new ArticleNotifications();
         this.imageCategory = new ImageCategory();
     }
 
-    public ArticleCategory getArticles() {
-        return articleCategory;
+    public ArticleNotifications getArticles() {
+        return articleNotifications;
     }
 
-    public void setArticles(ArticleCategory articleCategory) {
-        this.articleCategory = articleCategory;
+    public void setArticles(ArticleNotifications articleNotifications) {
+        this.articleNotifications = articleNotifications;
     }
 
     public ImageCategory getImages() {

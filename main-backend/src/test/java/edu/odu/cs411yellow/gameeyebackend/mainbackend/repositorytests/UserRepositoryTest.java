@@ -52,7 +52,7 @@ public class UserRepositoryTest {
         int articleCount = 1;
         String articleId = "5ea1c2e777dabd049ce92788";
         List<String> articleIds = new ArrayList<>(Arrays.asList(articleId));
-        ArticleCategory articleCategory = new ArticleCategory(articleCount, articleIds);
+        ArticleNotifications articleNotifications = new ArticleNotifications(articleCount, articleIds);
 
         // Declare images
         int imageCount = 1;
@@ -61,7 +61,7 @@ public class UserRepositoryTest {
         ImageCategory imageCategory = new ImageCategory(imageCount, imageIds);
 
         // Declare notificationCategories
-        NotificationCategories notificationCategories = new NotificationCategories(articleCategory, imageCategory);
+        NotificationCategories notificationCategories = new NotificationCategories(articleNotifications, imageCategory);
 
         // Declare watchGame
         String watchedGameId = "5e98bf94a3464d35b824d04f";
@@ -137,11 +137,11 @@ public class UserRepositoryTest {
             NotificationCategories testNotificationCategories =
                     testUserWatchList.get(i).getNotificationCategories();
 
-            ArticleCategory foundArticleCategory = foundNotificationCategories.getArticles();
-            ArticleCategory testArticleCategory = testNotificationCategories.getArticles();
+            ArticleNotifications foundArticleNotifications = foundNotificationCategories.getArticles();
+            ArticleNotifications testArticleNotifications = testNotificationCategories.getArticles();
 
-            List<String> foundArticleIds = foundArticleCategory.getArticleIds();
-            List<String> testArticleIds = testArticleCategory.getArticleIds();
+            List<String> foundArticleIds = foundArticleNotifications.getArticleIds();
+            List<String> testArticleIds = testArticleNotifications.getArticleIds();
 
             for (int j = 0; j < foundArticleIds.size(); j++) {
                 String foundArticleId = foundArticleIds.get(j);

@@ -8,18 +8,18 @@ import java.util.List;
 /**
  * Class representing the articles object in the watchList in the users collection.
  */
-public class ArticleCategory {
+public class ArticleNotifications {
     private Integer count;
 
     private List<String> articleIds;
 
     @PersistenceConstructor
-    public ArticleCategory(Integer count, List<String> articleIds) {
+    public ArticleNotifications(Integer count, List<String> articleIds) {
         this.count = count;
         this.articleIds = articleIds;
     }
 
-    public ArticleCategory() {
+    public ArticleNotifications() {
         this.count = 0;
         this.articleIds = new ArrayList<>();
     }
