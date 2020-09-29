@@ -11,4 +11,6 @@ public interface ImageRepository extends MongoRepository<Image, String> {
 
     Image findImageById(String id);
 
+    void deleteById(String id);
+
 }
