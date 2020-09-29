@@ -12,9 +12,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import java.util.List;
+import java.util.UUID;
 
 public class EuroGamerScraper implements WebScraper {
-    private String url = "https://www.eurogamer.net/?format=rss";
+    private String rssFeed = "https://www.eurogamer.net/?format=rss";
     private List<Article> articles;
     private DateFormat format = new SimpleDateFormat("E, d MMMM yyyy kk:mm:ss z");
 
@@ -35,7 +36,7 @@ public class EuroGamerScraper implements WebScraper {
     public void scrape() {
 
         try {
-            Document feed = Jsoup.connect(url).get();
+            Document feed = Jsoup.connect(rssFeed).get();
 
             Elements items = feed.select("item");
 
@@ -56,10 +57,12 @@ public class EuroGamerScraper implements WebScraper {
                     snippet = snippet.substring(0,255);
 
                 //TODO Create List of Articles
+                UUID id = UUID.randomUUID();
+                Article toAdd = new Article(id.toString(), title, url, null,
+                        null, snippet, publicationDate, publicationDate, 0);
 
-//                Article toAdd = new Article(0, title, url, null,
-//                        null, snippet, publicationDate, publicationDate, 0);
-//                articles.add(toAdd);
+                //TODO Prevent Duplicate articles
+                articles.add(toAdd);
 
             }
         }
