@@ -7,23 +7,34 @@ import java.util.List;
 
 public class NotificationPreferences {
 
-    private List<String> resourceCategories;
+    private boolean showArticleResources;
+    private boolean showImageResources;
 
     @PersistenceConstructor
-    public NotificationPreferences(List<String> resourceCategories) {
-        this.resourceCategories = resourceCategories;
+    public NotificationPreferences(boolean showArticleResources, boolean showImageResources) {
+        this.showArticleResources = showArticleResources;
+        this.showImageResources = showImageResources;
     }
 
     public NotificationPreferences() {
-        this.resourceCategories = new ArrayList<>();
+        this.showArticleResources = true;
+        this.showImageResources = true;
     }
 
-    public List<String> getResourcesCategories() {
-        return this.resourceCategories;
+    public boolean getShowArticleResources() {
+        return this.showArticleResources;
     }
 
-    public void setResourceCategories(List<String> resourceCategories) {
-        this.resourceCategories = resourceCategories;
+    public void setShowArticleResources(boolean showArticleResources) {
+        this.showArticleResources = showArticleResources;
+    }
+
+    public boolean getShowImageResources() {
+        return this.showImageResources;
+    }
+
+    public void setShowImageCategories(boolean showImageResources) {
+        this.showImageResources = showImageResources;
     }
 
 }

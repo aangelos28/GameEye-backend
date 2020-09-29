@@ -43,8 +43,10 @@ public class UserRepositoryTest {
 
         ContentPreferences contentPreferences = new ContentPreferences(showArchivedResources, showImpactScores);
 
-        List<String> resourceCategories = new ArrayList<>(Arrays.asList("articles"));
-        NotificationPreferences notificationPreferences = new NotificationPreferences(resourceCategories);
+        boolean showArticleResources = true;
+        boolean showImageResources = true;
+        NotificationPreferences notificationPreferences = new NotificationPreferences(showArticleResources,
+                                                                                      showImageResources);
 
         Preferences preferences = new Preferences(contentPreferences, notificationPreferences);
 
