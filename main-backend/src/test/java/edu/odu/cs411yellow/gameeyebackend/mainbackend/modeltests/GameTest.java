@@ -133,7 +133,7 @@ public class GameTest {
         List<String> articleIds = new ArrayList<>(Arrays.asList(articleId));
 
         List<Article> actualArticles = actualResources.getArticles();
-        List<Article> foundArticles = foundGame.findArticles(gameId, articleIds);
+        List<Article> foundArticles = foundGame.findArticles(articleIds);
 
         for (int i = 0; i < foundArticles.size(); i++) {
             Article foundArticle = foundArticles.get(i);

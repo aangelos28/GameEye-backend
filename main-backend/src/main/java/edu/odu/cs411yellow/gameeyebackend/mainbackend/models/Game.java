@@ -117,8 +117,7 @@ public class Game {
         this.resources = resources;
     }
 
-    @Query
-    public List<Article> findArticles(String gameId, List<String> articleIds) {
+    public List<Article> findArticles(List<String> articleIds) {
         List<Article> foundArticles = new ArrayList<>();
 
         Resources resources = this.getResources();
