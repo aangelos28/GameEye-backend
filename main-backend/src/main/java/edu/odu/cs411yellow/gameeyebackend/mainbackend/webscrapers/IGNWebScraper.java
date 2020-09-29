@@ -26,7 +26,36 @@ public class IGNWebScraper implements WebScraper{
     @Override
     public void scrape()
     {
+        try {
+            Document doc = Jsoup.connect(url).get();
 
+            Elements links = doc.getElementsByTag("item");
+
+            for(Element link:links)
+            {
+                //String title = link.attr("title");
+                String title = link.select("title").text();
+                //String source = link.attr("href");
+                String source = link.select("link").text();
+
+                String pubDate = link.select("pubDate").text();
+                Date publicationDate = format.parse(pubDate);
+
+
+                //Document body = Jsoup.parse(link.select("description").text());
+                //Document body = Jsoup.parse(link.select("description").text());
+                //Elements paragraph = body.select("p");
+                String snippet = link.select("description").text();
+                //String snippet = paragraph.text();
+                if (snippet.length() > 255)
+                    snippet = snippet.substring(0,255);
+
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
