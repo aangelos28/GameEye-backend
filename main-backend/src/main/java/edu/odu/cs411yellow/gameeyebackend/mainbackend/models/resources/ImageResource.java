@@ -1,12 +1,10 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources;
 
-import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 
 import java.util.Date;
 
 public class ImageResource {
-    @Id
     private String id;
 
     private String title;
