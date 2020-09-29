@@ -109,7 +109,7 @@ public class GameRepositoryTest {
         gameRepository.save(testGame);
     }
 
-    /*AfterEach
+    @AfterEach
     public void deleteInsertedGame() {
         String gameId = insertedGame.getId();
 
@@ -118,7 +118,7 @@ public class GameRepositoryTest {
 
         Assert.assertFalse(gameRepository.existsById(gameId));
 
-    }*/
+    }
 
     @Test
     public void findGameById() {

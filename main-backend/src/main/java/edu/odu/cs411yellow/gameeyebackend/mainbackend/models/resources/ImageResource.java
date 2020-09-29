@@ -34,7 +34,7 @@ public class ImageResource {
         return id;
     }
 
-    public void setId (String id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -42,11 +42,11 @@ public class ImageResource {
         return title;
     }
 
-    public void setTitle (String title) {
+    public void setTitle(String title) {
         this.title = title;
     }
 
-    public String getImageId () {
+    public String getImageId() {
         return imageId;
     }
 
