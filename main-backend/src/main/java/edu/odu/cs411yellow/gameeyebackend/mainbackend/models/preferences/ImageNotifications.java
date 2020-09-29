@@ -5,18 +5,18 @@ import org.springframework.data.annotation.PersistenceConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ImageCategory {
+public class ImageNotifications {
     private Integer count;
 
     private List<String> imageIds;
 
     @PersistenceConstructor
-    public ImageCategory(Integer count, List<String> imageIds) {
+    public ImageNotifications(Integer count, List<String> imageIds) {
         this.count = count;
         this.imageIds = imageIds;
     }
 
-    public ImageCategory() {
+    public ImageNotifications() {
         this.count = 0;
         this.imageIds = new ArrayList<>();
     }

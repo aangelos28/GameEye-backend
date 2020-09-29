@@ -6,17 +6,17 @@ public class NotificationCategories {
 
     private ArticleNotifications articleNotifications;
 
-    private ImageCategory imageCategory;
+    private ImageNotifications imageNotifications;
 
     @PersistenceConstructor
-    public NotificationCategories(ArticleNotifications articleNotifications, ImageCategory imageCategory) {
+    public NotificationCategories(ArticleNotifications articleNotifications, ImageNotifications imageNotifications) {
         this.articleNotifications = articleNotifications;
-        this.imageCategory = imageCategory;
+        this.imageNotifications = imageNotifications;
     }
 
     public NotificationCategories() {
         this.articleNotifications = new ArticleNotifications();
-        this.imageCategory = new ImageCategory();
+        this.imageNotifications = new ImageNotifications();
     }
 
     public ArticleNotifications getArticles() {
@@ -27,12 +27,12 @@ public class NotificationCategories {
         this.articleNotifications = articleNotifications;
     }
 
-    public ImageCategory getImages() {
-        return imageCategory;
+    public ImageNotifications getImages() {
+        return imageNotifications;
     }
 
-    public void setImages(ImageCategory imageCategory) {
-        this.imageCategory = imageCategory;
+    public void setImages(ImageNotifications imageNotifications) {
+        this.imageNotifications = imageNotifications;
     }
 
 }

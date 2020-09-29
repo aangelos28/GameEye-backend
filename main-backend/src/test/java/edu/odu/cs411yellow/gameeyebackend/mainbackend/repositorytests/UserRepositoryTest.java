@@ -58,10 +58,10 @@ public class UserRepositoryTest {
         int imageCount = 1;
         String imageId = "5ea108ea34019c1d1c818c02";
         List<String> imageIds = new ArrayList<>(Arrays.asList(imageId));
-        ImageCategory imageCategory = new ImageCategory(imageCount, imageIds);
+        ImageNotifications imageNotifications = new ImageNotifications(imageCount, imageIds);
 
         // Declare notificationCategories
-        NotificationCategories notificationCategories = new NotificationCategories(articleNotifications, imageCategory);
+        NotificationCategories notificationCategories = new NotificationCategories(articleNotifications, imageNotifications);
 
         // Declare watchGame
         String watchedGameId = "5e98bf94a3464d35b824d04f";
