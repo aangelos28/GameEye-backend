@@ -2,19 +2,19 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences;
 
 import org.springframework.data.annotation.PersistenceConstructor;
 
-public class NotificationCategories {
+public class ResourceNotifications {
 
     private ArticleNotifications articleNotifications;
 
     private ImageNotifications imageNotifications;
 
     @PersistenceConstructor
-    public NotificationCategories(ArticleNotifications articleNotifications, ImageNotifications imageNotifications) {
+    public ResourceNotifications(ArticleNotifications articleNotifications, ImageNotifications imageNotifications) {
         this.articleNotifications = articleNotifications;
         this.imageNotifications = imageNotifications;
     }
 
-    public NotificationCategories() {
+    public ResourceNotifications() {
         this.articleNotifications = new ArticleNotifications();
         this.imageNotifications = new ImageNotifications();
     }

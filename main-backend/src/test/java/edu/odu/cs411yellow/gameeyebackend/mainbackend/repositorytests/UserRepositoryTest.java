@@ -61,12 +61,12 @@ public class UserRepositoryTest {
         ImageNotifications imageNotifications = new ImageNotifications(imageCount, imageIds);
 
         // Declare notificationCategories
-        NotificationCategories notificationCategories = new NotificationCategories(articleNotifications, imageNotifications);
+        ResourceNotifications resourceNotifications = new ResourceNotifications(articleNotifications, imageNotifications);
 
         // Declare watchGame
         String watchedGameId = "5e98bf94a3464d35b824d04f";
         int notificationCount = 1;
-        WatchedGame watchedGame = new WatchedGame(watchedGameId, notificationCount, notificationCategories);
+        WatchedGame watchedGame = new WatchedGame(watchedGameId, notificationCount, resourceNotifications);
 
         // Declare watchList
         List<WatchedGame> watchList = new ArrayList<>(Arrays.asList(watchedGame));
@@ -131,14 +131,14 @@ public class UserRepositoryTest {
         List<WatchedGame> testUserWatchList = testUser.getWatchList();
 
         for (int i = 0; i < foundUserWatchList.size(); i++) {
-            NotificationCategories foundNotificationCategories =
+            ResourceNotifications foundResourceNotifications =
                     foundUserWatchList.get(i).getNotificationCategories();
 
-            NotificationCategories testNotificationCategories =
+            ResourceNotifications testResourceNotifications =
                     testUserWatchList.get(i).getNotificationCategories();
 
-            ArticleNotifications foundArticleNotifications = foundNotificationCategories.getArticles();
-            ArticleNotifications testArticleNotifications = testNotificationCategories.getArticles();
+            ArticleNotifications foundArticleNotifications = foundResourceNotifications.getArticles();
+            ArticleNotifications testArticleNotifications = testResourceNotifications.getArticles();
 
             List<String> foundArticleIds = foundArticleNotifications.getArticleIds();
             List<String> testArticleIds = testArticleNotifications.getArticleIds();

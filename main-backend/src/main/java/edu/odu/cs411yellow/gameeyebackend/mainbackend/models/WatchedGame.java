@@ -1,6 +1,6 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models;
 
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.NotificationCategories;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.ResourceNotifications;
 import org.springframework.data.annotation.PersistenceConstructor;
 
 public class WatchedGame {
@@ -8,20 +8,20 @@ public class WatchedGame {
 
     private Integer notificationCount;
 
-    private NotificationCategories notificationCategories;
+    private ResourceNotifications resourceNotifications;
 
     @PersistenceConstructor
     public WatchedGame(String gameId, Integer notificationCount,
-                       NotificationCategories notificationCategories) {
+                       ResourceNotifications resourceNotifications) {
         this.gameId = gameId;
         this.notificationCount = notificationCount;
-        this.notificationCategories = notificationCategories;
+        this.resourceNotifications = resourceNotifications;
     }
 
     public WatchedGame() {
         this.gameId = "";
         this.notificationCount = 0;
-        this.notificationCategories = new NotificationCategories();
+        this.resourceNotifications = new ResourceNotifications();
     }
 
     public String getGameId() {
@@ -36,12 +36,12 @@ public class WatchedGame {
         this.notificationCount = notificationCount;
     }
 
-    public NotificationCategories getNotificationCategories() {
-        return this.notificationCategories;
+    public ResourceNotifications getNotificationCategories() {
+        return this.resourceNotifications;
     }
 
-    public void setNotificationCategories(NotificationCategories notificationCategories) {
-        this.notificationCategories = notificationCategories;
+    public void setNotificationCategories(ResourceNotifications resourceNotifications) {
+        this.resourceNotifications = resourceNotifications;
     }
 
 }
