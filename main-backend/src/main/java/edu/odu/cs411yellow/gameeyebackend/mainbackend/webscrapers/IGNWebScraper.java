@@ -18,6 +18,8 @@ public class IGNWebScraper implements WebScraper{
     private List<Article> articles;
     private DateFormat format = new SimpleDateFormat("E, d MMMM yyyy kk:mm:ss z");
 
+    //private NewsWebsite ign = new NewsWebsite();
+
     public IGNWebScraper(List<Article> articles) {
         this.articles = articles;
     }
@@ -33,24 +35,27 @@ public class IGNWebScraper implements WebScraper{
 
             for(Element link:links)
             {
-                //String title = link.attr("title");
                 String title = link.select("title").text();
-                //String source = link.attr("href");
                 String source = link.select("link").text();
 
-                String pubDate = link.select("pubDate").text();
-                Date publicationDate = format.parse(pubDate);
+                String publicationDate = link.select("pubDate").text();
+                Date pubDate = format.parse(publicationDate);
 
-
-                //Document body = Jsoup.parse(link.select("description").text());
-                //Document body = Jsoup.parse(link.select("description").text());
-                //Elements paragraph = body.select("p");
                 String snippet = link.select("description").text();
-                //String snippet = paragraph.text();
                 if (snippet.length() > 255)
                     snippet = snippet.substring(0,255);
 
-
+                //TODO
+                //Set article ID
+                //
+                //Capture article Image
+                //
+                //Get Impact Score
+                //
+                //Get Last Published Date
+                //
+                //Article curr= new Article(ID,title, source, ign, IMAGE, snippet, pubDate, LASTUPDATED, IMPACT);
+                //articles.add(curr);
             }
 
         } catch (Exception e) {
