@@ -43,8 +43,10 @@ public class Resources {
         Article foundArticle = new Article();
 
         for (Article article : articles) {
-            if (article.getId().equals(id))
+            if (article.getId().equals(id)) {
                 foundArticle = article;
+                break;
+            }
         }
 
         return foundArticle;
