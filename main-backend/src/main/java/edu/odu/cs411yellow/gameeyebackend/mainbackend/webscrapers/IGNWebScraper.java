@@ -8,6 +8,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -31,39 +32,20 @@ public class IGNWebScraper implements WebScraper{
     {
         try {
             Document doc = Jsoup.connect(url).get();
-
+            Date buildDate = format.parse(doc.selectFirst("pubDate").text());
             Elements links = doc.getElementsByTag("item");
 
             for(Element link:links)
             {
-                String title = link.select("title").text();
-                String source = link.select("link").text();
-
-                String publicationDate = link.select("pubDate").text();
-                Date pubDate = format.parse(publicationDate);
-
-                String snippet = link.select("description").text();
-                if (snippet.length() > 255)
-                    snippet = snippet.substring(0,255);
-
                 String id = UUID.randomUUID().toString();
                 NewsWebsite ign = new NewsWebsite(id,"IGN",null,siteURL,url,
-                        pubDate,pubDate);
-                //TODO
-                //Set article ID
-                //
-                //Capture article Image
-                //
-                //Get Impact Score
-                //
-                //Get Last Published Date
-                //
-                //Check for duplicates
+                        buildDate,buildDate);
+                Article curr = createArticle(link,ign);
 
-                int impact = 0;
+                if(!checkDuplicateArticles(curr)) {
+                    articles.add(curr);
+                }
 
-                Article curr= new Article(id,title, source, ign, null, snippet, pubDate, pubDate, impact);
-                articles.add(curr);
             }
 
         } catch (Exception e) {
@@ -72,8 +54,37 @@ public class IGNWebScraper implements WebScraper{
     }
 
     @Override
-    public Article createArticle(Element e, NewsWebsite newsSite){
-        return null;
+    public Article createArticle(Element e, NewsWebsite newsSite) throws ParseException {
+
+        String title = e.select("title").text();
+        String source = e.select("link").text();
+        String publicationDate = e.select("pubDate").text();
+        Date pubDate = format.parse(publicationDate);
+
+        //TODO
+        //Get Last Published Date
+        String lastUpdated=e.select("").text();
+        Date lastPubDate = pubDate;
+
+        String snippet = e.select("description").text();
+        if (snippet.length() > 255)
+            snippet = snippet.substring(0,255);
+
+        int impact = 0;
+
+        //TODO
+        //Calculate impact score
+        //
+        //Set article ID
+        //
+        //Capture article Image
+        //
+        //Get Impact Score
+
+
+        Article curr= new Article(newsSite.getId(), title, source, newsSite, null,
+                snippet, pubDate, lastPubDate, impact);
+        return curr;
     }
 
     @Override
@@ -86,8 +97,14 @@ public class IGNWebScraper implements WebScraper{
         return articles.get(index);
     }
 
+
     @Override
     public Boolean checkDuplicateArticles(Article a){
-        return false;
+        Boolean dupe = false;
+
+        //TODO
+        //Check for duplicate articles
+
+        return dupe;
     }
 }
