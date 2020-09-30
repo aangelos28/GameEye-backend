@@ -9,12 +9,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 public class GameSpotWebScraperTests {
 
-    //How to Access the test controller
+    GameSpotWebScraper gsTest;
+
+    //TODO Access the test controller
 
     @BeforeEach
     public void setUp() {
-
-
+        gsTest = new GameSpotWebScraper();
     }
 
     //TODO write Unit Tests
@@ -22,6 +23,7 @@ public class GameSpotWebScraperTests {
     @Test
     public void testScrape() {
 
+        System.out.print(gsTest.toString());
         assert (true);
     }
 

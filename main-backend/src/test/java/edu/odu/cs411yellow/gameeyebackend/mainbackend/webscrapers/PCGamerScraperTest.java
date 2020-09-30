@@ -8,15 +8,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 
 @SpringBootTest
-public class EuroGamerScraperTest {
+public class PCGamerScraperTest {
 
-    public EuroGamerScraper egTest;
-
+    PCGamerScraper pcTest;
     //TODO Access the test controller
 
     @BeforeEach
     public void setUp() {
-        egTest = new EuroGamerScraper();
+        pcTest = new PCGamerScraper();
     }
 
     //TODO write Unit Tests
@@ -24,7 +23,7 @@ public class EuroGamerScraperTest {
     @Test
     public void testScrape() {
 
-        System.out.print(egTest.toString());
+        System.out.print(pcTest.toString());
         assert (true);
     }
 
