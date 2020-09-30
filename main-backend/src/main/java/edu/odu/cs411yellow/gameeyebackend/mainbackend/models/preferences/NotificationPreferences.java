@@ -2,33 +2,39 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences;
 
 import org.springframework.data.annotation.PersistenceConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class NotificationPreferences {
-    private String notificationFrequency;
 
-    private List<String> resourceCategories;
+    private boolean showArticleResources;
+    private boolean showImageResources;
 
     @PersistenceConstructor
-    public NotificationPreferences(String notificationFrequency, List<String> resourceCategories) {
-        this.notificationFrequency = notificationFrequency;
-        this.resourceCategories = resourceCategories;
+    public NotificationPreferences(boolean showArticleResources, boolean showImageResources) {
+        this.showArticleResources = showArticleResources;
+        this.showImageResources = showImageResources;
     }
 
-    public String getNotificationFrequency() {
-        return this.notificationFrequency;
+    public NotificationPreferences() {
+        this.showArticleResources = true;
+        this.showImageResources = true;
     }
 
-    public void setNotificationFrequency(String notificationFrequency) {
-        this.notificationFrequency = notificationFrequency;
+    public boolean getShowArticleResources() {
+        return this.showArticleResources;
     }
 
-    public List<String> getResourcesCategories() {
-        return this.resourceCategories;
+    public void setShowArticleResources(boolean showArticleResources) {
+        this.showArticleResources = showArticleResources;
     }
 
-    public void setResourceCategories(List<String> resourceCategories) {
-        this.resourceCategories = resourceCategories;
+    public boolean getShowImageResources() {
+        return this.showImageResources;
+    }
+
+    public void setShowImageCategories(boolean showImageResources) {
+        this.showImageResources = showImageResources;
     }
 
 }

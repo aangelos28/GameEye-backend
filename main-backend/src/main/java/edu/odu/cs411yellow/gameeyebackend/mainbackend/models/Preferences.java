@@ -16,6 +16,11 @@ public class Preferences {
         this.notificationPreferences = notificationPreferences;
     }
 
+    public Preferences() {
+        this.contentPreferences = new ContentPreferences();
+        this.notificationPreferences = new NotificationPreferences();
+    }
+
     public ContentPreferences getContent() {
         return this.contentPreferences;
     }
@@ -33,3 +38,4 @@ public class Preferences {
     }
 
 }
+

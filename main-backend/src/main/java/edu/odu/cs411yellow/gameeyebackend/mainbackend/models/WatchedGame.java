@@ -1,33 +1,31 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models;
 
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.NotificationCategory;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.ResourceNotifications;
 import org.springframework.data.annotation.PersistenceConstructor;
-import org.springframework.data.mongodb.core.mapping.DBRef;
-
-import java.util.List;
 
 public class WatchedGame {
-    @DBRef
     private String gameId;
 
     private Integer notificationCount;
 
-    private List<NotificationCategory> notificationCategories;
+    private ResourceNotifications resourceNotifications;
 
     @PersistenceConstructor
     public WatchedGame(String gameId, Integer notificationCount,
-                       List<NotificationCategory> notificationCategories) {
+                       ResourceNotifications resourceNotifications) {
         this.gameId = gameId;
         this.notificationCount = notificationCount;
-        this.notificationCategories = notificationCategories;
+        this.resourceNotifications = resourceNotifications;
+    }
+
+    public WatchedGame() {
+        this.gameId = "";
+        this.notificationCount = 0;
+        this.resourceNotifications = new ResourceNotifications();
     }
 
     public String getGameId() {
         return this.gameId;
-    }
-
-    public void setGameId(String gameId) {
-        this.gameId = gameId;
     }
 
     public Integer getNotificationCount() {
@@ -38,12 +36,12 @@ public class WatchedGame {
         this.notificationCount = notificationCount;
     }
 
-    public List<NotificationCategory> getNotificationCategories() {
-        return this.notificationCategories;
+    public ResourceNotifications getResourceNotifications() {
+        return this.resourceNotifications;
     }
 
-    public void setNotificationCategories(List<NotificationCategory> notificationCategories) {
-        this.notificationCategories = notificationCategories;
+    public void setResourceNotifications(ResourceNotifications resourceNotifications) {
+        this.resourceNotifications = resourceNotifications;
     }
 
 }
