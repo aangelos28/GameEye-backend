@@ -128,7 +128,6 @@ public class GameRepositoryTest {
 
         assert(foundGame.getId().equals(insertedGame.getId()));
 
-        System.out.println(foundGame.getLastUpdated().toString());
     }
 
 }
