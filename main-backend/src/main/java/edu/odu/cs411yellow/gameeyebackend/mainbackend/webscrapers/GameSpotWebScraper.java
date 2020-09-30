@@ -1,5 +1,7 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.webscrapers;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Image;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.NewsWebsite;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
@@ -17,13 +19,15 @@ import java.util.UUID;
 
 public class GameSpotWebScraper implements WebScraper {
 
-    private String rssFeed = "https://www.gamespot.com/feeds/game-news/";
+    private static String rssFeed = "https://www.gamespot.com/feeds/game-news/";
     private List<Article> articles;
     private DateFormat format = new SimpleDateFormat("E, d MMMM yyyy kk:mm:ss z");
 
-    public GameSpotWebScraper() {scrape();}
+    public GameSpotWebScraper() {
+
+    }
     /**
-     * Constructor
+     *  Constructor
      * @param articles from feed
      */
     public GameSpotWebScraper(List<Article> articles) {
@@ -38,9 +42,10 @@ public class GameSpotWebScraper implements WebScraper {
 
         try {
             Document feed = Jsoup.connect(rssFeed).get();
+
             Date buildDate = format.parse(feed.selectFirst("lastBuildDate").text());
-            NewsWebsite GameSpot = new NewsWebsite(UUID.randomUUID().toString(),"GameSpot", null,"https://www.gamespot.com/",
-                    rssFeed, buildDate,buildDate);
+            NewsWebsite GameSpot = new NewsWebsite(UUID.randomUUID().toString(),"GameSpot", null,
+                    "https://www.gamespot.com/", rssFeed, buildDate,buildDate);
 
             Elements items = feed.select("item");
 
@@ -104,4 +109,15 @@ public class GameSpotWebScraper implements WebScraper {
     public Article getArticle(int index) {
         return articles.get(index);
     }
+
+    /**
+     * Output to JSON format
+     * @return JSON
+     */
+    @Override
+    public String toString() {
+        Gson json = new GsonBuilder().setPrettyPrinting().create();
+        return json.toJson(this);
+    }
+
 }

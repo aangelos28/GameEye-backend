@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class EuroGamerScraper implements WebScraper {
-    private String rssFeed = "https://www.eurogamer.net/?format=rss";
+    private static String rssFeed = "https://www.eurogamer.net/?format=rss";
     private List<Article> articles;
     private DateFormat format = new SimpleDateFormat("E, d MMMM yyyy kk:mm:ss z");
 

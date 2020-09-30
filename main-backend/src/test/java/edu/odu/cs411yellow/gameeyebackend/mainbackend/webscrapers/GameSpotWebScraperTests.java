@@ -10,11 +10,11 @@ public class GameSpotWebScraperTests {
 
     private GameSpotWebScraper testScrape;
 
-    @BeforeAll
-    public void setUp() {
-        testScrape = new GameSpotWebScraper();
-
-    }
+//    @BeforeAll
+//    public void setUp() {
+//        testScrape = new GameSpotWebScraper();
+//
+//    }
 
     @Test
     public void testScrape() {
