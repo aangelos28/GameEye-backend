@@ -11,14 +11,15 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 public class IGNWebScraper implements WebScraper{
 
     private String url = "http://feeds.feedburner.com/ign/games-all";
     private List<Article> articles;
     private DateFormat format = new SimpleDateFormat("E, d MMMM yyyy kk:mm:ss z");
+    private String siteURL = "https://www.ign.com/";
 
-    //private NewsWebsite ign = new NewsWebsite();
 
     public IGNWebScraper(List<Article> articles) {
         this.articles = articles;
@@ -45,6 +46,9 @@ public class IGNWebScraper implements WebScraper{
                 if (snippet.length() > 255)
                     snippet = snippet.substring(0,255);
 
+                String id = UUID.randomUUID().toString();
+                NewsWebsite ign = new NewsWebsite(id,"IGN",null,siteURL,url,
+                        pubDate,pubDate);
                 //TODO
                 //Set article ID
                 //
@@ -54,8 +58,12 @@ public class IGNWebScraper implements WebScraper{
                 //
                 //Get Last Published Date
                 //
-                //Article curr= new Article(ID,title, source, ign, IMAGE, snippet, pubDate, LASTUPDATED, IMPACT);
-                //articles.add(curr);
+                //Check for duplicates
+
+                int impact = 0;
+
+                Article curr= new Article(id,title, source, ign, null, snippet, pubDate, pubDate, impact);
+                articles.add(curr);
             }
 
         } catch (Exception e) {
@@ -64,11 +72,22 @@ public class IGNWebScraper implements WebScraper{
     }
 
     @Override
+    public Article createArticle(Element e, NewsWebsite newsSite){
+        return null;
+    }
+
+    @Override
     public List<Article> getArticles() {
         return articles;
     }
 
+    @Override
     public Article getArticle(int index){
         return articles.get(index);
+    }
+
+    @Override
+    public Boolean checkDuplicateArticles(Article a){
+        return false;
     }
 }
