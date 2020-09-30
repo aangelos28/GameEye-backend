@@ -75,7 +75,7 @@ public class GameTest {
                 newsWebsiteLogo, newsWebsiteUrl,
                 newsWebsiteRssFeedUrl, newsWebsiteLastUpdated);
 
-        // Declare image
+        // Declare thumbnail
         String imageId = "5ea108ea34019c1d1c818c02";
         String type = "thumbnail";
         Binary imageData = new Binary(new byte[1]);
@@ -119,6 +119,7 @@ public class GameTest {
         Assert.assertFalse(gameRepository.existsById(gameId));
     }
 
+    //TODO Implement equal() for Game and use in test.
     @Test
     public void testFindArticles () {
 
@@ -126,7 +127,6 @@ public class GameTest {
         Game foundGame = gameRepository.findGameById(gameId);
 
         Resources actualResources = insertedGame.getResources();
-
 
         String articleId = "5ea1c2e777dabd049ce92788";
 

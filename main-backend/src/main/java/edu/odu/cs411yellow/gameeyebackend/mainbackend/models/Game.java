@@ -5,7 +5,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.repository.Query;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -126,5 +125,8 @@ public class Game {
 
         return foundArticles;
     }
+
+    @Override
+    public boolean equals(Game game)
 
 }
