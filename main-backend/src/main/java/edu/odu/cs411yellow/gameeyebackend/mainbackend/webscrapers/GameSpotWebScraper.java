@@ -12,10 +12,7 @@ import org.jsoup.select.Elements;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class GameSpotWebScraper implements WebScraper {
 
@@ -23,9 +20,127 @@ public class GameSpotWebScraper implements WebScraper {
     private List<Article> articles;
     private DateFormat format = new SimpleDateFormat("E, d MMMM yyyy kk:mm:ss z");
 
-    public GameSpotWebScraper() {
-
-    }
+    /**
+     * Default Constructor
+     */
+//    public GameSpotWebScraper() {
+//        articles = new List<Article>() {
+//            @Override
+//            public int size() {
+//                return 0;
+//            }
+//
+//            @Override
+//            public boolean isEmpty() {
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean contains(Object o) {
+//                return false;
+//            }
+//
+//            @Override
+//            public Iterator<Article> iterator() {
+//                return null;
+//            }
+//
+//            @Override
+//            public Object[] toArray() {
+//                return new Object[0];
+//            }
+//
+//            @Override
+//            public <T> T[] toArray(T[] a) {
+//                return null;
+//            }
+//
+//            @Override
+//            public boolean add(Article article) {
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean remove(Object o) {
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean containsAll(Collection<?> c) {
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean addAll(Collection<? extends Article> c) {
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean addAll(int index, Collection<? extends Article> c) {
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean removeAll(Collection<?> c) {
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean retainAll(Collection<?> c) {
+//                return false;
+//            }
+//
+//            @Override
+//            public void clear() {
+//
+//            }
+//
+//            @Override
+//            public Article get(int index) {
+//                return null;
+//            }
+//
+//            @Override
+//            public Article set(int index, Article element) {
+//                return null;
+//            }
+//
+//            @Override
+//            public void add(int index, Article element) {
+//
+//            }
+//
+//            @Override
+//            public Article remove(int index) {
+//                return null;
+//            }
+//
+//            @Override
+//            public int indexOf(Object o) {
+//                return 0;
+//            }
+//
+//            @Override
+//            public int lastIndexOf(Object o) {
+//                return 0;
+//            }
+//
+//            @Override
+//            public ListIterator<Article> listIterator() {
+//                return null;
+//            }
+//
+//            @Override
+//            public ListIterator<Article> listIterator(int index) {
+//                return null;
+//            }
+//
+//            @Override
+//            public List<Article> subList(int fromIndex, int toIndex) {
+//                return null;
+//            }
+//        };
+//    }
     /**
      *  Constructor
      * @param articles from feed
@@ -53,12 +168,18 @@ public class GameSpotWebScraper implements WebScraper {
 
                 //TODO Prevent Duplicate articles
                 Article toAdd = createArticle(i,GameSpot);
-                boolean duplicateExists = false;
-                for (Article a : articles) {
-                    if (toAdd.getTitle().contentEquals(a.getTitle()))
-                        duplicateExists = true;
-                }
-                if (!duplicateExists)
+
+                //Puts it in JSON format
+                Gson json = new GsonBuilder().setPrettyPrinting().create();
+                System.out.print(json.toJson(toAdd));
+
+//                boolean duplicateExists = false;
+
+//                for (Article a : articles) {
+//                    if (toAdd.getTitle().contentEquals(a.getTitle()))
+//                        duplicateExists = true;
+//                }
+//                if (!duplicateExists)
                     articles.add(toAdd);
             }
         }
@@ -70,6 +191,7 @@ public class GameSpotWebScraper implements WebScraper {
 
     public Article createArticle(Element i, NewsWebsite site) throws ParseException {
         String title = i.select("title").text();
+
         String url = i.select("link").text();
 
         //parse date
@@ -83,11 +205,10 @@ public class GameSpotWebScraper implements WebScraper {
         if (snippet.length() > 255)
             snippet = snippet.substring(0,255);
 
-        //TODO Create List of Articles
         //Create a Unique ID
         String id = UUID.randomUUID().toString();
         return new Article(id, title, url, site,
-                null, snippet, publicationDate, publicationDate, 0);
+                new Image(id, ".jpg",null), snippet, publicationDate, publicationDate, 0);
 
     }
 
@@ -117,7 +238,8 @@ public class GameSpotWebScraper implements WebScraper {
     @Override
     public String toString() {
         Gson json = new GsonBuilder().setPrettyPrinting().create();
-        return json.toJson(this);
+        return json.toJson(this.articles);
     }
+
 
 }
