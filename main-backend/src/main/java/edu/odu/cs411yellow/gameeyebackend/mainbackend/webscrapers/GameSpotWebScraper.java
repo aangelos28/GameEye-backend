@@ -54,13 +54,7 @@ public class GameSpotWebScraper implements WebScraper {
 
                 Article toAdd = createArticle(i,GameSpot);
 
-                //Prevent Duplicate Articles
-                boolean duplicateExists = false;
-                for (Article a : articles) {
-                    if (toAdd.getTitle().contentEquals(a.getTitle()))
-                        duplicateExists = true;
-                }
-                if (!duplicateExists)
+                if (!checkDuplicateArticles(toAdd))
                     articles.add(toAdd);
             }
         }
@@ -70,6 +64,7 @@ public class GameSpotWebScraper implements WebScraper {
 
     }
 
+    @Override
     public Article createArticle(Element i, NewsWebsite site) throws ParseException {
         String title = i.select("title").text();
 
@@ -91,6 +86,16 @@ public class GameSpotWebScraper implements WebScraper {
         return new Article(id, title, url, site,
                 new Image(id, ".jpg",null), snippet, publicationDate, publicationDate, 0);
 
+    }
+
+    @Override
+    public Boolean checkDuplicateArticles(Article a) {
+        for (Article i : articles) {
+            if (a.getTitle().contentEquals(i.getTitle()))
+                return true;
+        }
+
+        return false;
     }
 
     /**
