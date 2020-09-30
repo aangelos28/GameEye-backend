@@ -36,11 +36,11 @@ public class WatchedGame {
         this.notificationCount = notificationCount;
     }
 
-    public ResourceNotifications getNotificationCategories() {
+    public ResourceNotifications getResourceNotifications() {
         return this.resourceNotifications;
     }
 
-    public void setNotificationCategories(ResourceNotifications resourceNotifications) {
+    public void setResourceNotifications(ResourceNotifications resourceNotifications) {
         this.resourceNotifications = resourceNotifications;
     }
 

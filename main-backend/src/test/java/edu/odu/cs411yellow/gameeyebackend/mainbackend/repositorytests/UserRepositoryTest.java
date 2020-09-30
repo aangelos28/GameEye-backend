@@ -138,10 +138,10 @@ public class UserRepositoryTest {
 
         for (int i = 0; i < foundUserWatchList.size(); i++) {
             ResourceNotifications foundResourceNotifications =
-                    foundUserWatchList.get(i).getNotificationCategories();
+                    foundUserWatchList.get(i).getResourceNotifications();
 
             ResourceNotifications testResourceNotifications =
-                    testUserWatchList.get(i).getNotificationCategories();
+                    testUserWatchList.get(i).getResourceNotifications();
 
             ArticleNotifications foundArticleNotifications = foundResourceNotifications.getArticles();
             ArticleNotifications testArticleNotifications = testResourceNotifications.getArticles();

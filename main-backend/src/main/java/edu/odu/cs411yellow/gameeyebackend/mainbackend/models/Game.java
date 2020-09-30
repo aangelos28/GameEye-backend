@@ -120,10 +120,8 @@ public class Game {
     public List<Article> findArticles(List<String> articleIds) {
         List<Article> foundArticles = new ArrayList<>();
 
-        Resources resources = this.getResources();
-
         for (String articleId: articleIds) {
-            foundArticles.add(resources.findArticle(articleId));
+            foundArticles.add(this.resources.findArticle(articleId));
         }
 
         return foundArticles;
