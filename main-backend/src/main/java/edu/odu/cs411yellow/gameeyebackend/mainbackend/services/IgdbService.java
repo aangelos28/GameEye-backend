@@ -1,5 +1,6 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.services;
 
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -27,5 +28,31 @@ public class IgdbService {
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
+    }
+
+    public IgdbModel.GameResponse getGameResponseById(int id) {
+            String fieldsClause = "fields name, updated_at, genres, websites; ";
+            String whereClause = "where id = " + id + ";";
+
+        String game = webClient.post()
+                .uri("/games")
+                .contentType(MediaType.TEXT_PLAIN)
+                .bodyValue(fieldsClause + whereClause)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+
+        System.out.println(game);
+
+            IgdbModel.GameResponse gameResponse[] = webClient.post()
+                    .uri("/games")
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .bodyValue(fieldsClause + whereClause)
+                    .retrieve()
+                    .bodyToMono(IgdbModel.GameResponse[].class)
+                    .block();
+
+
+        return gameResponse[]
     }
 }

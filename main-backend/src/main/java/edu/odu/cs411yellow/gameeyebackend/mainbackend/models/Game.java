@@ -126,7 +126,10 @@ public class Game {
         return foundArticles;
     }
 
-    @Override
-    public boolean equals(Game game)
+    //TODO
+    /*@Override
+    public boolean equals(Game game) {
+
+    }*/
 
 }
