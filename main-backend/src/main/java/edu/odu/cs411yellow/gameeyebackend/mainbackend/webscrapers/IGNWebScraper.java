@@ -31,17 +31,20 @@ public class IGNWebScraper implements WebScraper{
     public void scrape()
     {
         try {
+            //Connects to RSS feed and parses into a document to retrieve article elements
             Document doc = Jsoup.connect(url).get();
             Date buildDate = format.parse(doc.selectFirst("pubDate").text());
-            Elements links = doc.getElementsByTag("item");
+            Elements links = doc.getElementsByTag("item");  //A collection of articles from the parsed URL
 
+            //Searches through each individual article
             for(Element link:links)
             {
-                String id = UUID.randomUUID().toString();
+                String id = UUID.randomUUID().toString();   //Assigns a random ID number for article
                 NewsWebsite ign = new NewsWebsite(id,"IGN",null,siteURL,url,
                         buildDate,buildDate);
                 Article curr = createArticle(link,ign);
 
+                //Adds new Article to list if not already present in list
                 if(!checkDuplicateArticles(curr)) {
                     articles.add(curr);
                 }
@@ -66,6 +69,7 @@ public class IGNWebScraper implements WebScraper{
         String lastUpdated=e.select("").text();
         Date lastPubDate = pubDate;
 
+        //Gets a short description of the article for viewing
         String snippet = e.select("description").text();
         if (snippet.length() > 255)
             snippet = snippet.substring(0,255);
