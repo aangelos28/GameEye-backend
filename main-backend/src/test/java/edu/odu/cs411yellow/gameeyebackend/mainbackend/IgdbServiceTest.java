@@ -1,7 +1,7 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend;
 
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.GameResponse;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.IgdbService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,11 +46,17 @@ public class IgdbServiceTest {
     }
 
     @Test
-    public void testGetGameById () {
+    public void testGetGameById () throws JsonProcessingException {
 
         int id = 1000;
-        IgdbModel.GameResponse gameResponse = igdbService.getGameResponseById(id);
+        GameResponse gameResponse = igdbService.getGameResponseById(id);
 
-        System.out.println(gameResponse.toString());
+        System.out.println(gameResponse.id + "\n");
+        System.out.println(gameResponse.name + "\n");
+        System.out.println(gameResponse.updated_at + "\n");
+        System.out.println(gameResponse.genres.get(0) + "\n");
+        System.out.println(gameResponse.websites.get(0) + "\n");
+
+
     }
 }

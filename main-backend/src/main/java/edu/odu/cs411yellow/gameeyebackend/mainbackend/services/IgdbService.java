@@ -1,10 +1,16 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.GameResponse;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import java.util.List;
 
 /**
  * Service for calling IGDB REST API.
@@ -30,11 +36,11 @@ public class IgdbService {
                 .block();
     }
 
-    public IgdbModel.GameResponse getGameResponseById(int id) {
-            String fieldsClause = "fields name, updated_at, genres, websites; ";
-            String whereClause = "where id = " + id + ";";
+    public GameResponse getGameResponseById(int id) throws JsonProcessingException {
+        String fieldsClause = "fields name, updated_at, genres, websites; ";
+        String whereClause = "where id = " + id + ";";
 
-        String game = webClient.post()
+        String gameJson = webClient.post()
                 .uri("/games")
                 .contentType(MediaType.TEXT_PLAIN)
                 .bodyValue(fieldsClause + whereClause)
@@ -42,17 +48,10 @@ public class IgdbService {
                 .bodyToMono(String.class)
                 .block();
 
-        System.out.println(game);
+        List<GameResponse> gameResponseList = new ObjectMapper().readValue(gameJson, new TypeReference<List<GameResponse>>(){});
 
-            IgdbModel.GameResponse gameResponse[] = webClient.post()
-                    .uri("/games")
-                    .contentType(MediaType.TEXT_PLAIN)
-                    .bodyValue(fieldsClause + whereClause)
-                    .retrieve()
-                    .bodyToMono(IgdbModel.GameResponse[].class)
-                    .block();
+        GameResponse gameResponse = gameResponseList.get(0);
 
-
-        return gameResponse[]
+        return gameResponse;
     }
 }
