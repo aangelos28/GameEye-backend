@@ -30,6 +30,12 @@ public class Image {
         this.data = data;
     }
 
+    public Image() {
+        this.id = "";
+        this.type = "";
+        this.data = new Binary(new byte[1]);
+    }
+
     public String getId() {
         return this.id;
     }

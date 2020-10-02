@@ -1,26 +1,33 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.ImageResource;
 import org.springframework.data.annotation.PersistenceConstructor;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class Resources {
 
-    private List<Image> images;
+    private List<ImageResource> images;
 
     private List<Article> articles;
 
     @PersistenceConstructor
-    public Resources(List<Image> images, List<Article> articles) {
+    public Resources(List<ImageResource> images, List<Article> articles) {
         this.images = images;
         this.articles = articles;
     }
+    public Resources() {
+        this.images = new ArrayList<>();
+        this.articles = new ArrayList<>();
+    }
 
-    public List<Image> getImages() {
+    public List<ImageResource> getImages() {
         return this.images;
     }
 
-    public void setImages(List<Image> images) {
+    public void setImages(List<ImageResource> images) {
         this.images = images;
     }
 
@@ -30,6 +37,19 @@ public class Resources {
 
     public void setArticles(List<Article> articles) {
         this.articles = articles;
+    }
+
+    public Article findArticle(String id) {
+        Article foundArticle = new Article();
+
+        for (Article article : articles) {
+            if (article.getId().equals(id)) {
+                foundArticle = article;
+                break;
+            }
+        }
+
+        return foundArticle;
     }
 
 }

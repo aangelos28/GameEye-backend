@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,74 +15,61 @@ public class User {
     @Id
     private final String id;
 
-    private String firstName;
+    private String firebaseId;
 
-    private String lastName;
+    private UserStatus status;
 
-    private String email;
-
-    private String status;
-
-    private String plan;
+    private UserPlan plan;
 
     private Preferences preferences;
 
     private List<WatchedGame> watchList;
 
     @PersistenceConstructor
-    public User(String id, String firstName, String lastName, String email, String status,
-                String plan, Preferences preferences, List<WatchedGame> watchList) {
+    public User(String id, String firebaseId, UserStatus status,
+                UserPlan plan, Preferences preferences, List<WatchedGame> watchList) {
         this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
+        this.firebaseId = firebaseId;
         this.status = status;
         this.plan = plan;
         this.preferences = preferences;
         this.watchList = watchList;
     }
 
+    public User() {
+        this.id = "";
+        this.firebaseId = "";
+        this.status = UserStatus.active;
+        this.plan = UserPlan.free;
+        this.preferences = new Preferences();
+        this.watchList = new ArrayList<>();
+    }
+
     public String getId() {
         return this.id;
     }
 
-    public String getFirstName() {
-        return this.firstName;
+    public String getFirebaseId() {
+        return this.firebaseId;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setFirebaseId(String firebaseId) {
+        this.firebaseId = firebaseId;
     }
 
-    public String getLastName() {
-        return this.lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getEmail() {
-        return this.email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getStatus() {
+    public UserStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(UserStatus status) {
         this.status = status;
     }
 
-    public String getPlan() {
+    public UserPlan getPlan() {
         return this.plan;
     }
 
-    public void setPlan(String plan) {
+    public void setPlan(UserPlan plan) {
         this.plan = plan;
     }
 

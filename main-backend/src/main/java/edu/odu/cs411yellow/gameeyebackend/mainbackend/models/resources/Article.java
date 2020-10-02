@@ -2,7 +2,6 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Image;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.NewsWebsite;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
@@ -12,7 +11,6 @@ import java.util.Date;
  * Represents a news article resource.
  */
 public class Article {
-    @Id
     private final String id;
 
     /**
@@ -61,6 +59,7 @@ public class Article {
     @PersistenceConstructor
     public Article(String id, String title, String url, NewsWebsite newsWebsite, Image thumbnail, String snippet,
                    Date publicationDate, Date lastUpdated, int impactScore) {
+
         this.id = id;
         this.title = title;
         this.url = url;
@@ -70,6 +69,18 @@ public class Article {
         this.publicationDate = publicationDate;
         this.lastUpdated = lastUpdated;
         this.impactScore = impactScore;
+    }
+
+    public Article() {
+        this.id = "";
+        this.title = "";
+        this.url = "";
+        this.newsWebsite = new NewsWebsite();
+        this.thumbnail = new Image();
+        this.snippet = "";
+        this.publicationDate = new Date();
+        this.lastUpdated = new Date();
+        this.impactScore = 0;
     }
 
     public String getId() {
