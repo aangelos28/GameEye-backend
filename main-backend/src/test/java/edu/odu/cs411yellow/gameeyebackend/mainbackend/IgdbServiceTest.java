@@ -1,7 +1,9 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.GameResponse;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.IgdbService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,19 +16,19 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.List;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles("test")
 @TestPropertySource(locations="classpath:application-test.properties")
 public class IgdbServiceTest {
 
-    WebClient.Builder webClientBuilder;
-
-    String igdbUrl = "";
-    String igdbKey = "";
-
     @Autowired
     IgdbService igdbService;
+
+    @Autowired
+    GameRepository gameRepository;
 
     @BeforeEach
     public void setup () {
@@ -46,17 +48,47 @@ public class IgdbServiceTest {
     }
 
     @Test
-    public void testGetGameById () throws JsonProcessingException {
+    public void testGetGameResponseById () throws JsonProcessingException {
 
-        int id = 1000;
+        String id = "100";
         GameResponse gameResponse = igdbService.getGameResponseById(id);
 
-        System.out.println(gameResponse.id + "\n");
-        System.out.println(gameResponse.name + "\n");
-        System.out.println(gameResponse.updated_at + "\n");
-        System.out.println(gameResponse.genres.get(0) + "\n");
-        System.out.println(gameResponse.websites.get(0) + "\n");
+        assert(gameResponse.id.equals(id));
 
+    }
+
+    @Test
+    public void testGetGenresFromGenreResponse () throws JsonProcessingException {
+
+        String id = "100";
+        GameResponse gameResponse = igdbService.getGameResponseById(id);
+
+        List<String> genres = gameResponse.getGenresFromGenreResponses();
+
+        for(int i = 0; i < gameResponse.genreResponses.size(); i++) {
+            String genreFromGameResponse = gameResponse.genreResponses.get(i).name;
+            String genreFromGenres = genres.get(i);
+
+            assert(genreFromGameResponse.equals(genreFromGenres));
+
+        }
+
+    }
+
+    @Test
+    public void testGetGameResponsesByRange() throws JsonProcessingException, InterruptedException {
+        int lowerId = 1;
+        int upperId = 200;
+
+        List<GameResponse> gameResponses = igdbService.getGameResponsesByRange(lowerId, upperId);
+
+        int expectedSize = upperId - lowerId + 1;
+
+
+        for (GameResponse gameResponse: gameResponses) {
+            gameRepository.save(gameResponse.toGame());
+
+        }
 
     }
 }

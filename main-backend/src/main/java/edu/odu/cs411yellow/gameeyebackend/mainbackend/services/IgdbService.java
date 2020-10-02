@@ -3,13 +3,14 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.GameResponse;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -36,9 +37,11 @@ public class IgdbService {
                 .block();
     }
 
-    public GameResponse getGameResponseById(int id) throws JsonProcessingException {
-        String fieldsClause = "fields name, updated_at, genres, websites; ";
+    public GameResponse getGameResponseById(String id) throws JsonProcessingException {
+        String fieldsClause = "fields name, updated_at, genres.name, websites.url, websites.category, platforms.name; ";
         String whereClause = "where id = " + id + ";";
+
+        GameResponse gameResponse = new GameResponse();
 
         String gameJson = webClient.post()
                 .uri("/games")
@@ -48,10 +51,37 @@ public class IgdbService {
                 .bodyToMono(String.class)
                 .block();
 
+
         List<GameResponse> gameResponseList = new ObjectMapper().readValue(gameJson, new TypeReference<List<GameResponse>>(){});
 
-        GameResponse gameResponse = gameResponseList.get(0);
+        if (gameResponseList.size() != 0) {
+            gameResponse = gameResponseList.get(0);
+        }
 
         return gameResponse;
+
     }
+
+    public List<GameResponse> getGameResponsesByRange(int lowerId, int upperId) throws JsonProcessingException, InterruptedException {
+        String fieldsClause = "fields name, updated_at, genres.name, websites.url," +
+                              "websites.category, platforms.name; ";
+
+        List<GameResponse> gameResponses = new ArrayList<>();
+        GameResponse gameResponse = new GameResponse();
+
+        for (int id = lowerId; id < upperId + 1; id++) {
+            gameResponse = getGameResponseById(String.valueOf(id));
+            Thread.sleep(250);
+
+            if (gameResponse.name != "") {
+                gameResponses.add(gameResponse);
+
+            }
+
+        }
+
+        return gameResponses;
+
+    }
+
 }
