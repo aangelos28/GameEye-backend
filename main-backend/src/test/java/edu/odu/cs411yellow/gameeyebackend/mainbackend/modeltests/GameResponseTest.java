@@ -2,7 +2,7 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.modeltests;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.GameResponse;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.IgdbService;
 import org.junit.jupiter.api.AfterEach;
@@ -41,7 +41,7 @@ public class GameResponseTest {
     public void testToGame () throws JsonProcessingException {
         String id = "1000";
 
-        GameResponse gameResponse = igdbService.getGameResponseById(id);
+        IgdbModel.GameResponse gameResponse = igdbService.getGameResponseById(id);
 
         Game game = gameResponse.toGame();
 

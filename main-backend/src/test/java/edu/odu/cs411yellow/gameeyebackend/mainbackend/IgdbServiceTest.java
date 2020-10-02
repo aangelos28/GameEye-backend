@@ -1,8 +1,7 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.GameResponse;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.IgdbService;
 import org.junit.jupiter.api.AfterEach;
@@ -14,7 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
 
@@ -51,7 +49,7 @@ public class IgdbServiceTest {
     public void testGetGameResponseById () throws JsonProcessingException {
 
         String id = "100";
-        GameResponse gameResponse = igdbService.getGameResponseById(id);
+        IgdbModel.GameResponse gameResponse = igdbService.getGameResponseById(id);
 
         assert(gameResponse.id.equals(id));
 
@@ -61,7 +59,7 @@ public class IgdbServiceTest {
     public void testGetGenresFromGenreResponse () throws JsonProcessingException {
 
         String id = "100";
-        GameResponse gameResponse = igdbService.getGameResponseById(id);
+        IgdbModel.GameResponse gameResponse = igdbService.getGameResponseById(id);
 
         List<String> genres = gameResponse.getGenresFromGenreResponses();
 
@@ -76,16 +74,16 @@ public class IgdbServiceTest {
     }
 
     @Test
-    public void testGetGameResponsesByRange() throws JsonProcessingException, InterruptedException {
+    public void testGetGameResponsesByRange() throws JsonProcessingException {
         int lowerId = 1;
         int upperId = 200;
 
-        List<GameResponse> gameResponses = igdbService.getGameResponsesByRange(lowerId, upperId);
+        List<IgdbModel.GameResponse> gameResponses = igdbService.getGameResponsesByRange(lowerId, upperId);
 
         int expectedSize = upperId - lowerId + 1;
 
 
-        for (GameResponse gameResponse: gameResponses) {
+        for (IgdbModel.GameResponse gameResponse: gameResponses) {
             gameRepository.save(gameResponse.toGame());
 
         }

@@ -3,8 +3,7 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.GameResponse;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -37,11 +36,11 @@ public class IgdbService {
                 .block();
     }
 
-    public GameResponse getGameResponseById(String id) throws JsonProcessingException {
+    public IgdbModel.GameResponse getGameResponseById(String id) throws JsonProcessingException {
         String fieldsClause = "fields name, updated_at, genres.name, websites.url, websites.category, platforms.name; ";
         String whereClause = "where id = " + id + ";";
 
-        GameResponse gameResponse = new GameResponse();
+        IgdbModel.GameResponse gameResponse = new IgdbModel.GameResponse();
 
         String gameJson = webClient.post()
                 .uri("/games")
@@ -52,7 +51,8 @@ public class IgdbService {
                 .block();
 
 
-        List<GameResponse> gameResponseList = new ObjectMapper().readValue(gameJson, new TypeReference<List<GameResponse>>(){});
+        List<IgdbModel.GameResponse> gameResponseList = new ObjectMapper().readValue(gameJson, new TypeReference<>() {
+        });
 
         if (gameResponseList.size() != 0) {
             gameResponse = gameResponseList.get(0);
@@ -62,18 +62,17 @@ public class IgdbService {
 
     }
 
-    public List<GameResponse> getGameResponsesByRange(int lowerId, int upperId) throws JsonProcessingException, InterruptedException {
+    public List<IgdbModel.GameResponse> getGameResponsesByRange(int lowerId, int upperId) throws JsonProcessingException{
         String fieldsClause = "fields name, updated_at, genres.name, websites.url," +
                               "websites.category, platforms.name; ";
 
-        List<GameResponse> gameResponses = new ArrayList<>();
-        GameResponse gameResponse = new GameResponse();
+        List<IgdbModel.GameResponse> gameResponses = new ArrayList<>();
+        IgdbModel.GameResponse gameResponse = new IgdbModel.GameResponse();
 
         for (int id = lowerId; id < upperId + 1; id++) {
             gameResponse = getGameResponseById(String.valueOf(id));
-            Thread.sleep(250);
 
-            if (gameResponse.name != "") {
+            if (!gameResponse.name.equals("")) {
                 gameResponses.add(gameResponse);
 
             }
