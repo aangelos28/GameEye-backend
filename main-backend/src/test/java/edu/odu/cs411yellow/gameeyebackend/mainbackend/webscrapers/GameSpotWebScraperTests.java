@@ -1,5 +1,6 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.webscrapers;
 
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.controllers.TestController;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import org.jsoup.Jsoup;
@@ -9,43 +10,46 @@ import org.jsoup.select.Elements;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.platform.commons.logging.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.util.Assert;
+
+import java.util.ArrayList;
+import java.util.logging.Logger;
 
 @SpringBootTest
 public class GameSpotWebScraperTests {
 
     GameSpotWebScraper gsTest;
-
+    Logger logger  = (Logger) LoggerFactory.getLogger(TestController.class);
     //TODO Access the test controller
 
     @BeforeEach
     public void setUp() {
-        gsTest = new GameSpotWebScraper();
+        gsTest = new GameSpotWebScraper(new ArrayList<>());
     }
 
     //TODO write Unit Tests
-    //Take a SnapShot of the Rss feed
     @Test
     public void testScrape() {
 
         Element firstArticle;
 
-        //Take snapShot of RSS feed
-        try {
-            Document feed = Jsoup.connect("https://www.gamespot.com/feeds/game-news/").get();
-            //Testing the Contents of the first article
-//            firstArticle = feed.selectFirst("items");
-        }
-        catch (Exception ex){
-            ex.printStackTrace();
-        }
-        //Compare to first Article
-//        Article one = gsTest.getArticles().get(0);
-//        String title = firstArticle.select("title").text();
-//        Assert.
-
+        gsTest.scrape();
         System.out.print(gsTest.toString());
-        assert (true);
+        Assert.noNullElements(gsTest.getArticles(), "Error: Articles not Saved");
+
+//        //Take snapShot of RSS feed
+//        try {
+//            gsTest.scrape();
+//            System.out.print(gsTest.toString());
+//            Assert.noNullElements(gsTest.getArticles(), "Error: Articles not Saved");
+//
+//        }
+//        catch (Exception ex){
+//            ex.printStackTrace();
+//        }
+
     }
 
 

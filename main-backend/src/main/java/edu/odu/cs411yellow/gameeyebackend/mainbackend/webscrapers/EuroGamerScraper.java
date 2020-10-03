@@ -5,14 +5,16 @@ import com.google.gson.GsonBuilder;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Image;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.NewsWebsite;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.NewsWebsiteRepository;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 import java.util.List;
@@ -23,11 +25,8 @@ public class EuroGamerScraper implements WebScraper {
     private List<Article> articles;
     private DateFormat format = new SimpleDateFormat("E, d MMMM yyyy kk:mm:ss z");
 
-
-    public EuroGamerScraper() {
-        articles = new ArrayList<>();
-        scrape();
-    }
+    @Autowired
+    NewsWebsiteRepository siteBuilder;
 
     /**
      * Constructor
@@ -46,9 +45,8 @@ public class EuroGamerScraper implements WebScraper {
         try {
             Document feed = Jsoup.connect(rssFeed).get();
 
-            Date buildDate = format.parse(feed.selectFirst("lastBuildDate").text());
-            NewsWebsite Eurogamer = new NewsWebsite(UUID.randomUUID().toString(),"Eurogamer", null,
-                    "https://www.eurogamer.net/", rssFeed, buildDate, buildDate);
+            NewsWebsite Eurogamer = siteBuilder.findByName("EuroGamer");
+
 
             Elements items = feed.select("item");
 
@@ -68,6 +66,7 @@ public class EuroGamerScraper implements WebScraper {
 
     @Override
     public Article createArticle(Element i, NewsWebsite site) throws ParseException {
+
         String title = i.select("title").text();
 
         String url = i.select("link").text();

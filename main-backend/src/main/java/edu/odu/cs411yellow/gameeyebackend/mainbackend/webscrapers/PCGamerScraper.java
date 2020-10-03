@@ -5,14 +5,16 @@ import com.google.gson.GsonBuilder;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Image;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.NewsWebsite;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.NewsWebsiteRepository;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 import java.util.List;
@@ -22,12 +24,8 @@ public class PCGamerScraper implements WebScraper {
     private static String rssFeed = "https://www.pcgamer.com/rss/";
     private List<Article> articles;
     private DateFormat format = new SimpleDateFormat("E, d MMMM yyyy kk:mm:ss z");
-
-
-    public PCGamerScraper(){
-        articles = new ArrayList<>();
-        scrape();
-    }
+    @Autowired
+    NewsWebsiteRepository siteBuilder;
 
     /**
      * Constructor
@@ -45,9 +43,8 @@ public class PCGamerScraper implements WebScraper {
 
         try {
             Document feed = Jsoup.connect(rssFeed).get();
-            Date buildDate = format.parse(feed.selectFirst("lastBuildDate").text());
-            NewsWebsite PCGamer = new NewsWebsite(UUID.randomUUID().toString(),"PCGamer", null,
-                    "https://www.pcgamer.com/", rssFeed, buildDate, buildDate);
+
+            NewsWebsite PCGamer = siteBuilder.findByName("PCGamer");
 
             Elements items = feed.select("item");
 
@@ -68,6 +65,7 @@ public class PCGamerScraper implements WebScraper {
 
     @Override
     public Article createArticle(Element i, NewsWebsite site) throws ParseException {
+
         String title = i.select("title").text();
 
         String url = i.select("link").text();

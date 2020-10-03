@@ -5,10 +5,14 @@ import com.google.gson.GsonBuilder;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Image;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.NewsWebsite;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.NewsWebsiteRepository;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Autowired;
+
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -19,14 +23,9 @@ public class GameSpotWebScraper implements WebScraper {
     private static String rssFeed = "https://www.gamespot.com/feeds/game-news/";
     private List<Article> articles;
     private DateFormat format = new SimpleDateFormat("E, d MMMM yyyy kk:mm:ss z");
+    @Autowired
+    NewsWebsiteRepository siteBuilder;
 
-    /**
-     * Default Constructor
-     */
-    public GameSpotWebScraper() {
-        articles = new ArrayList<>();
-        scrape();
-    }
     /**
      *  Constructor
      * @param articles from feed
@@ -44,9 +43,11 @@ public class GameSpotWebScraper implements WebScraper {
         try {
             Document feed = Jsoup.connect(rssFeed).get();
 
-            Date buildDate = format.parse(feed.selectFirst("lastBuildDate").text());
-            NewsWebsite GameSpot = new NewsWebsite(UUID.randomUUID().toString(),"GameSpot", null,
-                    "https://www.gamespot.com/", rssFeed, buildDate, buildDate);
+            NewsWebsite GameSpot = siteBuilder.findByName("GameSpot");
+
+//            Date buildDate = format.parse(feed.selectFirst("lastBuildDate").text());
+//            NewsWebsite GameSpot = new NewsWebsite(UUID.randomUUID().toString(),"GameSpot", null,
+//                    "https://www.gamespot.com/", rssFeed, buildDate, buildDate);
 
             Elements items = feed.select("item");
 

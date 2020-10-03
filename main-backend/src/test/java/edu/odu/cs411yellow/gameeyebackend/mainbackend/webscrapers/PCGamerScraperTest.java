@@ -6,19 +6,20 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
+
 
 @SpringBootTest
 public class PCGamerScraperTest {
 
     PCGamerScraper pcTest;
-    //TODO Access the test controller
 
     @BeforeEach
     public void setUp() {
-        pcTest = new PCGamerScraper();
+        pcTest = new PCGamerScraper(new ArrayList<>());
     }
 
-    //TODO write Unit Tests
+
     //Take a SnapShot of the Rss feed
     @Test
     public void testScrape() {

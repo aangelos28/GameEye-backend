@@ -3,10 +3,13 @@ import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.NewsWebsite;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Image;
 
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.NewsWebsiteRepository;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -19,6 +22,9 @@ public class IGNWebScraper implements WebScraper{
     private List<Article> articles;
     private DateFormat format = new SimpleDateFormat("E, d MMMM yyyy kk:mm:ss z");
     private String siteURL = "https://www.ign.com/";
+
+    @Autowired
+    NewsWebsiteRepository siteBuilder;
 
 
     public IGNWebScraper(List<Article> articles) {
@@ -47,8 +53,10 @@ public class IGNWebScraper implements WebScraper{
                     snippet = snippet.substring(0,255);
 
                 String id = UUID.randomUUID().toString();
-                NewsWebsite ign = new NewsWebsite(id,"IGN",null,siteURL,url,
-                        pubDate,pubDate);
+
+                NewsWebsite ign = siteBuilder.findByName("IGN");
+//                NewsWebsite ign = new NewsWebsite(id,"IGN",null,siteURL,url,
+//                        pubDate,pubDate);
                 //TODO
                 //Set article ID
                 //
