@@ -40,17 +40,24 @@ public class NewsWebsite {
      */
     private Date lastUpdated;
 
-    private Date publicationDate;
-
     @PersistenceConstructor
     public NewsWebsite(String id, String name, Binary logo, String siteUrl,
-                       String rssFeedUrl, Date lastUpdated, Date publicationDate) {
+                       String rssFeedUrl, Date lastUpdated) {
         this.id = id;
         this.name = name;
         this.logo = logo;
         this.siteUrl = siteUrl;
         this.rssFeedUrl = rssFeedUrl;
         this.lastUpdated = lastUpdated;
+    }
+
+    public NewsWebsite() {
+        this.id = "";
+        this.name = "";
+        this.logo = new Binary(new byte[1]);
+        this.siteUrl = "";
+        this.rssFeedUrl = "";
+        this.lastUpdated = new Date();
     }
 
     public String getId() {
@@ -97,7 +104,4 @@ public class NewsWebsite {
         this.lastUpdated = lastUpdated;
     }
 
-    public Date getPublicationDate() {
-        return this.publicationDate;
-    }
 }

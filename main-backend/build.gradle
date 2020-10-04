@@ -23,6 +23,8 @@ dependencies {
 	implementation 'org.springframework.security:spring-security-config'
 	implementation 'com.google.firebase:firebase-admin:6.15.0'
 	implementation project(':common')
+	implementation 'junit:junit:4.12'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
 	implementation group: 'org.jsoup', name: 'jsoup', version: '1.11.3'
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
