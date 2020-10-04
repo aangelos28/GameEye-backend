@@ -16,24 +16,27 @@ import org.springframework.stereotype.Service;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-@Service("IgnScrape")
+@Service
 public class IGNWebScraper implements WebScraper{
+    @Autowired
+    NewsWebsiteRepository newsWebsites;
 
-    private static final String url = "http://feeds.feedburner.com/ign/games-all";
+    private String url = newsWebsites.findByName("IGN").getRssFeedUrl();
+    //private static final String url = "http://feeds.feedburner.com/ign/games-all";
     private List<Article> articles;
     private DateFormat format = new SimpleDateFormat("E, d MMMM yyyy kk:mm:ss z");
     //private String siteURL = "https://www.ign.com/";
 
-    @Autowired
-    NewsWebsiteRepository siteBuilder;
 
 
-    public IGNWebScraper(List<Article> articles) {
-        this.articles = articles;
+
+    public IGNWebScraper() {
+        articles = new ArrayList<Article>();
     }
 
     /**
@@ -44,19 +47,17 @@ public class IGNWebScraper implements WebScraper{
     {
         try {
             //Connects to RSS feed and parses into a document to retrieve article elements
-            Document doc = Jsoup.connect(url).get();
-            NewsWebsite IGN= siteBuilder.findByName("IGN"); //Searches database for IGN
-            Elements links = doc.getElementsByTag("item");  //A collection of articles from the parsed URL
+            Document rssFeed = Jsoup.connect(url).get();
+            NewsWebsite ign= newsWebsites.findByName("IGN"); //Searches database for IGN
+
+            Elements links = rssFeed.getElementsByTag("item");  //A collection of articles from the parsed URL
 
             //Searches through each individual article
             for(Element link:links)
             {
-                Article curr = createArticle(link,IGN);
+                Article curr = createArticle(link,ign);
 
-                //Adds new Article to list if not already present in list
-                if(!checkDuplicateArticles(curr)) {
                     articles.add(curr);
-                }
             }
         } catch (Exception e) {
             e.printStackTrace();
