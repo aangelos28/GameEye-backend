@@ -11,17 +11,18 @@ import org.springframework.util.Assert;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles("test")
-public class PCGamerScraperTest {
+public class MockNewsScraperTest {
+
 
     @Autowired
-    PCGamerScraper pcTest;
+    MockNewsScraper MNtest;
 
-    //Take a SnapShot of the Rss feed
     @Test
     public void testScrape() {
-        pcTest.scrape();
-        System.out.print(pcTest.toString());
-        Assert.noNullElements(pcTest.getArticles(), "Error: Articles not Scraped");
+
+        MNtest.scrape();
+        System.out.print(MNtest.toString());
+        Assert.noNullElements(MNtest.getArticles(), "Error: Articles not Scraped");
 
     }
 

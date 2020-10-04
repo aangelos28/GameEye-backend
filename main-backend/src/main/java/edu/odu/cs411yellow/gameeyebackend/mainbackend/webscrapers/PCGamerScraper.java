@@ -11,6 +11,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -20,10 +21,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+@Service ("PCGamerScrape")
 public class PCGamerScraper implements WebScraper {
+
     private static final String rssFeed = "https://www.pcgamer.com/rss/";
     private List<Article> articles;
     private static final DateFormat format = new SimpleDateFormat("E, d MMMM yyyy kk:mm:ss z");
+
     @Autowired
     private NewsWebsiteRepository siteBuilder;
 
@@ -44,7 +48,7 @@ public class PCGamerScraper implements WebScraper {
         try {
             Document feed = Jsoup.connect(rssFeed).get();
 
-            NewsWebsite PCGamer = siteBuilder.findByName("PCGamer");
+            NewsWebsite PCGamer = siteBuilder.findByName("PC Gamer");
 
             Elements items = feed.select("item");
 

@@ -2,40 +2,37 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.webscrapers;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Image;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.NewsWebsite;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.NewsWebsiteRepository;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 import java.util.List;
 import java.util.UUID;
 
-@Service ("EuroGamerScrape")
-public class EuroGamerScraper implements WebScraper {
+@Service("MockNewsScrape")
+public class MockNewsScraper implements WebScraper{
 
-    private static final String rssFeed = "https://www.eurogamer.net/?format=rss";
+    private static final String newsSite = "https://gameeye-mock-news.netlify.app/";
     private List<Article> articles;
-    private static final DateFormat format = new SimpleDateFormat("E, d MMMM yyyy kk:mm:ss z");
+    public static DateFormat format = new SimpleDateFormat("E, MMMM d, yyyy");
 
-    @Autowired
-    private NewsWebsiteRepository siteBuilder;
+//  NOTE: GameEye Mock News is not in the database yet.
+//    @Autowired
+//    private NewsWebsiteRepository siteBuilder;
 
     /**
      * Constructor
      * @param articles from feed
      */
-    public EuroGamerScraper(List<Article> articles) {
+    public MockNewsScraper(List<Article> articles) {
         this.articles = articles;
     }
 
@@ -46,15 +43,16 @@ public class EuroGamerScraper implements WebScraper {
     public void scrape() {
 
         try {
-            Document feed = Jsoup.connect(rssFeed).get();
+            Document feed = Jsoup.parse(Jsoup.connect(newsSite).get().select("ul").toString());
 
-            NewsWebsite Eurogamer = siteBuilder.findByName("Eurogamer");
+//            NewsWebsite mockNews = siteBuilder.findByName("GameEye Mock News");
+            NewsWebsite mockNews = new NewsWebsite(UUID.randomUUID().toString(), "GameEyre Mock News",
+                    null, newsSite, newsSite, null);
 
-            Elements items = feed.select("item");
-
+            Elements items = feed.select("div");
             for (var i : items){
 
-                Article toAdd = createArticle(i,Eurogamer);
+                Article toAdd = createArticle(i,mockNews);
 
                 if (!checkDuplicateArticles(toAdd))
                     articles.add(toAdd);
@@ -69,25 +67,24 @@ public class EuroGamerScraper implements WebScraper {
     @Override
     public Article createArticle(Element i, NewsWebsite site) throws ParseException {
 
-        String title = i.select("title").text();
 
-        String url = i.select("link").text();
+        //Get Info
+        String title = i.select("h2").text();
 
-        //parse date
-        String pubDate = i.select("pubDate").text();
-        Date publicationDate = format.parse(pubDate);
+        //Parse Link
+        String url = i.select("a").toString();
+        String delims = "\"";
+        String [] parse = url.split(delims);
+        url = newsSite + parse[1];
 
-        //parse snippet
-        Document body = Jsoup.parse(i.select("description").text());
-        Elements paragraph = body.select("p");
-        String snippet = paragraph.text();
-        if (snippet.length() > 255)
-            snippet = snippet.substring(0,255);
+        String pubDate = i.selectFirst("p").text();
+        Date date = format.parse(pubDate);
 
-        //Create a Unique ID
+        String snippet = i.selectFirst("p").nextElementSibling().text();
+
         String id = UUID.randomUUID().toString();
-        return new Article(id, title, url, site,
-                new Image(id, ".jpg",null), snippet, publicationDate, publicationDate, 0);
+        return new Article(id , title, url, site,
+                null, snippet, date, date, 0);
 
     }
 
@@ -131,5 +128,6 @@ public class EuroGamerScraper implements WebScraper {
         Gson json = new GsonBuilder().setPrettyPrinting().create();
         return json.toJson(this.articles);
     }
+
 
 }

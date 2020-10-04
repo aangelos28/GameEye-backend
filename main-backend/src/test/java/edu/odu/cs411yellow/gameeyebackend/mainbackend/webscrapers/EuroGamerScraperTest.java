@@ -1,25 +1,20 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.webscrapers;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.Assert;
 
-import java.util.ArrayList;
-
+@RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles("test")
 public class EuroGamerScraperTest {
 
+    @Autowired
     public EuroGamerScraper egTest;
-
-
-    @BeforeEach
-    public void setUp() {
-        egTest = new EuroGamerScraper(new ArrayList<>() {
-        });
-    }
 
     //Take a SnapShot of the Rss feed
     @Test
@@ -27,7 +22,6 @@ public class EuroGamerScraperTest {
         egTest.scrape();
         System.out.print(egTest.toString());
         Assert.noNullElements(egTest.getArticles(), "Error: Articles not Scraped");
-        assert (true);
     }
 
 

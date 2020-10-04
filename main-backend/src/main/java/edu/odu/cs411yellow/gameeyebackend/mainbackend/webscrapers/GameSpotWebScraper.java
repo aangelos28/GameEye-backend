@@ -11,6 +11,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -19,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+@Service("GameSpotScrape")
 public class GameSpotWebScraper implements WebScraper {
 
     private static final String rssFeed = "https://www.gamespot.com/feeds/game-news/";
@@ -47,10 +49,6 @@ public class GameSpotWebScraper implements WebScraper {
             Document feed = Jsoup.connect(rssFeed).get();
 
             NewsWebsite GameSpot = siteBuilder.findByName("GameSpot");
-
-//            Date buildDate = format.parse(feed.selectFirst("lastBuildDate").text());
-//            NewsWebsite GameSpot = new NewsWebsite(UUID.randomUUID().toString(),"GameSpot", null,
-//                    "https://www.gamespot.com/", rssFeed, buildDate);
 
             Elements items = feed.select("item");
 
