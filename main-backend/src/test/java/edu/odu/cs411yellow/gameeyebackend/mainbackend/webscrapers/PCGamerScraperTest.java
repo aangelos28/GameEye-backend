@@ -14,6 +14,7 @@ public class PCGamerScraperTest {
 
     PCGamerScraper pcTest;
 
+
     @BeforeEach
     public void setUp() {
         pcTest = new PCGamerScraper(new ArrayList<>());
