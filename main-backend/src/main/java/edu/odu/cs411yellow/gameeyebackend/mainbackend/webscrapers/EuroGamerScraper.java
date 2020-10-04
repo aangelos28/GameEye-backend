@@ -21,12 +21,12 @@ import java.util.List;
 import java.util.UUID;
 
 public class EuroGamerScraper implements WebScraper {
-    private static String rssFeed = "https://www.eurogamer.net/?format=rss";
+    private static final String rssFeed = "https://www.eurogamer.net/?format=rss";
     private List<Article> articles;
-    private DateFormat format = new SimpleDateFormat("E, d MMMM yyyy kk:mm:ss z");
+    private static final DateFormat format = new SimpleDateFormat("E, d MMMM yyyy kk:mm:ss z");
 
     @Autowired
-    NewsWebsiteRepository siteBuilder;
+    private NewsWebsiteRepository siteBuilder;
 
     /**
      * Constructor
@@ -46,7 +46,6 @@ public class EuroGamerScraper implements WebScraper {
             Document feed = Jsoup.connect(rssFeed).get();
 
             NewsWebsite Eurogamer = siteBuilder.findByName("EuroGamer");
-
 
             Elements items = feed.select("item");
 
@@ -130,5 +129,4 @@ public class EuroGamerScraper implements WebScraper {
         return json.toJson(this.articles);
     }
 
-    //TODO Categorize Each game article
 }

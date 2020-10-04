@@ -1,28 +1,22 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.webscrapers;
 
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.controllers.TestController;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.commons.logging.LoggerFactory;
+import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
-import java.util.logging.Logger;
 
+@RunWith(SpringRunner.class)
 @SpringBootTest
+@ActiveProfiles("test")
 public class GameSpotWebScraperTests {
 
     GameSpotWebScraper gsTest;
-    Logger logger  = (Logger) LoggerFactory.getLogger(TestController.class);
-    //TODO Access the test controller
+//    Logger logger  = (Logger) LoggerFactory.getLogger(TestController.class);
 
     @BeforeEach
     public void setUp() {
@@ -33,22 +27,10 @@ public class GameSpotWebScraperTests {
     @Test
     public void testScrape() {
 
-        Element firstArticle;
-
         gsTest.scrape();
         System.out.print(gsTest.toString());
-        Assert.noNullElements(gsTest.getArticles(), "Error: Articles not Saved");
+        Assert.noNullElements(gsTest.getArticles(), "Error: Articles not Scraped");
 
-//        //Take snapShot of RSS feed
-//        try {
-//            gsTest.scrape();
-//            System.out.print(gsTest.toString());
-//            Assert.noNullElements(gsTest.getArticles(), "Error: Articles not Saved");
-//
-//        }
-//        catch (Exception ex){
-//            ex.printStackTrace();
-//        }
 
     }
 

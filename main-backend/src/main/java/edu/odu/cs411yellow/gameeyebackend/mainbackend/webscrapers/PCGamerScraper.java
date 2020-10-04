@@ -21,11 +21,11 @@ import java.util.List;
 import java.util.UUID;
 
 public class PCGamerScraper implements WebScraper {
-    private static String rssFeed = "https://www.pcgamer.com/rss/";
+    private static final String rssFeed = "https://www.pcgamer.com/rss/";
     private List<Article> articles;
-    private DateFormat format = new SimpleDateFormat("E, d MMMM yyyy kk:mm:ss z");
+    private static final DateFormat format = new SimpleDateFormat("E, d MMMM yyyy kk:mm:ss z");
     @Autowired
-    NewsWebsiteRepository siteBuilder;
+    private NewsWebsiteRepository siteBuilder;
 
     /**
      * Constructor
@@ -127,6 +127,4 @@ public class PCGamerScraper implements WebScraper {
         Gson json = new GsonBuilder().setPrettyPrinting().create();
         return json.toJson(this.articles);
     }
-
-    //TODO Categorize Each game article
 }

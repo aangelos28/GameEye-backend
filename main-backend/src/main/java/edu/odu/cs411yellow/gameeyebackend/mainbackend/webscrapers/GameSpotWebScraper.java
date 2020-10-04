@@ -12,17 +12,19 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 public class GameSpotWebScraper implements WebScraper {
 
-    private static String rssFeed = "https://www.gamespot.com/feeds/game-news/";
+    private static final String rssFeed = "https://www.gamespot.com/feeds/game-news/";
     private List<Article> articles;
-    private DateFormat format = new SimpleDateFormat("E, d MMMM yyyy kk:mm:ss z");
+    private static final DateFormat format = new SimpleDateFormat("E, d MMMM yyyy kk:mm:ss z");
+
     @Autowired
     NewsWebsiteRepository siteBuilder;
 
@@ -33,6 +35,7 @@ public class GameSpotWebScraper implements WebScraper {
     public GameSpotWebScraper(List<Article> articles) {
         this.articles = articles;
     }
+
 
     /**
      * Initiate the scrape
@@ -47,7 +50,7 @@ public class GameSpotWebScraper implements WebScraper {
 
 //            Date buildDate = format.parse(feed.selectFirst("lastBuildDate").text());
 //            NewsWebsite GameSpot = new NewsWebsite(UUID.randomUUID().toString(),"GameSpot", null,
-//                    "https://www.gamespot.com/", rssFeed, buildDate, buildDate);
+//                    "https://www.gamespot.com/", rssFeed, buildDate);
 
             Elements items = feed.select("item");
 
@@ -128,5 +131,4 @@ public class GameSpotWebScraper implements WebScraper {
         return json.toJson(this.articles);
     }
 
-    //TODO Categorize Each game article
 }
