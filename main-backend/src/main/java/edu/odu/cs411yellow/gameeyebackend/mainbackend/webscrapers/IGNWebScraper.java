@@ -36,14 +36,16 @@ public class IGNWebScraper implements WebScraper{
         this.articles = articles;
     }
 
-
+    /**
+     * Initiates scrape
+     */
     @Override
     public void scrape()
     {
         try {
             //Connects to RSS feed and parses into a document to retrieve article elements
             Document doc = Jsoup.connect(url).get();
-            NewsWebsite IGN= siteBuilder.findByName("IGN");
+            NewsWebsite IGN= siteBuilder.findByName("IGN"); //Searches database for IGN
             Elements links = doc.getElementsByTag("item");  //A collection of articles from the parsed URL
 
             //Searches through each individual article
@@ -55,14 +57,22 @@ public class IGNWebScraper implements WebScraper{
                 if(!checkDuplicateArticles(curr)) {
                     articles.add(curr);
                 }
-
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Creates an Article object from the extracted url, article title, article
+     * publication date, news website, article thumbnail,
+     * article description, and calculated impact score
+     *
+     * @param e HTML element pulled from the RSS feed
+     * @param newsSite  Website where the article originated
+     * @return  Article
+     * @throws ParseException
+     */
     @Override
     public Article createArticle(Element e, NewsWebsite newsSite) throws ParseException {
 
@@ -73,7 +83,7 @@ public class IGNWebScraper implements WebScraper{
 
         //TODO
         //Get Last Published Date
-        String lastUpdated=e.select("").text();
+        //String lastUpdated=e.select("").text();
         Date lastPubDate = pubDate;
 
         //Gets a short description of the article for viewing
@@ -81,9 +91,12 @@ public class IGNWebScraper implements WebScraper{
         if (snippet.length() > 255)
             snippet = snippet.substring(0,255);
 
+        //Placeholder
         int impact = 0;
+
         String id = UUID.randomUUID().toString();   //Assigns a random ID number for article
 
+        //Placeholder
         Image thumbnail = new Image (id,".jpg",null);
 
         //TODO
@@ -96,24 +109,39 @@ public class IGNWebScraper implements WebScraper{
                 snippet, pubDate, lastPubDate, impact);
     }
 
+    /**
+     * Retrieves a list of the extracted news articles by the web scraper
+     *
+     * @return  List of scraped articles
+     */
     @Override
     public List<Article> getArticles() {
         return articles;
     }
 
+    /**
+     * Retrieves a specific news article provided an index.
+     *
+     * @param index Index pertaining to an article
+     * @return Article
+     */
     @Override
     public Article getArticle(int index){
         return articles.get(index);
     }
 
-
+    /**
+     * Checks if newly created article object is already present in list of
+     * extracted articles
+     * @param a Newly created Article
+     * @return Boolean
+     */
     @Override
     public Boolean checkDuplicateArticles(Article a){
         for (Article i : articles) {
             if (a.getTitle().contentEquals(i.getTitle()))
                 return true;
         }
-
         return false;
     }
 
@@ -125,6 +153,7 @@ public class IGNWebScraper implements WebScraper{
     public String toString() {
         Gson json = new GsonBuilder().setPrettyPrinting().create();
         return json.toJson(this.articles);
+
     }
 
 }
