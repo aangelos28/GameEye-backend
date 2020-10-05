@@ -1,7 +1,6 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.webscrapers;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Image;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.NewsWebsite;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
@@ -13,57 +12,56 @@ import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
-@Service("GameSpotScrape")
+@Service
 public class GameSpotWebScraper implements WebScraper {
 
+    @Autowired
+    NewsWebsiteRepository newsWebsites;
+
+//    private String rssFeed = newsWebsites.findByName("gamespot").getRssFeedUrl();
     private static final String rssFeed = "https://www.gamespot.com/feeds/game-news/";
     private List<Article> articles;
     private static final DateFormat format = new SimpleDateFormat("E, d MMMM yyyy kk:mm:ss z");
 
-    @Autowired
-    NewsWebsiteRepository siteBuilder;
 
-    /**
-     *  Constructor
-     * @param articles from feed
-     */
-    public GameSpotWebScraper(List<Article> articles) {
-        this.articles = articles;
+
+
+
+    public GameSpotWebScraper(){
+        articles = new ArrayList<>();
     }
-
 
     /**
      * Initiate the scrape
      */
     @Override
-    public void scrape() {
+    public List<Article> scrape() {
 
         try {
-            Document feed = Jsoup.connect(rssFeed).get();
+            NewsWebsite GameSpot = newsWebsites.findByName("gamespot");
 
-            NewsWebsite GameSpot = siteBuilder.findByName("GameSpot");
+            Document RssFeed = Jsoup.connect(rssFeed).get();
 
-            Elements items = feed.select("item");
+            Elements items = RssFeed.select("item");
 
             for (var i : items){
 
                 Article toAdd = createArticle(i,GameSpot);
-
-                if (!checkDuplicateArticles(toAdd))
-                    articles.add(toAdd);
+                articles.add(toAdd);
             }
         }
         catch(Exception ex){
             ex.printStackTrace();
         }
-
+        return articles;
     }
 
     @Override
@@ -80,23 +78,20 @@ public class GameSpotWebScraper implements WebScraper {
         Document body = Jsoup.parse(i.select("description").text());
         Elements paragraph = body.select("p");
         String snippet = paragraph.text();
-        if (snippet.length() > 255)
+        if (snippet.length() > 255){
             snippet = snippet.substring(0,255);
+        }
+
+        Image image = new Image(null, ".jpg",null);
 
         //Create a Unique ID
-        String id = UUID.randomUUID().toString();
-        return new Article(id, title, url, site,
-                new Image(id, ".jpg",null), snippet, publicationDate, publicationDate, 0);
+        return new Article(null, title, url, site, image,
+                snippet, publicationDate, publicationDate, 0);
 
     }
 
     @Override
-    public Boolean checkDuplicateArticles(Article a) {
-        for (Article i : articles) {
-            if (a.getTitle().contentEquals(i.getTitle()))
-                return true;
-        }
-
+    public Boolean checkDuplicateArticles(Article a){
         return false;
     }
 
@@ -125,8 +120,20 @@ public class GameSpotWebScraper implements WebScraper {
      */
     @Override
     public String toString() {
-        Gson json = new GsonBuilder().setPrettyPrinting().create();
-        return json.toJson(this.articles);
+        ObjectMapper obj= new ObjectMapper();
+        String articlesStr="";
+        for (Article a:articles){
+
+            try {
+                String temp;
+                temp = obj.writerWithDefaultPrettyPrinter().writeValueAsString(a);
+                articlesStr = articlesStr + "\n" + temp;
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return articlesStr;
     }
 
 }

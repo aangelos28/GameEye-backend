@@ -1,67 +1,62 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.webscrapers;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Image;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.NewsWebsite;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.NewsWebsiteRepository;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
-@Service("MockNewsScrape")
+@Service
 public class MockNewsScraper implements WebScraper{
 
-    private static final String newsSite = "https://gameeye-mock-news.netlify.app/";
+    @Autowired
+    NewsWebsiteRepository newsWebsites;
+
+//    private String rssFeed = newsWebsites.findByName("gameeye mock news").getRssFeedUrl();
+    private static final String rssFeed = "https://gameeye-mock-news.netlify.app" ;
     private List<Article> articles;
     public static DateFormat format = new SimpleDateFormat("E, MMMM d, yyyy");
 
-//  NOTE: GameEye Mock News is not in the database yet.
-//    @Autowired
-//    private NewsWebsiteRepository siteBuilder;
-
-    /**
-     * Constructor
-     * @param articles from feed
-     */
-    public MockNewsScraper(List<Article> articles) {
-        this.articles = articles;
+    public MockNewsScraper(){
+        articles = new ArrayList<>();
     }
 
     /**
      * Initiate the scrape
      */
     @Override
-    public void scrape() {
+    public List<Article> scrape() {
 
         try {
-            Document feed = Jsoup.parse(Jsoup.connect(newsSite).get().select("ul").toString());
+            NewsWebsite mockNews = newsWebsites.findByName("GameEye Mock News");
 
-//            NewsWebsite mockNews = siteBuilder.findByName("GameEye Mock News");
-            NewsWebsite mockNews = new NewsWebsite(UUID.randomUUID().toString(), "GameEyre Mock News",
-                    null, newsSite, newsSite, null);
+            Document RssFeed = Jsoup.parse(Jsoup.connect(rssFeed).get().select("ul").toString());
 
-            Elements items = feed.select("div");
+            Elements items = RssFeed.select("div");
             for (var i : items){
 
                 Article toAdd = createArticle(i,mockNews);
-
-                if (!checkDuplicateArticles(toAdd))
-                    articles.add(toAdd);
+                articles.add(toAdd);
             }
         }
         catch(Exception ex){
             ex.printStackTrace();
         }
-
+        return articles;
     }
 
     @Override
@@ -75,29 +70,26 @@ public class MockNewsScraper implements WebScraper{
         String url = i.select("a").toString();
         String delims = "\"";
         String [] parse = url.split(delims);
-        url = newsSite + parse[1];
+        url = "https://gameeye-mock-news.netlify.app" + parse[1];
 
         String pubDate = i.selectFirst("p").text();
         Date date = format.parse(pubDate);
 
         String snippet = i.selectFirst("p").nextElementSibling().text();
+        if (snippet.length() > 255){
+            snippet = snippet.substring(0,255);
+        }
 
-        String id = UUID.randomUUID().toString();
-        return new Article(id , title, url, site,
-                null, snippet, date, date, 0);
+        Image image = new Image(null, ".jpg",null);
+
+        return new Article(null , title, url, site, image,
+                snippet, date, date, 0);
 
     }
 
     @Override
-    public Boolean checkDuplicateArticles(Article a) {
-
-        for (Article i : articles) {
-            if (a.getTitle().contentEquals(i.getTitle()))
-                return true;
-        }
-
+    public Boolean checkDuplicateArticles(Article a){
         return false;
-
     }
 
     /**
@@ -125,8 +117,20 @@ public class MockNewsScraper implements WebScraper{
      */
     @Override
     public String toString() {
-        Gson json = new GsonBuilder().setPrettyPrinting().create();
-        return json.toJson(this.articles);
+        ObjectMapper obj= new ObjectMapper();
+        String articlesStr="";
+        for (Article a:articles){
+
+            try {
+                String temp;
+                temp = obj.writerWithDefaultPrettyPrinter().writeValueAsString(a);
+                articlesStr = articlesStr + "\n" + temp;
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return articlesStr;
     }
 
 
