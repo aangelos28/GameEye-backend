@@ -29,6 +29,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors()
                 .and()
                 .addFilterBefore(firebaseIdTokenFilterBean(), (Class<? extends Filter>) UsernamePasswordAuthenticationFilter.class);
+
+        // Disable CSRF
+        http.csrf().disable();
     }
 
     /**
