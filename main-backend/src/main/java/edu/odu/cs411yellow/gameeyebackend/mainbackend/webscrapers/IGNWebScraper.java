@@ -1,7 +1,8 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.webscrapers;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+//import com.google.gson.Gson;
+//import com.google.gson.GsonBuilder;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Image;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.NewsWebsite;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
@@ -13,6 +14,7 @@ import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,19 +22,19 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.io.IOException;
+
+
 
 @Service
 public class IGNWebScraper implements WebScraper{
     @Autowired
     NewsWebsiteRepository newsWebsites;
 
-    private String url = newsWebsites.findByName("IGN").getRssFeedUrl();
-    //private static final String url = "http://feeds.feedburner.com/ign/games-all";
+    //private String url = newsWebsites.findByName("IGN").getRssFeedUrl();
+    private static final String url = "http://feeds.feedburner.com/ign/games-all";
     private List<Article> articles;
     private DateFormat format = new SimpleDateFormat("E, d MMMM yyyy kk:mm:ss z");
-    //private String siteURL = "https://www.ign.com/";
-
-
 
 
     public IGNWebScraper() {
@@ -43,7 +45,7 @@ public class IGNWebScraper implements WebScraper{
      * Initiates scrape
      */
     @Override
-    public void scrape()
+    public List<Article> scrape()
     {
         try {
             //Connects to RSS feed and parses into a document to retrieve article elements
@@ -57,11 +59,17 @@ public class IGNWebScraper implements WebScraper{
             {
                 Article curr = createArticle(link,ign);
 
+                //Adds article to collection if not already present in database
+                //to prevent duplicate articles
+                if(!checkDuplicateArticles(curr)) {
                     articles.add(curr);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        return articles;
     }
 
     /**
@@ -89,13 +97,15 @@ public class IGNWebScraper implements WebScraper{
 
         //Gets a short description of the article for viewing
         String snippet = e.select("description").text();
-        if (snippet.length() > 255)
-            snippet = snippet.substring(0,255);
+        if (snippet.length() > 255) {
+            snippet = snippet.substring(0, 255);
+        }
 
         //Placeholder
         int impact = 0;
 
-        String id = UUID.randomUUID().toString();   //Assigns a random ID number for article
+        //Placeholder
+        String id = null; // Assigns a random ID number for article
 
         //Placeholder
         Image thumbnail = new Image (id,".jpg",null);
@@ -132,17 +142,16 @@ public class IGNWebScraper implements WebScraper{
     }
 
     /**
-     * Checks if newly created article object is already present in list of
-     * extracted articles
+     * Checks if discovered article is already present in database
+     *
      * @param a Newly created Article
      * @return Boolean
      */
     @Override
     public Boolean checkDuplicateArticles(Article a){
-        for (Article i : articles) {
-            if (a.getTitle().contentEquals(i.getTitle()))
-                return true;
-        }
+        //TODO
+        //Check database for article
+
         return false;
     }
 
@@ -152,9 +161,20 @@ public class IGNWebScraper implements WebScraper{
      */
     @Override
     public String toString() {
-        Gson json = new GsonBuilder().setPrettyPrinting().create();
-        return json.toJson(this.articles);
+        ObjectMapper obj= new ObjectMapper();
+        String articlesStr="";
+        for (Article a:articles){
 
+            try {
+                String temp;
+                temp = obj.writerWithDefaultPrettyPrinter().writeValueAsString(a);
+                articlesStr = articlesStr + "\n" + temp;
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return articlesStr;
     }
 
 }

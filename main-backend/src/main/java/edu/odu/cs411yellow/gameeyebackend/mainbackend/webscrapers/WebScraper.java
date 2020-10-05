@@ -16,8 +16,11 @@ public interface WebScraper {
 
     /**
      * Initiates web scraping.
+     *
+     * @return List of Articles
      */
-    void scrape();
+    List<Article> scrape();
+    //void scrape();
 
     /**
      * Retrieves a list of the extracted news articles by the web scraper
