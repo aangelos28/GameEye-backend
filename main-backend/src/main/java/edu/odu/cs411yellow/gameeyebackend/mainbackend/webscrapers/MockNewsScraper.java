@@ -42,7 +42,7 @@ public class MockNewsScraper implements WebScraper{
     public List<Article> scrape() {
 
         try {
-            NewsWebsite mockNews = newsWebsites.findByName("GameEye Mock News");
+            NewsWebsite mockNews = newsWebsites.findByName("gameeye mock news");
 
             Document RssFeed = Jsoup.parse(Jsoup.connect(rssFeed).get().select("ul").toString());
 

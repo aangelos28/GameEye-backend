@@ -44,7 +44,7 @@ public class EuroGamerScraper implements WebScraper {
     public List<Article> scrape() {
 
         try {
-            NewsWebsite Eurogamer = newsWebsites.findByName("EuroGamer");
+            NewsWebsite Eurogamer = newsWebsites.findByName("eurogamer");
 
             Document RssFeed = Jsoup.connect(rssFeed).get();
 
