@@ -16,8 +16,11 @@ public interface WebScraper {
 
     /**
      * Initiates web scraping.
+     *
+     * @return List of Articles
      */
-    void scrape();
+    List<Article> scrape();
+    //void scrape();
 
     /**
      * Retrieves a list of the extracted news articles by the web scraper
@@ -30,7 +33,7 @@ public interface WebScraper {
      * Retrieves a specific news article provided an index.
      *
      * @param index Index pertaining to an article
-     * @return An Article
+     * @return Article
      */
     Article getArticle(int index);
 
@@ -41,7 +44,7 @@ public interface WebScraper {
      *
      * @param e HTML element pulled from the RSS feed
      * @param newsSite  Website where the article originated
-     * @return  An Article object
+     * @return  Article
      * @throws ParseException
      */
     Article createArticle(Element e, NewsWebsite newsSite) throws ParseException;
@@ -51,7 +54,7 @@ public interface WebScraper {
      * extracted articles
      *
      * @param a Newly created Article
-     * @return
+     * @return Boolean
      */
     Boolean checkDuplicateArticles(Article a);
 }
