@@ -1,9 +1,6 @@
 
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.controllers;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Preferences;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.UserPlan;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.UserStatus;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.WatchedGame;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.*;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.UserService;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,7 +33,10 @@ public class UserController {
         userService.registerUser(firebaseId);
     }
 
-
+    public User findUser(String firebaseID)
+    {
+       return userService.findUserbyFirebase(firebaseID);
+    }
     /*  To be implemented later when we start creating lists of users.
     public String showAllUsers()
     {
