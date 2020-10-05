@@ -76,12 +76,9 @@ public class IgdbServiceTest {
     @Test
     public void testGetGameResponsesByRange() throws JsonProcessingException {
         int lowerId = 1;
-        int upperId = 200;
+        int upperId = 100;
 
         List<IgdbModel.GameResponse> gameResponses = igdbService.getGameResponsesByRange(lowerId, upperId);
-
-        int expectedSize = upperId - lowerId + 1;
-
 
         for (IgdbModel.GameResponse gameResponse: gameResponses) {
             gameRepository.save(gameResponse.toGame());
