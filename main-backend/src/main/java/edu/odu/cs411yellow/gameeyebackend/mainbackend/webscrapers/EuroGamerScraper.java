@@ -26,8 +26,6 @@ public class EuroGamerScraper implements WebScraper {
     @Autowired
     NewsWebsiteRepository newsWebsites;
 
-//    private String rssFeed = newsWebsites.findByName("eurogamer").getRssFeedUrl();
-    private static final String rssFeed = "https://www.eurogamer.net/?format=rss";
     private List<Article> articles;
     private static final DateFormat format = new SimpleDateFormat("E, d MMMM yyyy kk:mm:ss z");
 
@@ -44,15 +42,16 @@ public class EuroGamerScraper implements WebScraper {
     public List<Article> scrape() {
 
         try {
-            NewsWebsite Eurogamer = newsWebsites.findByName("eurogamer");
+            NewsWebsite eurogamer = newsWebsites.findByName("Eurogamer");
+            String rssFeedUrl = newsWebsites.findByName("Eurogamer").getRssFeedUrl();
 
-            Document RssFeed = Jsoup.connect(rssFeed).get();
+            Document rssFeed = Jsoup.connect(rssFeedUrl).get();
 
-            Elements items = RssFeed.select("item");
+            Elements items = rssFeed.select("item");
 
             for (var i : items){
 
-                Article toAdd = createArticle(i,Eurogamer);
+                Article toAdd = createArticle(i,eurogamer);
                 articles.add(toAdd);
             }
         }

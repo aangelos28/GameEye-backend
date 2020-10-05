@@ -26,8 +26,7 @@ public class PCGamerScraper implements WebScraper {
     @Autowired
     NewsWebsiteRepository newsWebsites;
 
-//    private String rssFeed = newsWebsites.findByName("pcgamer").getRssFeedUrl();
-    private static final String rssFeed = "https://www.pcgamer.com/rss/";
+//    private static final String rssFeed = "https://www.pcgamer.com/rss/";
     private List<Article> articles;
     private static final DateFormat format = new SimpleDateFormat("E, d MMMM yyyy kk:mm:ss z");
 
@@ -44,16 +43,17 @@ public class PCGamerScraper implements WebScraper {
     public List<Article> scrape() {
 
         try {
-            NewsWebsite PCGamer = newsWebsites.findByName("pc gamer");
+            NewsWebsite pcGamer = newsWebsites.findByName("PC Gamer");
+            String rssFeedUrl = newsWebsites.findByName("PC Gamer").getRssFeedUrl();
 
-            Document RssFeed = Jsoup.connect(rssFeed).get();
+            Document rssFeed = Jsoup.connect(rssFeedUrl).get();
 
 
-            Elements items = RssFeed.select("item");
+            Elements items = rssFeed.select("item");
 
             for (var i : items){
 
-                Article toAdd = createArticle(i,PCGamer);
+                Article toAdd = createArticle(i,pcGamer);
                 articles.add(toAdd);
             }
         }

@@ -26,8 +26,6 @@ public class MockNewsScraper implements WebScraper{
     @Autowired
     NewsWebsiteRepository newsWebsites;
 
-//    private String rssFeed = newsWebsites.findByName("gameeye mock news").getRssFeedUrl();
-    private static final String rssFeed = "https://gameeye-mock-news.netlify.app" ;
     private List<Article> articles;
     public static DateFormat format = new SimpleDateFormat("E, MMMM d, yyyy");
 
@@ -42,9 +40,10 @@ public class MockNewsScraper implements WebScraper{
     public List<Article> scrape() {
 
         try {
-            NewsWebsite mockNews = newsWebsites.findByName("gameeye mock news");
+            NewsWebsite mockNews = newsWebsites.findByName("GameEye Mock News");
+            String rssFeedUrl = newsWebsites.findByName("GameEye Mock News").getSiteUrl();
 
-            Document RssFeed = Jsoup.parse(Jsoup.connect(rssFeed).get().select("ul").toString());
+            Document RssFeed = Jsoup.parse(Jsoup.connect(rssFeedUrl).get().select("ul").toString());
 
             Elements items = RssFeed.select("div");
             for (var i : items){

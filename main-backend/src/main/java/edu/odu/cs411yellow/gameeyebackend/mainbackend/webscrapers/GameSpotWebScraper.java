@@ -26,8 +26,6 @@ public class GameSpotWebScraper implements WebScraper {
     @Autowired
     NewsWebsiteRepository newsWebsites;
 
-//    private String rssFeed = newsWebsites.findByName("gamespot").getRssFeedUrl();
-    private static final String rssFeed = "https://www.gamespot.com/feeds/game-news/";
     private List<Article> articles;
     private static final DateFormat format = new SimpleDateFormat("E, d MMMM yyyy kk:mm:ss z");
 
@@ -46,15 +44,16 @@ public class GameSpotWebScraper implements WebScraper {
     public List<Article> scrape() {
 
         try {
-            NewsWebsite GameSpot = newsWebsites.findByName("gamespot");
+            NewsWebsite gameSpot = newsWebsites.findByName("GameSpot");
+            String rssFeedUrl = newsWebsites.findByName("GameSpot").getRssFeedUrl();
 
-            Document RssFeed = Jsoup.connect(rssFeed).get();
+            Document rssFeed = Jsoup.connect(rssFeedUrl).get();
 
-            Elements items = RssFeed.select("item");
+            Elements items = rssFeed.select("item");
 
             for (var i : items){
 
-                Article toAdd = createArticle(i,GameSpot);
+                Article toAdd = createArticle(i,gameSpot);
                 articles.add(toAdd);
             }
         }
