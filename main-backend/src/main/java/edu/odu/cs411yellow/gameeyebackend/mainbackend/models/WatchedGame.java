@@ -32,7 +32,7 @@ public class WatchedGame {
         return this.notificationCount;
     }
 
-    public void setTitle(Integer notificationCount) {
+    public void setNotificationCount(Integer notificationCount) {
         this.notificationCount = notificationCount;
     }
 
