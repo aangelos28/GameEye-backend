@@ -43,6 +43,8 @@ public class IGNWebScraper implements WebScraper{
 
     /**
      * Initiates scrape
+     *
+     * @return List of scraped articles
      */
     @Override
     public List<Article> scrape()
