@@ -20,6 +20,10 @@ public class WatchedGame {
         this.resourceNotifications = resourceNotifications;
     }
 
+    public WatchedGame(Game game) {
+        this.gameId = game.getId();
+    }
+
     public WatchedGame() {
         this.gameId = "";
         this.notificationCount = 0;
