@@ -2,11 +2,13 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.controllers;
 
 import com.google.firebase.auth.FirebaseToken;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.WatchedGame;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.requests.WatchlistGameRequest;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.WatchlistService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,10 +16,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * REST API for interacting with user watchlists.
+ */
 @RestController
 public class WatchlistController {
 
     WatchlistService watchlistService;
+
     Logger logger = LoggerFactory.getLogger(WatchlistController.class);
 
     @Autowired
@@ -30,26 +36,26 @@ public class WatchlistController {
      *
      * @return List of games.
      */
-    @GetMapping(path = "/private/watchlist")
+    @GetMapping(path = "/private/watchlist", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<WatchedGame> getWatchlistGames() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        FirebaseToken fbToken = (FirebaseToken) auth.getPrincipal();
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final FirebaseToken fbToken = (FirebaseToken) auth.getPrincipal();
 
-        return this.watchlistService.getWatchlistGames(fbToken.getUid());
+        return watchlistService.getWatchlistGames(fbToken.getUid());
     }
 
     /**
      * Adds a game to a user's watchlist.
      *
-     * @param gameId Id of the game to add.
+     * @param request HTTP request body
      */
-    @PostMapping(path = "/private/watchlist/add/{gameId}")
-    public ResponseEntity<?> addWatchlistGame(@PathVariable String gameId) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        FirebaseToken fbToken = (FirebaseToken) auth.getPrincipal();
+    @PostMapping(path = "/private/watchlist/add", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> addWatchlistGame(@RequestBody WatchlistGameRequest request) {
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final FirebaseToken fbToken = (FirebaseToken) auth.getPrincipal();
 
         try {
-            this.watchlistService.addWatchlistGame(fbToken.getUid(), gameId);
+            watchlistService.addWatchlistGame(fbToken.getUid(), request.getGameId());
             return ResponseEntity.status(HttpStatus.CREATED).body("Added game to watchlist.");
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -64,14 +70,95 @@ public class WatchlistController {
      */
     @DeleteMapping(path = "/private/watchlist/delete/{gameIndex}")
     public ResponseEntity<?> deleteWatchlistGame(@PathVariable int gameIndex) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        FirebaseToken fbToken = (FirebaseToken) auth.getPrincipal();
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final FirebaseToken fbToken = (FirebaseToken) auth.getPrincipal();
 
         try {
-            this.watchlistService.deleteWatchlistGame(fbToken.getUid(), gameIndex);
+            watchlistService.deleteWatchlistGame(fbToken.getUid(), gameIndex);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body("Deleted game from watchlist.");
         } catch (Exception ex) {
+            ex.printStackTrace();
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to delete game with specified index");
+        }
+    }
+
+    /**
+     * Gets all the games in the watchlist of a user with a specific id.
+     *
+     * @return List of games.
+     */
+    @GetMapping(path = "/private-admin/watchlist", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getWatchlistGamesAdmin(@RequestBody WatchlistGameRequest request) {
+        final String userId = request.getUserId();
+
+        try {
+            final List<WatchedGame> watchlist = watchlistService.getWatchlistGames(userId);
+
+            logger.info(String.format("ADMIN: Got watchlist of user %s.", userId));
+
+            return ResponseEntity.ok().body(watchlist);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+
+            final String response = String.format("ADMIN: Failed to get watchlist of user %s.", userId);
+            logger.warn(response);
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+    }
+
+    /**
+     * Adds a game with a specific id to the watchlist of the user with
+     * a specific id.
+     *
+     * @param request HTTP request body
+     */
+    @PostMapping(path = "/private-admin/watchlist/add", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> addWatchlistGameAdmin(@RequestBody WatchlistGameRequest request) {
+        final String userId = request.getUserId();
+        final String gameId = request.getGameId();
+
+        try {
+            watchlistService.addWatchlistGame(userId, gameId);
+
+            final String response = String.format("ADMIN: Added game %s to watchlist of user %s.", gameId, userId);
+            logger.info(response);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+
+            final String response = String.format("ADMIN: Failed to add game %s to watchlist of user %s.", userId, gameId);
+            logger.warn(response);
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+    }
+
+    /**
+     * Deletes a game from the watchlist of a user with a specific id.
+     *
+     * @param gameIndex Index of the game in the user's watchlist to delete
+     * @param request   HTTP request body
+     */
+    @DeleteMapping(path = "/private-admin/watchlist/delete/{gameIndex}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteWatchlistGameAdmin(@PathVariable int gameIndex, @RequestBody WatchlistGameRequest request) {
+        final String userId = request.getUserId();
+
+        try {
+            watchlistService.deleteWatchlistGame(userId, gameIndex);
+
+            final String response = String.format("ADMIN: Deleted game %d from watchlist of user %s.", gameIndex, userId);
+            logger.info(response);
+
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+
+            final String response = String.format("ADMIN: Failed to delete game %d from watchlist of user %s.", gameIndex, userId);
+            logger.warn(response);
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("ADMIN: Failed to delete game with specified index.");
         }
     }
 }

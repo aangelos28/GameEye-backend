@@ -35,8 +35,8 @@ public class WatchlistService {
      * @param firebaseUserId The firebase id of the user.
      * @return List of watched games.
      */
-    public List<WatchedGame> getWatchlistGames(String firebaseUserId) {
-        User user = this.users.findUserByFirebaseId(firebaseUserId);
+    public List<WatchedGame> getWatchlistGames(final String firebaseUserId) {
+        final User user = this.users.findUserByFirebaseId(firebaseUserId);
 
         return user.getWatchList();
     }
@@ -47,14 +47,14 @@ public class WatchlistService {
      * @param firebaseUserId The firebase id of the user.
      * @param gameId         Id of the game to add.
      */
-    public void addWatchlistGame(String firebaseUserId, String gameId) {
-        User user = this.users.findUserByFirebaseId(firebaseUserId);
-        Game game = this.games.findGameById(gameId);
+    public void addWatchlistGame(final String firebaseUserId, final String gameId) {
+        final User user = this.users.findUserByFirebaseId(firebaseUserId);
+        final Game game = this.games.findGameById(gameId);
 
         if (game == null) return;
 
-        List<WatchedGame> watchlist = user.getWatchList();
-        WatchedGame newGame = new WatchedGame(game.getId(), 0, new ResourceNotifications());
+        final List<WatchedGame> watchlist = user.getWatchList();
+        final WatchedGame newGame = new WatchedGame(game.getId(), 0, new ResourceNotifications());
 
         // Ensure we do not add a duplicate game
         if (!watchlist.contains(newGame)) {
@@ -70,15 +70,15 @@ public class WatchlistService {
      * @param firebaseUserId The firebase id of the user.
      * @param gameIndex      Index of the game in the watchlist to delete.
      */
-    public void deleteWatchlistGame(String firebaseUserId, int gameIndex) throws Exception {
-        User user = this.users.findUserByFirebaseId(firebaseUserId);
+    public void deleteWatchlistGame(final String firebaseUserId, final int gameIndex) throws Exception {
+        final User user = this.users.findUserByFirebaseId(firebaseUserId);
 
         // Disallow negative game indices
         if (gameIndex < 0) {
             throw new Exception("Negative game indices not allowed.");
         }
 
-        List<WatchedGame> watchlist = user.getWatchList();
+        final List<WatchedGame> watchlist = user.getWatchList();
 
         // Disallow game indices out of watchlist bounds
         if (gameIndex >= watchlist.size()) {
