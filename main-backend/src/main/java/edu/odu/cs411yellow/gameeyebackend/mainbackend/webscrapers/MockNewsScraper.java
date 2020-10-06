@@ -23,14 +23,17 @@ import java.util.List;
 @Service
 public class MockNewsScraper implements WebScraper{
 
-    @Autowired
     NewsWebsiteRepository newsWebsites;
-
+    private String url;
     private List<Article> articles;
-    public static DateFormat format = new SimpleDateFormat("E, MMMM d, yyyy");
+    private DateFormat format;
 
-    public MockNewsScraper(){
+    @Autowired
+    public MockNewsScraper(NewsWebsiteRepository newsWebsites){
+        this.newsWebsites = newsWebsites;
         articles = new ArrayList<>();
+        url = newsWebsites.findByName("GameEye Mock News").getSiteUrl();
+        format = new SimpleDateFormat("E, MMMM d, yyyy");
     }
 
     /**
@@ -41,9 +44,8 @@ public class MockNewsScraper implements WebScraper{
 
         try {
             NewsWebsite mockNews = newsWebsites.findByName("GameEye Mock News");
-            String rssFeedUrl = newsWebsites.findByName("GameEye Mock News").getSiteUrl();
 
-            Document RssFeed = Jsoup.parse(Jsoup.connect(rssFeedUrl).get().select("ul").toString());
+            Document RssFeed = Jsoup.parse(Jsoup.connect(url).get().select("ul").toString());
 
             Elements items = RssFeed.select("div");
             for (var i : items){

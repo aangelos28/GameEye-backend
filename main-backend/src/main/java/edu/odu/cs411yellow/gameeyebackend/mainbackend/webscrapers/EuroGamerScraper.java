@@ -23,16 +23,17 @@ import java.util.List;
 @Service
 public class EuroGamerScraper implements WebScraper {
 
-    @Autowired
     NewsWebsiteRepository newsWebsites;
-
+    private String url;
     private List<Article> articles;
-    private static final DateFormat format = new SimpleDateFormat("E, d MMMM yyyy kk:mm:ss z");
+    private DateFormat format;
 
-
-
-    public EuroGamerScraper() {
+    @Autowired
+    public EuroGamerScraper(NewsWebsiteRepository newsWebsites) {
+        this.newsWebsites = newsWebsites;
         articles = new ArrayList<>();
+        url= newsWebsites.findByName("Eurogamer").getRssFeedUrl();
+        format = new SimpleDateFormat("E, d MMMM yyyy kk:mm:ss z");
     }
 
     /**
@@ -43,9 +44,8 @@ public class EuroGamerScraper implements WebScraper {
 
         try {
             NewsWebsite eurogamer = newsWebsites.findByName("Eurogamer");
-            String rssFeedUrl = newsWebsites.findByName("Eurogamer").getRssFeedUrl();
 
-            Document rssFeed = Jsoup.connect(rssFeedUrl).get();
+            Document rssFeed = Jsoup.connect(url).get();
 
             Elements items = rssFeed.select("item");
 
