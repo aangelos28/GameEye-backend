@@ -10,6 +10,7 @@ public class IgdbModel {
 
     public static class GameResponse {
         public String id;
+        public String igdbId;
         public String name;
         @JsonProperty("platforms")
         public List<PlatformResponse> platformResponses;
@@ -21,6 +22,7 @@ public class IgdbModel {
 
         public GameResponse() {
             this.id = "";
+            this.igdbId = "";
             this.name = "";
             this.platformResponses = new ArrayList<>();
             this.updated_at = 0;
@@ -28,10 +30,11 @@ public class IgdbModel {
             this.websiteResponses = new ArrayList<>();
         }
 
-        public GameResponse(String id, String name, List<PlatformResponse> platformResponses,
+        public GameResponse(String id, String igdbId, String name, List<PlatformResponse> platformResponses,
                             List<GenreResponse> genreResponses, int updated_at,
                             List<WebsiteResponse> websiteResponses) {
             this.id = id;
+            this.igdbId = igdbId;
             this.name = name;
             this.platformResponses = platformResponses;
             this.updated_at = updated_at;
@@ -86,6 +89,7 @@ public class IgdbModel {
 
         public Game toGame() {
             String id = "";
+            String igdbId = this.igdbId;
             String title = this.name;
             List<String> platforms = this.getPlatformsFromPlatformResponses();
             String status = "";
@@ -96,7 +100,7 @@ public class IgdbModel {
             SourceUrls sourceUrls = this.getSourceUrlsFromWebsiteResponses();
             Resources resources = new Resources();
 
-            Game game = new Game(id, title, platforms, status, lastUpdated, genres, sourceUrls, resources);
+            Game game = new Game(id, igdbId, title, platforms, status, lastUpdated, genres, sourceUrls, resources);
 
             return game;
         }
@@ -151,6 +155,24 @@ public class IgdbModel {
             this.id = id;
             this.name = name;
 
+        }
+    }
+
+    public static class AuthResponse {
+        public String access_token;
+        public int expires_in;
+        public String token_type;
+
+        public AuthResponse() {
+            this.access_token = "";
+            this.expires_in = 0;
+            this.token_type = "";
+        }
+
+        public AuthResponse(String access_token, int expires_in, String token_type) {
+            this.access_token = access_token;
+            this.expires_in = expires_in;
+            this.token_type = token_type;
         }
     }
 }

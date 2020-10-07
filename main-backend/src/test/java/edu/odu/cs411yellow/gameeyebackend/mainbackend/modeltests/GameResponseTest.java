@@ -39,7 +39,7 @@ public class GameResponseTest {
 
     @Test
     public void testToGame () throws JsonProcessingException {
-        String id = "1000";
+        int id = 1000;
 
         IgdbModel.GameResponse gameResponse = igdbService.getGameResponseById(id);
 

@@ -48,17 +48,17 @@ public class IgdbServiceTest {
     @Test
     public void testGetGameResponseById () throws JsonProcessingException {
 
-        String id = "100";
+        int id = 200;
         IgdbModel.GameResponse gameResponse = igdbService.getGameResponseById(id);
 
         assert(gameResponse.id.equals(id));
 
     }
 
-    @Test
+    /*@Test
     public void testGetGenresFromGenreResponse () throws JsonProcessingException {
 
-        String id = "100";
+        int id = 100;
         IgdbModel.GameResponse gameResponse = igdbService.getGameResponseById(id);
 
         List<String> genres = gameResponse.getGenresFromGenreResponses();
@@ -71,9 +71,9 @@ public class IgdbServiceTest {
 
         }
 
-    }
+    }*/
 
-    @Test
+    /*@Test
     public void testGetGameResponsesByRange() throws JsonProcessingException {
         int lowerId = 1;
         int upperId = 100;
@@ -85,5 +85,14 @@ public class IgdbServiceTest {
 
         }
 
-    }
+    }*/
+
+    /*@Test
+    public void testgetGameResponseByOffset() throws JsonProcessingException {
+        int offset = 200;
+
+        List<IgdbModel.GameResponse> gameResponses = igdbService.getGameResponsesByOffset(offset);
+
+
+    }*/
 }

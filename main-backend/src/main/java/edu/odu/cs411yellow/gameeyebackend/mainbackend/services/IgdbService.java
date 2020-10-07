@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.security.IgdbTokenContainer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -18,12 +20,17 @@ import java.util.List;
 @Service
 public class IgdbService {
     private final WebClient webClient;
+    IgdbTokenContainer token;
 
-    public IgdbService(WebClient.Builder webClientBuilder, @Value("${igdb.baseurl}") String igdbUrl, @Value("${apikeys.igdb}") String igdbKey) {
+    @Autowired
+    public IgdbService(WebClient.Builder webClientBuilder, @Value("${igdb.baseurl}") String igdbUrl) {
+        this.token = token;
         this.webClient = webClientBuilder
                 .baseUrl(igdbUrl)
-                .defaultHeader("user-key", igdbKey)
+                .defaultHeader("Client-ID",token.getClientId())
+                .defaultHeader("Authorization",token.getAccessToken())
                 .build();
+
     }
 
     public String getCompanies() {
@@ -36,7 +43,7 @@ public class IgdbService {
                 .block();
     }
 
-    public IgdbModel.GameResponse getGameResponseById(String id) throws JsonProcessingException {
+    public IgdbModel.GameResponse getGameResponseById(int id) throws JsonProcessingException {
         String fieldsClause = "fields name, updated_at, genres.name, websites.url, websites.category, platforms.name; ";
         String whereClause = "where id = " + id + ";";
 
@@ -51,6 +58,7 @@ public class IgdbService {
                 .block();
 
 
+        System.out.println(gameJson);
         List<IgdbModel.GameResponse> gameResponseList = new ObjectMapper().readValue(gameJson, new TypeReference<>() {
         });
 
@@ -63,14 +71,12 @@ public class IgdbService {
     }
 
     public List<IgdbModel.GameResponse> getGameResponsesByRange(int lowerId, int upperId) throws JsonProcessingException{
-        String fieldsClause = "fields name, updated_at, genres.name, websites.url," +
-                              "websites.category, platforms.name; ";
 
         List<IgdbModel.GameResponse> gameResponses = new ArrayList<>();
         IgdbModel.GameResponse gameResponse = new IgdbModel.GameResponse();
 
         for (int id = lowerId; id < upperId + 1; id++) {
-            gameResponse = getGameResponseById(String.valueOf(id));
+            gameResponse = getGameResponseById(id);
 
             if (!gameResponse.name.equals("")) {
                 gameResponses.add(gameResponse);
@@ -81,6 +87,33 @@ public class IgdbService {
 
         return gameResponses;
 
+    }
+
+    public List<IgdbModel.GameResponse> getGameResponsesByOffset(int offset) throws JsonProcessingException {
+        List<IgdbModel.GameResponse> gameResponses = new ArrayList<>();
+
+        int id = offset;
+        /**
+         * Tracks number of null responses from IGDB.
+         * Null responses may be a sign a random game that has been removed or the end of the database is reached.
+         * The threshold is currently set to 100 successive nulls.
+         */
+        int nullCount = 0;
+
+        while (nullCount != 100) {
+            id++;
+            IgdbModel.GameResponse gameResponse = getGameResponseById(id);
+            if (gameResponse.igdbId.equals("")) {
+                nullCount++;
+            }
+            else {
+                gameResponses.add(gameResponse);
+                nullCount--;
+            }
+
+        }
+
+        return gameResponses;
     }
 
 }

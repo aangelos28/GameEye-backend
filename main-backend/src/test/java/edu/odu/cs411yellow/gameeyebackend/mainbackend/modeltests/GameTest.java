@@ -36,6 +36,7 @@ public class GameTest {
     @BeforeEach
     public void insertGameIntoGameEyeTest () {
         String gameId = "5e98bf94a3464d35b824d04f";
+        String igdbId = "";
         String gameTitle = "Doom Eternal";
         List<String> platforms = new ArrayList<>(Arrays.asList("Stadia", "Xbox One", "Nintendo Switch",
                 "PS4", "Mobile"));
@@ -103,7 +104,7 @@ public class GameTest {
 
         Resources resources = new Resources(images, articles);
 
-        insertedGame = new Game(gameId, gameTitle, platforms, status, gameLastUpdated, genres,
+        insertedGame = new Game(gameId, igdbId, gameTitle, platforms, status, gameLastUpdated, genres,
                                 sourceUrls, resources);
 
         gameRepository.save(insertedGame);
