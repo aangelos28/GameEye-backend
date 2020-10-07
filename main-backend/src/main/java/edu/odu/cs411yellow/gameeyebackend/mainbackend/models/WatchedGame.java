@@ -3,6 +3,8 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.models;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.ResourceNotifications;
 import org.springframework.data.annotation.PersistenceConstructor;
 
+import java.util.Objects;
+
 public class WatchedGame {
     private String gameId;
 
@@ -16,6 +18,10 @@ public class WatchedGame {
         this.gameId = gameId;
         this.notificationCount = notificationCount;
         this.resourceNotifications = resourceNotifications;
+    }
+
+    public WatchedGame(Game game) {
+        this.gameId = game.getId();
     }
 
     public WatchedGame() {
@@ -32,7 +38,7 @@ public class WatchedGame {
         return this.notificationCount;
     }
 
-    public void setTitle(Integer notificationCount) {
+    public void setNotificationCount(Integer notificationCount) {
         this.notificationCount = notificationCount;
     }
 
@@ -44,4 +50,16 @@ public class WatchedGame {
         this.resourceNotifications = resourceNotifications;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        WatchedGame that = (WatchedGame) o;
+        return gameId.equals(that.gameId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(gameId);
+    }
 }
