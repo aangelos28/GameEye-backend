@@ -18,6 +18,8 @@ public class Game {
     @Id
     private final String id;
 
+    private String igdbId;
+
     @Indexed(unique = true)
     private String title;
 
@@ -34,9 +36,10 @@ public class Game {
     private Resources resources;
 
     @PersistenceConstructor
-    public Game(String id, String title, List<String> platforms, String status, Date lastUpdated,
+    public Game(String id, String igdbId, String title, List<String> platforms, String status, Date lastUpdated,
                 List<String> genres, SourceUrls sourceUrls, Resources resources) {
         this.id = id;
+        this.igdbId = igdbId;
         this.title = title;
         this.platforms = platforms;
         this.status = status;
@@ -47,6 +50,7 @@ public class Game {
     }
     public Game() {
         this.id = "";
+        this.igdbId = "";
         this.title = "";
         this.platforms = new ArrayList<>();
         this.status = "";
@@ -58,6 +62,14 @@ public class Game {
 
     public String getId() {
         return this.id;
+    }
+
+    public String getIgdbId() {
+        return igdbId;
+    }
+
+    public void setIgdbId(String igdbId) {
+        this.igdbId = igdbId;
     }
 
     public String getTitle() {
