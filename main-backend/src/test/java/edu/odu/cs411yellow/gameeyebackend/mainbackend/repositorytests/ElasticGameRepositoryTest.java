@@ -1,0 +1,70 @@
+package edu.odu.cs411yellow.gameeyebackend.mainbackend.repositorytests;
+
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.elasticsearch.ElasticGame;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ElasticGameRepository;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest
+@ActiveProfiles("test")
+@TestPropertySource(locations="classpath:application-test.properties")
+public class ElasticGameRepositoryTest {
+    @Autowired
+    private ElasticGameRepository elasticGames;
+
+    @Autowired
+    private GameRepository games;
+
+    @Test
+    public void testInsertElasticGames() {
+        final String game1Id = "5f78f69e7588682adc444b04";
+        final String game2Id = "5f78f69e7588682adc444b08";
+        final String game3Id = "5f78f69d7588682adc444aff";
+
+        // Delete elastic games if already present
+        elasticGames.deleteByGameId(game1Id);
+        elasticGames.deleteByGameId(game2Id);
+        elasticGames.deleteByGameId(game3Id);
+
+        Game game1 = games.findGameById(game1Id);
+        Game game2 = games.findGameById(game2Id);
+        Game game3 = games.findGameById(game3Id);
+
+        ElasticGame elasticGame1 = new ElasticGame(game1);
+        ElasticGame elasticGame2 = new ElasticGame(game2);
+        ElasticGame elasticGame3 = new ElasticGame(game3);
+
+        elasticGames.save(elasticGame1);
+        elasticGames.save(elasticGame2);
+        elasticGames.save(elasticGame3);
+
+        elasticGame1 = elasticGames.findByGameId(game1Id);
+        elasticGame2 = elasticGames.findByGameId(game2Id);
+        elasticGame3 = elasticGames.findByGameId(game3Id);
+
+        assertThat(elasticGame1.getGameId(), is(game1Id));
+        assertThat(elasticGame1.getTitle(), is(game1.getTitle()));
+
+        assertThat(elasticGame2.getGameId(), is(game2Id));
+        assertThat(elasticGame2.getTitle(), is(game2.getTitle()));
+
+        assertThat(elasticGame2.getGameId(), is(game2Id));
+        assertThat(elasticGame2.getTitle(), is(game2.getTitle()));
+
+        // Delete elastic games
+        elasticGames.deleteByGameId(game1Id);
+        elasticGames.deleteByGameId(game2Id);
+        elasticGames.deleteByGameId(game3Id);
+    }
+}
