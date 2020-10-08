@@ -11,9 +11,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Component
 public class IgdbTokenContainer implements InitializingBean {
     private String accessToken;
-    @Value("${igdb.clientid}")
+    @Value("{igdb.clientid}")
     private String clientId;
-    @Value("${igdb.clientsecret}")
+    @Value("{igdb.clientsecret}")
     private String clientSecret;
     private int expirationInSeconds;
 
@@ -34,6 +34,8 @@ public class IgdbTokenContainer implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
+        //String clientId="";
+        //String clientSecret = "";
         WebClient webClient = WebClient.builder()
                 .baseUrl("https://id.twitch.tv")
                 .build();
@@ -41,14 +43,17 @@ public class IgdbTokenContainer implements InitializingBean {
         System.out.println(webClient.toString());
 
         IgdbModel.AuthResponse authResponse = webClient.post()
-                .uri("/oauth2/token")
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue("?client_id=" + this.clientId +
-                           "&client_secret=" + this.clientSecret +
-                           "&grant_type=client_credentials")
+                .uri(uriBuilder -> uriBuilder
+                .path("/oauth2/token")
+                .queryParam("client_id", this.clientId)
+                .queryParam("client_secret", this.clientSecret)
+                .queryParam("grant_type", "client_credentials")
+                .build())
                 .retrieve()
                 .bodyToMono(IgdbModel.AuthResponse.class)
                 .block();
+        this.clientId = clientId;
+        this.clientSecret = clientSecret;
         this.accessToken = authResponse.access_token;
         this.expirationInSeconds = authResponse.expires_in;
 

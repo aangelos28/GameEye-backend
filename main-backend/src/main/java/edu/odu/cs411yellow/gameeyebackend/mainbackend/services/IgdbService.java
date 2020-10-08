@@ -23,12 +23,12 @@ public class IgdbService {
     IgdbTokenContainer token;
 
     @Autowired
-    public IgdbService(WebClient.Builder webClientBuilder, @Value("${igdb.baseurl}") String igdbUrl) {
+    public IgdbService(WebClient.Builder webClientBuilder, @Value("${igdb.baseurl}") String igdbUrl, IgdbTokenContainer token) {
         this.token = token;
         this.webClient = webClientBuilder
                 .baseUrl(igdbUrl)
                 .defaultHeader("Client-ID",token.getClientId())
-                .defaultHeader("Authorization",token.getAccessToken())
+                .defaultHeader("Authorization","Bearer " + token.getAccessToken())
                 .build();
 
     }
