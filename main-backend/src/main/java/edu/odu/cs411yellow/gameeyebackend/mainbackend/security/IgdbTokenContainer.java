@@ -1,21 +1,24 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.security;
 
-import com.google.api.client.util.Value;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel;
-import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
+import static edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel.AuthResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Component
-public class IgdbTokenContainer implements InitializingBean {
-    private String accessToken;
-    @Value("{igdb.clientid}")
+public class IgdbTokenContainer {
+    Logger logger = LoggerFactory.getLogger(IgdbTokenContainer.class);
+
     private String clientId;
-    @Value("{igdb.clientsecret}")
     private String clientSecret;
+    private String accessToken;
     private int expirationInSeconds;
 
-    public IgdbTokenContainer() {
+    public IgdbTokenContainer(@Value("${igdb.clientid}") String clientId, @Value("${igdb.clientsecret}") String clientSecret) {
+        retrieveAccessToken(clientId, clientSecret);
+
     }
 
     public String getAccessToken() {
@@ -30,30 +33,31 @@ public class IgdbTokenContainer implements InitializingBean {
         return this.clientSecret;
     }
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        //String clientId="";
-        //String clientSecret = "";
+    public void retrieveAccessToken(String clientId, String clientSecret) {
         WebClient webClient = WebClient.builder()
                 .baseUrl("https://id.twitch.tv")
                 .build();
 
-        System.out.println(webClient.toString());
+        logger.info(String.format("Client id:", clientId));
+        logger.info(String.format("Client secret:", clientSecret));
 
-        IgdbModel.AuthResponse authResponse = webClient.post()
+        AuthResponse authResponse = webClient.post()
                 .uri(uriBuilder -> uriBuilder
-                .path("/oauth2/token")
-                .queryParam("client_id", this.clientId)
-                .queryParam("client_secret", this.clientSecret)
-                .queryParam("grant_type", "client_credentials")
-                .build())
+                        .path("/oauth2/token")
+                        .queryParam("client_id", clientId)
+                        .queryParam("client_secret", clientSecret)
+                        .queryParam("grant_type", "client_credentials")
+                        .build())
                 .retrieve()
-                .bodyToMono(IgdbModel.AuthResponse.class)
+                .bodyToMono(AuthResponse.class)
                 .block();
+
+        logger.info(String.format("Client id:", authResponse.accessToken));
+
         this.clientId = clientId;
         this.clientSecret = clientSecret;
         this.accessToken = authResponse.accessToken;
         this.expirationInSeconds = authResponse.expiresIn;
-
     }
+
 }

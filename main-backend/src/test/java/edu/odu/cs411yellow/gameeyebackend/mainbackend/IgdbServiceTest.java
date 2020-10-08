@@ -26,7 +26,7 @@ public class IgdbServiceTest {
     IgdbService igdbService;
 
     @Autowired
-    GameRepository gameRepository;
+    GameRepository games;
 
     @BeforeEach
     public void setup () {
@@ -46,7 +46,7 @@ public class IgdbServiceTest {
     }
 
     @Test
-    public void testGetGameResponseById () throws JsonProcessingException {
+    public void testGetGameById () throws JsonProcessingException {
 
         int id = 200;
         GameResponse gameResponse = igdbService.getGameById(id);
@@ -74,25 +74,29 @@ public class IgdbServiceTest {
     }
 
     @Test
-    public void testGetGameResponsesByRange() throws JsonProcessingException {
+    public void testGetGamesByRange() throws JsonProcessingException {
         int lowerId = 1;
         int upperId = 100;
 
         List<GameResponse> gameResponses = igdbService.getGamesByRange(lowerId, upperId);
 
         for (GameResponse gameResponse: gameResponses) {
-            gameRepository.save(gameResponse.toGame());
+            games.save(gameResponse.toGame());
 
         }
 
     }
 
     @Test
-    public void testgetGameResponseByOffset() throws JsonProcessingException {
+    public void testGetGamesByOffset() throws JsonProcessingException {
         int offset = 200;
 
         List<GameResponse> gameResponses = igdbService.getGamesByOffset(offset);
 
+        for (GameResponse gameResponse: gameResponses) {
+            games.save(gameResponse.toGame());
+
+        }
 
     }
 }

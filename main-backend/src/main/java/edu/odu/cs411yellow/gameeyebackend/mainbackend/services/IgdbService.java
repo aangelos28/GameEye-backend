@@ -23,7 +23,8 @@ public class IgdbService {
     IgdbTokenContainer token;
 
     @Autowired
-    public IgdbService(WebClient.Builder webClientBuilder, @Value("${igdb.baseurl}") String igdbUrl, IgdbTokenContainer token) {
+    public IgdbService(WebClient.Builder webClientBuilder, @Value("${igdb.baseurl}") String igdbUrl,
+                       IgdbTokenContainer token) {
         this.token = token;
         this.webClient = webClientBuilder
                 .baseUrl(igdbUrl)
@@ -41,6 +42,7 @@ public class IgdbService {
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
+
     }
 
     public GameResponse getGameById(int id) throws JsonProcessingException {
