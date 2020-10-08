@@ -21,7 +21,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @SpringBootTest
 @ActiveProfiles("test")
 @TestPropertySource(locations = "classpath:application-test.properties")
-public class ElasticGameRepositoryTest {
+public class ElasticGameAutocompletionTest {
     @Autowired
     private ElasticGameRepository elasticGames;
 
