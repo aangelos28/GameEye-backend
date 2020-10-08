@@ -3,13 +3,15 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.models.elasticsearch;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
-import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.*;
+import org.springframework.data.elasticsearch.core.completion.Completion;
 
 /**
  * Represents a game title document in ElasticSearch.
  * Used for autocompletion suggestions.
  */
 @Document(indexName = "games")
+@Setting(settingPath = "/elasticsearch/elasticgame-config.json")
 public class ElasticGame {
     /**
      * Id of the game in ElasticSearch.
@@ -25,6 +27,7 @@ public class ElasticGame {
     /**
      * Title of the game.
      */
+    @Field(type = FieldType.Text, analyzer = "autocomplete_index", searchAnalyzer = "autocomplete_search")
     private String title;
 
     @PersistenceConstructor
