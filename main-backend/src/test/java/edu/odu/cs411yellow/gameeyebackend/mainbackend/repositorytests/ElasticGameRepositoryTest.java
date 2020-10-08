@@ -106,10 +106,10 @@ public class ElasticGameRepositoryTest {
         elasticGames.save(elasticGame3);
 
         // Search for Fallout 3
-        List<ElasticGame> results = autocompletionService.autocompleteGameTitle("fout 3", 5);
+        SearchHits<ElasticGame> results = autocompletionService.autocompleteGameTitle("fout 3", 5);
 
-        assertThat(results.size(), is(1));
-        assertThat(results.get(0).getTitle(), is("Fallout 3"));
+        assertThat(results.getTotalHits(), is(1));
+        assertThat(results.getSearchHit(0).getContent().getTitle(), is("Fallout 3"));
 
         // Delete elastic games
         elasticGames.deleteByGameId(game1Id);

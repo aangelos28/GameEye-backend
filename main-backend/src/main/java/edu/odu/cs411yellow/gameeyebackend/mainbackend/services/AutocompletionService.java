@@ -36,7 +36,7 @@ public class AutocompletionService {
      * @param maxResults Maximum autocompletion results to get
      * @return List of autocompleted games
      */
-    public List<ElasticGame> autocompleteGameTitle(String title, int maxResults) {
+    public SearchHits<ElasticGame> autocompleteGameTitle(String title, int maxResults) {
         // Query ElasticSearch
         NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(QueryBuilders.matchQuery("title", title)
@@ -45,14 +45,6 @@ public class AutocompletionService {
                 .build();
         searchQuery.setMaxResults(maxResults);
 
-        SearchHits<ElasticGame> searchHits = elasticSearch.search(searchQuery, ElasticGame.class, IndexCoordinates.of("games"));
-
-        // Convert search results to list
-        List<ElasticGame> autocompletionResults = new ArrayList<>();
-        for (SearchHit<ElasticGame> searchHit : searchHits) {
-            autocompletionResults.add(searchHit.getContent());
-        }
-
-        return autocompletionResults;
+        return elasticSearch.search(searchQuery, ElasticGame.class, IndexCoordinates.of("games"));
     }
 }
