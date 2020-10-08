@@ -5,24 +5,14 @@ import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.elasticsearch.Elast
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ElasticGameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.AutocompletionService;
-import org.elasticsearch.common.unit.Fuzziness;
-import org.elasticsearch.index.query.Operator;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHits;
-import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -108,7 +98,7 @@ public class ElasticGameRepositoryTest {
         // Search for Fallout 3
         SearchHits<ElasticGame> results = autocompletionService.autocompleteGameTitle("fout 3", 5);
 
-        assertThat(results.getTotalHits(), is(1));
+        assertThat(results.getTotalHits(), is(1L));
         assertThat(results.getSearchHit(0).getContent().getTitle(), is("Fallout 3"));
 
         // Delete elastic games
