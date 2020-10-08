@@ -20,7 +20,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class ImageRepositoryTest {
 
     @Autowired
-    private ImageRepository imageRepository;
+    private ImageRepository images;
 
     Image insertedImage;
 
@@ -35,7 +35,7 @@ public class ImageRepositoryTest {
 
         insertedImage = testImage;
 
-        imageRepository.save(insertedImage);
+        images.save(insertedImage);
     }
 
     @AfterEach
@@ -43,8 +43,8 @@ public class ImageRepositoryTest {
 
         String imageId = insertedImage.getId();
 
-        if(imageRepository.existsById(imageId))
-            imageRepository.delete(insertedImage);
+        if(images.existsById(imageId))
+            images.delete(insertedImage);
 
     }
 
@@ -52,7 +52,7 @@ public class ImageRepositoryTest {
     public void findImageById() {
         String imageId = insertedImage.getId();
 
-        Image foundImage = imageRepository.findImageById(imageId);
+        Image foundImage = images.findImageById(imageId);
 
         assert(foundImage.getId().equals(insertedImage.getId()));
         assert(foundImage.getType().equals(insertedImage.getType()));

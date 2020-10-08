@@ -1,7 +1,7 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel;
+import static edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel.GameResponse;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.IgdbService;
 import org.junit.jupiter.api.AfterEach;
@@ -49,17 +49,17 @@ public class IgdbServiceTest {
     public void testGetGameResponseById () throws JsonProcessingException {
 
         int id = 200;
-        IgdbModel.GameResponse gameResponse = igdbService.getGameResponseById(id);
+        GameResponse gameResponse = igdbService.getGameById(id);
 
         assert(gameResponse.id.equals(id));
 
     }
 
-    /*@Test
+    @Test
     public void testGetGenresFromGenreResponse () throws JsonProcessingException {
 
         int id = 100;
-        IgdbModel.GameResponse gameResponse = igdbService.getGameResponseById(id);
+        GameResponse gameResponse = igdbService.getGameById(id);
 
         List<String> genres = gameResponse.getGenresFromGenreResponses();
 
@@ -71,28 +71,28 @@ public class IgdbServiceTest {
 
         }
 
-    }*/
+    }
 
-    /*@Test
+    @Test
     public void testGetGameResponsesByRange() throws JsonProcessingException {
         int lowerId = 1;
         int upperId = 100;
 
-        List<IgdbModel.GameResponse> gameResponses = igdbService.getGameResponsesByRange(lowerId, upperId);
+        List<GameResponse> gameResponses = igdbService.getGamesByRange(lowerId, upperId);
 
-        for (IgdbModel.GameResponse gameResponse: gameResponses) {
+        for (GameResponse gameResponse: gameResponses) {
             gameRepository.save(gameResponse.toGame());
 
         }
 
-    }*/
+    }
 
-    /*@Test
+    @Test
     public void testgetGameResponseByOffset() throws JsonProcessingException {
         int offset = 200;
 
-        List<IgdbModel.GameResponse> gameResponses = igdbService.getGameResponsesByOffset(offset);
+        List<GameResponse> gameResponses = igdbService.getGamesByOffset(offset);
 
 
-    }*/
+    }
 }

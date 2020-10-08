@@ -1,6 +1,5 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.repositorytests;
 
-import com.google.api.client.util.Value;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.*;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.*;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.UserRepository;
@@ -11,11 +10,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,7 +25,7 @@ import java.util.List;
 public class UserRepositoryTest {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserRepository users;
 
     User testUser;
 
@@ -84,21 +81,21 @@ public class UserRepositoryTest {
         testUser = new User(userId, firebaseId, status, plan, preferences, watchList);
 
         // Write testUser to GameEyeTest
-        userRepository.insert(testUser);
+        users.insert(testUser);
 
     }
 
     @AfterEach
     public void deleteTestUserFromGameEyeTest() {
         String userId = testUser.getId();
-        if (userRepository.existsById(userId))
-            userRepository.deleteById(userId);
+        if (users.existsById(userId))
+            users.deleteById(userId);
     }
 
     @Test
     public void findUserById() {
         String foundUserId = testUser.getId();
-        User foundUser = userRepository.findUserById(foundUserId);
+        User foundUser = users.findUserById(foundUserId);
 
         assert(foundUser.getId().equals(testUser.getId()));
 
@@ -107,7 +104,7 @@ public class UserRepositoryTest {
     @Test
     public void findUserByFirebaseId() {
         String foundUserFirebaseId = testUser.getFirebaseId();
-        User foundUser = userRepository.findUserByFirebaseId(foundUserFirebaseId);
+        User foundUser = users.findUserByFirebaseId(foundUserFirebaseId);
 
         assert(foundUser.getFirebaseId().equals(testUser.getFirebaseId()));
 
@@ -116,7 +113,7 @@ public class UserRepositoryTest {
     @Test
     public void findUsersWatchListAndCheckAgainstAvailableGames() {
         String foundUserId = testUser.getId();
-        User foundUser = userRepository.findUserById(foundUserId);
+        User foundUser = users.findUserById(foundUserId);
 
         List<WatchedGame> foundUserWatchList = foundUser.getWatchList();
         List<WatchedGame> testUserWatchList = testUser.getWatchList();
@@ -134,7 +131,7 @@ public class UserRepositoryTest {
     public void findArticlesInUsersWatchList() {
         String foundUserId = testUser.getId();
 
-        User foundUser = userRepository.findUserById(foundUserId);
+        User foundUser = users.findUserById(foundUserId);
 
         List<WatchedGame> foundUserWatchList = foundUser.getWatchList();
         List<WatchedGame> testUserWatchList = testUser.getWatchList();

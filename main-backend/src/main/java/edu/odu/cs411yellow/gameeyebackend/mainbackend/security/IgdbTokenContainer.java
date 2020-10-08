@@ -3,8 +3,6 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.security;
 import com.google.api.client.util.Value;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -54,8 +52,8 @@ public class IgdbTokenContainer implements InitializingBean {
                 .block();
         this.clientId = clientId;
         this.clientSecret = clientSecret;
-        this.accessToken = authResponse.access_token;
-        this.expirationInSeconds = authResponse.expires_in;
+        this.accessToken = authResponse.accessToken;
+        this.expirationInSeconds = authResponse.expiresIn;
 
     }
 }

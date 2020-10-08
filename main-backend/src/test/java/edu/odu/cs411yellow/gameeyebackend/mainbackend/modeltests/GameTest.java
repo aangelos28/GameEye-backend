@@ -29,7 +29,7 @@ import java.util.List;
 public class GameTest {
 
     @Autowired
-    private GameRepository gameRepository;
+    private GameRepository games;
 
     Game insertedGame;
 
@@ -107,17 +107,17 @@ public class GameTest {
         insertedGame = new Game(gameId, igdbId, gameTitle, platforms, status, gameLastUpdated, genres,
                                 sourceUrls, resources);
 
-        gameRepository.save(insertedGame);
+        games.save(insertedGame);
     }
 
     @AfterEach
     public void deleteGameFromGameEyeTest () {
         String gameId = insertedGame.getId();
 
-        if (gameRepository.existsById(gameId))
-            gameRepository.deleteById(gameId);
+        if (games.existsById(gameId))
+            games.deleteById(gameId);
 
-        Assert.assertFalse(gameRepository.existsById(gameId));
+        Assert.assertFalse(games.existsById(gameId));
     }
 
     //TODO Implement equal() for Game and use in test.
@@ -125,7 +125,7 @@ public class GameTest {
     public void testFindArticles () {
 
         String gameId = insertedGame.getId();
-        Game foundGame = gameRepository.findGameById(gameId);
+        Game foundGame = games.findGameById(gameId);
 
         Resources actualResources = insertedGame.getResources();
 

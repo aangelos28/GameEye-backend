@@ -14,7 +14,8 @@ public class IgdbModel {
         public String name;
         @JsonProperty("platforms")
         public List<PlatformResponse> platformResponses;
-        public int updated_at;
+        @JsonProperty("updated_at")
+        public int lastUpdated;
         @JsonProperty("genres")
         public List<GenreResponse> genreResponses;
         @JsonProperty("websites")
@@ -25,19 +26,19 @@ public class IgdbModel {
             this.igdbId = "";
             this.name = "";
             this.platformResponses = new ArrayList<>();
-            this.updated_at = 0;
+            this.lastUpdated = 0;
             this.genreResponses = new ArrayList<>();
             this.websiteResponses = new ArrayList<>();
         }
 
         public GameResponse(String id, String igdbId, String name, List<PlatformResponse> platformResponses,
-                            List<GenreResponse> genreResponses, int updated_at,
+                            List<GenreResponse> genreResponses, int lastUpdated,
                             List<WebsiteResponse> websiteResponses) {
             this.id = id;
             this.igdbId = igdbId;
             this.name = name;
             this.platformResponses = platformResponses;
-            this.updated_at = updated_at;
+            this.lastUpdated = lastUpdated;
             this.genreResponses = genreResponses;
             this.websiteResponses = websiteResponses;
         }
@@ -95,7 +96,7 @@ public class IgdbModel {
             String status = "";
 
             // Convert UNIX epoch timestamp from IGDB to year, month, day format
-            Date lastUpdated = new java.util.Date((long)updated_at*1000);
+            Date lastUpdated = new java.util.Date((long)this.lastUpdated*1000);
             List<String> genres = this.getGenresFromGenreResponses();
             SourceUrls sourceUrls = this.getSourceUrlsFromWebsiteResponses();
             Resources resources = new Resources();
@@ -159,20 +160,23 @@ public class IgdbModel {
     }
 
     public static class AuthResponse {
-        public String access_token;
-        public int expires_in;
-        public String token_type;
+        @JsonProperty("access_token")
+        public String accessToken;
+        @JsonProperty("expires_in")
+        public int expiresIn;
+        @JsonProperty("token_type")
+        public String tokenType;
 
         public AuthResponse() {
-            this.access_token = "";
-            this.expires_in = 0;
-            this.token_type = "";
+            this.accessToken = "";
+            this.expiresIn = 0;
+            this.tokenType = "";
         }
 
-        public AuthResponse(String access_token, int expires_in, String token_type) {
-            this.access_token = access_token;
-            this.expires_in = expires_in;
-            this.token_type = token_type;
+        public AuthResponse(String accessToken, int expiresIn, String tokenType) {
+            this.accessToken = accessToken;
+            this.expiresIn = expiresIn;
+            this.tokenType = tokenType;
         }
     }
 }

@@ -28,7 +28,7 @@ import java.util.List;
 public class GameRepositoryTest {
 
     @Autowired
-    private GameRepository gameRepository;
+    private GameRepository games;
 
     Game insertedGame;
 
@@ -107,17 +107,17 @@ public class GameRepositoryTest {
                                  sourceUrls, resources);
         insertedGame = testGame;
 
-        gameRepository.save(testGame);
+        games.save(testGame);
     }
 
     @AfterEach
     public void deleteInsertedGame() {
         String gameId = insertedGame.getId();
 
-        if (gameRepository.existsById(gameId))
-            gameRepository.deleteById(gameId);
+        if (games.existsById(gameId))
+            games.deleteById(gameId);
 
-        Assert.assertFalse(gameRepository.existsById(gameId));
+        Assert.assertFalse(games.existsById(gameId));
 
     }
 
@@ -125,7 +125,7 @@ public class GameRepositoryTest {
     public void findGameById() {
         String gameId = insertedGame.getId();
 
-        Game foundGame = gameRepository.findGameById(gameId);
+        Game foundGame = games.findGameById(gameId);
 
         assert(foundGame.getId().equals(insertedGame.getId()));
 
