@@ -4,26 +4,16 @@ import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.elasticsearch.ElasticGame;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ElasticGameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
-import org.elasticsearch.action.search.SearchRequestBuilder;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.RestHighLevelClient;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.AutocompletionService;
 import org.elasticsearch.common.unit.Fuzziness;
-import org.elasticsearch.index.query.FuzzyQueryBuilder;
-import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.suggest.SuggestBuilder;
-import org.elasticsearch.search.suggest.SuggestBuilders;
-import org.elasticsearch.search.suggest.SuggestionBuilder;
-import org.elasticsearch.search.suggest.completion.CompletionSuggestion;
-import org.elasticsearch.search.suggest.completion.CompletionSuggestionBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
-import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
@@ -31,6 +21,8 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -46,10 +38,8 @@ public class ElasticGameRepositoryTest {
     @Autowired
     private GameRepository games;
 
-    @Qualifier("elasticsearchOperations")
-    //private RestHighLevelClient elasticSearch;
     @Autowired
-    private ElasticsearchOperations elasticSearch;
+    AutocompletionService autocompletionService;
 
     @Test
     public void testInsertElasticGames() {
@@ -87,9 +77,9 @@ public class ElasticGameRepositoryTest {
         assertThat(elasticGame2.getTitle(), is(game2.getTitle()));
 
         // Delete elastic games
-        //elasticGames.deleteByGameId(game1Id);
-        //elasticGames.deleteByGameId(game2Id);
-        //elasticGames.deleteByGameId(game3Id);
+        elasticGames.deleteByGameId(game1Id);
+        elasticGames.deleteByGameId(game2Id);
+        elasticGames.deleteByGameId(game3Id);
     }
 
     @Test
@@ -116,18 +106,10 @@ public class ElasticGameRepositoryTest {
         elasticGames.save(elasticGame3);
 
         // Search for Fallout 3
-        NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
-                .withQuery(QueryBuilders.matchQuery("title", "Faou 3")
-                        .operator(Operator.AND)
-                        .fuzziness(Fuzziness.TWO)
-                        .prefixLength(1)
-                        .fuzzyTranspositions(true))
-                .build();
-        SearchHits<ElasticGame> gameResults = elasticSearch.search(searchQuery, ElasticGame.class, IndexCoordinates.of("games"));
+        List<ElasticGame> results = autocompletionService.autocompleteGameTitle("fout 3", 5);
 
-        assertThat(gameResults.getTotalHits(), is(1L));
-        System.out.println(gameResults.getSearchHit(0).getContent().getTitle());
-        assertThat(gameResults.getSearchHit(0).getContent().getTitle(), is("Fallout 3"));
+        assertThat(results.size(), is(1));
+        assertThat(results.get(0).getTitle(), is("Fallout 3"));
 
         // Delete elastic games
         elasticGames.deleteByGameId(game1Id);
