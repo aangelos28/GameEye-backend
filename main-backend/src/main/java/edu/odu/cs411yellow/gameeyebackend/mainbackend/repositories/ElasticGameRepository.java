@@ -11,4 +11,6 @@ public interface ElasticGameRepository extends ElasticsearchRepository<ElasticGa
     void deleteById(String id);
 
     void deleteByGameId(String gameId);
+
+    void deleteByTitle(String title);
 }

@@ -10,7 +10,11 @@ public interface GameRepository extends MongoRepository<Game, String> {
 
     Game findGameById(String id);
 
+    Game findGameByTitle(String title);
+
     void deleteById(String id);
+
+    void deleteByTitle(String title);
 
     boolean existsById(Game game);
 
