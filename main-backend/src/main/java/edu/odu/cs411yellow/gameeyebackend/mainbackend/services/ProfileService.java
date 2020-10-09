@@ -1,34 +1,44 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.services;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.User;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import  edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.UserRepository;
 import org.springframework.stereotype.Service;
-import java.util.List;
+
+import org.slf4j.LoggerFactory;
+
 
 @Service
-public class UserService
+public class ProfileService
 {
-    @Autowired
+
     UserRepository userRepository;
+    Logger logger = LoggerFactory.getLogger(ProfileService.class);
 
-
-    UserService (UserRepository otherRepository)
+    @Autowired
+    ProfileService (UserRepository otherRepository)
     {
         this.userRepository = otherRepository;
     }
 
 
-    public void registerUser(String firebaseId)
+    public void registerUser(final String firebaseId)
     {
         User newbie = new User();
+        /*
+        Newbie stays rrrreeeeeeee
+         */
+
         newbie.setFirebaseId(firebaseId);
         userRepository.save(newbie);
-
     }
 
-    public User findUserbyFirebase(String firebaseId)
-    {
-        return userRepository.findUserByFirebaseId(firebaseId);
-    }
+    public void deleteAccount(final String firebaseID){
+
+        final User user = this.userRepository.findUserByFirebaseId(firebaseID);
+
+
+        }
+
 }
