@@ -27,7 +27,7 @@ public class ElasticGame {
     /**
      * Title of the game.
      */
-    @Field(type = FieldType.Text, analyzer = "autocomplete_index", searchAnalyzer = "autocomplete_search")
+    @Field(type = FieldType.Keyword, analyzer = "autocomplete_index", searchAnalyzer = "autocomplete_search")
     private String title;
 
     @PersistenceConstructor
