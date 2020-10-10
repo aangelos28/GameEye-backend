@@ -75,7 +75,7 @@ public class IgdbReplicatorServiceTest {
 
         // Delete new games written to db.
         for (int igdbId = minId; igdbId < maxId-minId+2; igdbId++) {
-            gameRepository.deleteById(String.valueOf(igdbId));
+            gameRepository.deleteByIgdbId(String.valueOf(igdbId));
         }
     }
 
@@ -139,7 +139,7 @@ public class IgdbReplicatorServiceTest {
 
         // Delete new and updated games written to db.
         for (int igdbId = minId; igdbId < maxId-minId+2; igdbId++) {
-            gameRepository.deleteById(String.valueOf(igdbId));
+            gameRepository.deleteByIgdbId(String.valueOf(igdbId));
         }
     }
 }

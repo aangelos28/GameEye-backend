@@ -1,8 +1,6 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.modeltests;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
-import static edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel.GameResponse;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.IgdbService;
 import org.junit.jupiter.api.AfterEach;

@@ -12,8 +12,6 @@ import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.SourceUrls;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.IgdbService;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,16 +35,6 @@ public class IgdbServiceTest {
 
     @Autowired
     GameRepository gameRepository;
-
-    @BeforeEach
-    public void setup () {
-
-    }
-
-    @AfterEach
-    public void tearDown() {
-
-    }
 
     @Test
     public void testGetCompanies () throws JsonProcessingException {
