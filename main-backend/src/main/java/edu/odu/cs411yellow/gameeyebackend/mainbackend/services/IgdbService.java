@@ -105,20 +105,20 @@ public class IgdbService {
         while (remainder > 0) {
             List<GameResponse> gameResponses;
 
-            if (remainder >= limit) {
+            if (remainder > limit) {
                 currentMaxId = currentMinId + limit;
                 remainder -= limit;
 
                 gameResponses = getGameResponsesByRangeWithLimit(currentMinId, currentMaxId, limit);
 
-                logger.info("Retrieved IGDB games in ID range of " + currentMinId + "-" + currentMaxId);
+                logger.info("Retrieved games in ID range " + currentMinId + "-" + currentMaxId);
 
                 currentMinId = currentMaxId + 1;
             } else {
                 currentMaxId = maxId;
                 gameResponses = getGameResponsesByRangeWithLimit(currentMinId, currentMaxId, limit);
 
-                logger.info("Retrieved IGDB games ID range of " + currentMinId + "-" + currentMaxId);
+                logger.info("Retrieved games ID range " + currentMinId + "-" + currentMaxId);
 
                 remainder = (remainder - currentMaxId - currentMinId + 1);
             }

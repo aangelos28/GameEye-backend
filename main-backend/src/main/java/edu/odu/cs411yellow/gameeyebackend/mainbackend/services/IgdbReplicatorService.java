@@ -26,7 +26,7 @@ public class IgdbReplicatorService {
     }
 
     public void replicateIgdbByRange(int minId, int maxId) throws JsonProcessingException {
-        logger.info("Replicating " + (maxId - minId + 1) + " games; range: " + minId + "-" + maxId);
+        logger.info("Replicating potentially " + (maxId - minId + 1) + " games; range: " + minId + "-" + maxId);
         List<Game> games = igdbService.getGamesByRange(minId, maxId);
 
         int updatedGames = 0;
