@@ -102,9 +102,10 @@ public class GameRepositoryTest {
         List<Article> articles = new ArrayList<>(Arrays.asList(article));
 
         Resources resources = new Resources(images, articles);
+        int watchers = 0;
 
         Game testGame = new Game(gameId, igdbId, gameTitle, platforms, status, gameLastUpdated, genres,
-                                 sourceUrls, resources);
+                                 sourceUrls, resources, watchers);
         insertedGame = testGame;
 
         games.save(testGame);

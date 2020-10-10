@@ -103,9 +103,10 @@ public class GameTest {
         List<Article> articles = new ArrayList<>(Arrays.asList(article));
 
         Resources resources = new Resources(images, articles);
+        int watchers = 0;
 
         insertedGame = new Game(gameId, igdbId, gameTitle, platforms, status, gameLastUpdated, genres,
-                                sourceUrls, resources);
+                                sourceUrls, resources, watchers);
 
         games.save(insertedGame);
     }

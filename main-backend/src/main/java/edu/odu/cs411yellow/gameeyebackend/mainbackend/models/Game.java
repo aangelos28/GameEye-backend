@@ -35,9 +35,11 @@ public class Game {
 
     private Resources resources;
 
+    private int watchers;
+
     @PersistenceConstructor
     public Game(String id, String igdbId, String title, List<String> platforms, String status, Date lastUpdated,
-                List<String> genres, SourceUrls sourceUrls, Resources resources) {
+                List<String> genres, SourceUrls sourceUrls, Resources resources, int watchers) {
         this.id = id;
         this.igdbId = igdbId;
         this.title = title;
@@ -47,6 +49,7 @@ public class Game {
         this.genres = genres;
         this.sourceUrls = sourceUrls;
         this.resources = resources;
+        this.watchers = watchers;
     }
     public Game() {
         this.id = "";
@@ -58,6 +61,7 @@ public class Game {
         this.genres = new ArrayList<>();
         this.sourceUrls = new SourceUrls();
         this.resources = new Resources();
+        this.watchers = 0;
     }
 
     public String getId() {
@@ -126,6 +130,18 @@ public class Game {
 
     public void setResources(Resources resources) {
         this.resources = resources;
+    }
+
+    public int getWatchers() {
+        return this.watchers;
+    }
+
+    public void incrementWatchers() {
+        watchers++;
+    }
+
+    public void decrementWatchers() {
+        watchers--;
     }
 
     public List<Article> findArticles(List<String> articleIds) {

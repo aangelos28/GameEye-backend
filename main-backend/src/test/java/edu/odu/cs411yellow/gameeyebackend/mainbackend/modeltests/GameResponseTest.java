@@ -39,14 +39,6 @@ public class GameResponseTest {
 
     @Test
     public void testToGame () throws JsonProcessingException {
-        int id = 1000;
-
-        GameResponse gameResponse = igdbService.getGameById(id);
-
-        Game game = gameResponse.toGame();
-
-        // Insert game into GameEyeTest
-        gameRepository.save(game);
 
     }
 

@@ -10,8 +10,12 @@ public interface GameRepository extends MongoRepository<Game, String> {
 
     Game findGameById(String id);
 
+    Game findByIgdbId(String igdbId);
+
     void deleteById(String id);
 
     boolean existsById(Game game);
+
+    boolean existsByIgdbId(String igdbId);
 
 }
