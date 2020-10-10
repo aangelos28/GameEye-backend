@@ -4,6 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import static edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel.GameResponse;
 import static edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel.GenreResponse;
+import static edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel.CompanyResponse;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.SourceUrls;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
@@ -45,10 +49,11 @@ public class IgdbServiceTest {
     }
 
     @Test
-    public void testGetCompanies () {
+    public void testGetCompanies () throws JsonProcessingException {
+        String companies = igdbService.getCompanies();
 
-        String igdbOutput = igdbService.getCompanies();
-
+        List<CompanyResponse> companyList = new ObjectMapper().readValue(companies, new TypeReference<>() {});
+        assert(companyList.size()==10);
     }
 
     @Test
@@ -62,7 +67,7 @@ public class IgdbServiceTest {
     }
 
     @Test
-    public void testGetGenresFromGenreResponse () throws JsonProcessingException {
+    public void testGetGenresFromGenreResponse () {
         String genreId1 = "1";
         String category1 = "First-person shooter";
         GenreResponse genre1 = new GenreResponse(genreId1, category1);
@@ -98,29 +103,23 @@ public class IgdbServiceTest {
     @Test
     public void testGetGamesByRangeWithLimit() throws JsonProcessingException {
         int minId = 1;
-        int maxId = 250;
-        int limit = 250;
+        int maxId = 10;
+        int limit = 10;
 
         List<Game> games = igdbService.getGamesByRangeWithLimit(minId, maxId, limit);
 
-        for (Game game: games) {
-            if (!gameRepository.existsByIgdbId(game.getIgdbId()) && game.getIgdbId()!= "") {
-                gameRepository.save(game);
-            }
-        }
+        assert(games.size()==10);
 
     }
 
     @Test
     public void testGetGamesByRange() throws JsonProcessingException {
         int minId = 1;
-        int maxId = 1000;
+        int maxId = 100;
 
         List<Game> games = igdbService.getGamesByRange(minId, maxId);
+        assert(games.size()==100);
 
-        for (Game game: games) {
-            System.out.println(game.getIgdbId() + ": " + game.getTitle() + "\n");
-        };
     }
 
     @Test

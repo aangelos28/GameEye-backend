@@ -6,6 +6,7 @@ import org.springframework.data.annotation.PersistenceConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Resources {
 
@@ -50,6 +51,16 @@ public class Resources {
         }
 
         return foundArticle;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o ) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Resources that = (Resources) o;
+
+        return Objects.equals(articles, that.articles)
+                && Objects.equals(images, that.images);
     }
 
 }

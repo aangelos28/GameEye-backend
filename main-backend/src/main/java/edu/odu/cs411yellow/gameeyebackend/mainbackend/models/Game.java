@@ -1,6 +1,7 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.ImageResource;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -9,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Class representing a document in the "Games" database collection.
@@ -154,10 +156,22 @@ public class Game {
         return foundArticles;
     }
 
-    //TODO
-    /*@Override
-    public boolean equals(Game game) {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o ) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Game that = (Game) o;
 
-    }*/
+        return Objects.equals(id, that.id)
+                && Objects.equals(igdbId, that.igdbId)
+                && Objects.equals(title, that.title)
+                && Objects.equals(platforms, that.platforms)
+                && Objects.equals(status, that.status)
+                && Objects.equals(lastUpdated, that.lastUpdated)
+                && Objects.equals(genres, that.genres)
+                && Objects.equals(sourceUrls, that.sourceUrls)
+                && Objects.equals(resources, that.resources)
+                && Objects.equals(watchers, that.watchers);
+    }
 
 }

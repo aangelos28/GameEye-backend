@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import static edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel.GameResponse;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.security.IgdbTokenContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,8 +63,7 @@ public class IgdbService {
                 .bodyToMono(String.class)
                 .block();
 
-        List<GameResponse> gameResponseList = new ObjectMapper().readValue(gameJson, new TypeReference<>() {
-        });
+        List<GameResponse> gameResponseList = new ObjectMapper().readValue(gameJson, new TypeReference<>() {});
 
         if (gameResponseList.size() != 0) {
             gameResponse = gameResponseList.get(0);

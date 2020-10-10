@@ -180,4 +180,19 @@ public class IgdbModel {
             this.tokenType = tokenType;
         }
     }
+
+    public static class CompanyResponse {
+        public String id;
+        public String name;
+
+        public CompanyResponse() {
+            this.id = "";
+            this.name = "";
+        }
+
+        public CompanyResponse(String id, String name) {
+            this.id = id;
+            this.name = name;
+        }
+    }
 }

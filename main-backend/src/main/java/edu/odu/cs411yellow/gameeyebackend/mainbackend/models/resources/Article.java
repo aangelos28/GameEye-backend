@@ -6,6 +6,7 @@ import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * Represents a news article resource.
@@ -149,5 +150,22 @@ public class Article {
 
     public void setImpactScore(int impactScore) {
         this.impactScore = impactScore;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o ) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Article that = (Article) o;
+
+        return Objects.equals(id, that.id)
+                && Objects.equals(impactScore, that.impactScore)
+                && Objects.equals(url, that.url)
+                && Objects.equals(newsWebsite, that.newsWebsite)
+                && Objects.equals(thumbnail, that.thumbnail)
+                && Objects.equals(snippet, that.snippet)
+                && Objects.equals(publicationDate, that.publicationDate)
+                && Objects.equals(lastUpdated, that.lastUpdated)
+                && Objects.equals(impactScore, that.impactScore);
     }
 }

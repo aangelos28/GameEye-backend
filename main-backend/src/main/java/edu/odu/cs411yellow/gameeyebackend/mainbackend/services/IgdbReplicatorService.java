@@ -2,12 +2,14 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.SourceUrls;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -37,17 +39,35 @@ public class IgdbReplicatorService {
                 if (gameRepository.existsByIgdbId(newGame.getIgdbId())) {
                     Game existingGame = gameRepository.findByIgdbId(newGame.getIgdbId());
 
-                    existingGame.setTitle(newGame.getTitle());
+                    // Update platforms and genres
                     existingGame.setPlatforms(newGame.getPlatforms());
                     existingGame.setGenres(newGame.getGenres());
-                    existingGame.setSourceUrls(newGame.getSourceUrls());
+
+                    // Update sourceUrls
+                    SourceUrls newSourceUrls = newGame.getSourceUrls();
+                    SourceUrls existingSourceUrls = existingGame.getSourceUrls();
+
+                    if (newSourceUrls.getPublisherUrl() != "") {
+                        existingSourceUrls.setPublisherUrl(newSourceUrls.getPublisherUrl());
+                    }
+                    if (newSourceUrls.getSteamUrl() != "") {
+                        existingSourceUrls.setSteamUrl(newSourceUrls.getSteamUrl());
+                    }
+                    if (newSourceUrls.getSubRedditUrl() != "") {
+                        existingSourceUrls.setSubRedditUrl(newSourceUrls.getSubRedditUrl());
+                    }
+                    if (newSourceUrls.getTwitterUrl() != "") {
+                        existingSourceUrls.setTwitterUrl(newSourceUrls.getTwitterUrl());
+                    }
 
                     // Save updated existing game
+                    existingGame.setLastUpdated(new Date());
                     gameRepository.save(existingGame);
                     updatedGames++;
                 }
                 else {
                     // Save new game
+                    newGame.setLastUpdated(new Date());
                     gameRepository.save(newGame);
                     newGames++;
                 }

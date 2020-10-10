@@ -1,8 +1,10 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources;
 
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.SourceUrls;
 import org.springframework.data.annotation.PersistenceConstructor;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class ImageResource {
     private String id;
@@ -58,5 +60,17 @@ public class ImageResource {
 
     public void setLastUpdated(Date lastUpdated) {
         this.lastUpdated = lastUpdated;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o ) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ImageResource that = (ImageResource) o;
+
+        return Objects.equals(id, that.id)
+                && Objects.equals(imageId, that.imageId)
+                && Objects.equals(lastUpdated, that.lastUpdated)
+                && Objects.equals(title, that.title);
     }
 }
