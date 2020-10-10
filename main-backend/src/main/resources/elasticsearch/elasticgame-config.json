@@ -10,17 +10,15 @@
     "analyzer": {
       "autocomplete_search": {
         "type": "custom",
-        "tokenizer": "keyword",
+        "tokenizer": "standard",
         "filter": [
-          "asciifolding",
           "lowercase"
         ]
       },
       "autocomplete_index": {
         "type": "custom",
-        "tokenizer": "keyword",
+        "tokenizer": "standard",
         "filter": [
-          "asciifolding",
           "lowercase",
           "autocomplete_filter"
         ]
