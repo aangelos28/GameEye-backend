@@ -2,6 +2,8 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.models;
 
 import org.springframework.data.annotation.PersistenceConstructor;
 
+import javax.xml.transform.Source;
+
 /**
  * Holds the source URLs for a game.
  * These are important URLs related to the game, and my be used for web scraping.
@@ -73,5 +75,16 @@ public class SourceUrls {
 
     public void setTwitterUrl(String twitterUrl) {
         this.twitterUrl = twitterUrl;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o ) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SourceUrls that = (SourceUrls) o;
+        return this.publisherUrl.equals(that.publisherUrl) &&
+               this.steamUrl.equals(that.steamUrl) &&
+               this.subRedditUrl.equals(that.subRedditUrl) &&
+               this.twitterUrl.equals(that.twitterUrl);
     }
 }
