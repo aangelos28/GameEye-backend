@@ -33,59 +33,80 @@ public class ElasticGameAutocompletionTest {
 
     @Test
     public void testInsertElasticGames() {
-        final String game1Id = "5f78f69e7588682adc444b04";
-        final String game2Id = "5f78f69e7588682adc444b08";
-        final String game3Id = "5f78f69d7588682adc444aff";
-        // Delete elastic games if already present
-        elasticGames.deleteByGameId(game1Id);
-        elasticGames.deleteByGameId(game2Id);
-        elasticGames.deleteByGameId(game3Id);
+        final String game1Title = "Baldur's Gate II: Shadows of Amn";
+        final String game2Title = "Vampire: The Masquerade - Bloodlines";
+        final String game3Title = "Fallout 3";
+        final String game4Title = "Fallout 2";
+        final String game5Title = "Fallout: New Vegas";
 
-        Game game1 = games.findGameById(game1Id);
-        Game game2 = games.findGameById(game2Id);
-        Game game3 = games.findGameById(game3Id);
+        // Delete elastic games if already present
+        elasticGames.deleteByTitle(game1Title);
+        elasticGames.deleteByTitle(game2Title);
+        elasticGames.deleteByTitle(game3Title);
+        elasticGames.deleteByTitle(game4Title);
+        elasticGames.deleteByTitle(game5Title);
+
+        Game game1 = games.findGameByTitle(game1Title);
+        Game game2 = games.findGameByTitle(game2Title);
+        Game game3 = games.findGameByTitle(game3Title);
+        Game game4 = games.findGameByTitle(game4Title);
+        Game game5 = games.findGameByTitle(game5Title);
 
         ElasticGame elasticGame1 = new ElasticGame(game1);
         ElasticGame elasticGame2 = new ElasticGame(game2);
         ElasticGame elasticGame3 = new ElasticGame(game3);
+        ElasticGame elasticGame4 = new ElasticGame(game4);
+        ElasticGame elasticGame5 = new ElasticGame(game5);
 
         elasticGames.save(elasticGame1);
         elasticGames.save(elasticGame2);
         elasticGames.save(elasticGame3);
+        elasticGames.save(elasticGame4);
+        elasticGames.save(elasticGame5);
 
-        elasticGame1 = elasticGames.findByGameId(game1Id);
-        elasticGame2 = elasticGames.findByGameId(game2Id);
-        elasticGame3 = elasticGames.findByGameId(game3Id);
+        elasticGame1 = elasticGames.findByTitle(game1Title);
+        elasticGame2 = elasticGames.findByTitle(game2Title);
+        elasticGame3 = elasticGames.findByTitle(game3Title);
+        elasticGame4 = elasticGames.findByTitle(game4Title);
+        elasticGame5 = elasticGames.findByTitle(game5Title);
 
-        assertThat(elasticGame1.getGameId(), is(game1Id));
+        assertThat(elasticGame1.getGameId(), is(game1.getId()));
         assertThat(elasticGame1.getTitle(), is(game1.getTitle()));
 
-        assertThat(elasticGame2.getGameId(), is(game2Id));
+        assertThat(elasticGame2.getGameId(), is(game2.getId()));
         assertThat(elasticGame2.getTitle(), is(game2.getTitle()));
 
-        assertThat(elasticGame2.getGameId(), is(game2Id));
-        assertThat(elasticGame2.getTitle(), is(game2.getTitle()));
+        assertThat(elasticGame3.getGameId(), is(game3.getId()));
+        assertThat(elasticGame3.getTitle(), is(game3.getTitle()));
+
+        assertThat(elasticGame4.getGameId(), is(game4.getId()));
+        assertThat(elasticGame4.getTitle(), is(game4.getTitle()));
+
+        assertThat(elasticGame5.getGameId(), is(game5.getId()));
+        assertThat(elasticGame5.getTitle(), is(game5.getTitle()));
 
         // Delete elastic games
-        elasticGames.deleteByGameId(game1Id);
-        elasticGames.deleteByGameId(game2Id);
-        elasticGames.deleteByGameId(game3Id);
+        elasticGames.deleteByTitle(game1Title);
+        elasticGames.deleteByTitle(game2Title);
+        elasticGames.deleteByTitle(game3Title);
+        elasticGames.deleteByTitle(game4Title);
+        elasticGames.deleteByTitle(game5Title);
     }
 
     @Test
     public void testAutocomplete() {
-        final String game1Id = "5f78f69e7588682adc444b04";
-        final String game2Id = "5f78f69e7588682adc444b08";
-        final String game3Id = "5f78f69d7588682adc444aff";
+        final String game1Title = "Baldur's Gate II: Shadows of Amn";
+        final String game2Title = "Fallout 3";
+        final String game3Title = "Vampire: The Masquerade - Bloodlines";
 
         // Delete elastic games if already present
-        elasticGames.deleteByGameId(game1Id);
-        elasticGames.deleteByGameId(game2Id);
-        elasticGames.deleteByGameId(game3Id);
+        elasticGames.deleteByTitle(game1Title);
+        elasticGames.deleteByTitle(game1Title);
+        elasticGames.deleteByTitle(game1Title);
 
-        Game game1 = games.findGameById(game1Id);
-        Game game2 = games.findGameById(game2Id);
-        Game game3 = games.findGameById(game3Id);
+        Game game1 = games.findGameByTitle(game1Title);
+        Game game2 = games.findGameByTitle(game2Title);
+        Game game3 = games.findGameByTitle(game3Title);
 
         ElasticGame elasticGame1 = new ElasticGame(game1);
         ElasticGame elasticGame2 = new ElasticGame(game2);
@@ -96,14 +117,14 @@ public class ElasticGameAutocompletionTest {
         elasticGames.save(elasticGame3);
 
         // Search for Fallout 3
-        SearchHits<ElasticGame> results = autocompletionService.autocompleteGameTitle("fout 3", 5);
+        SearchHits<ElasticGame> results = autocompletionService.autocompleteGameTitle("fout 3", 1);
 
         assertThat(results.getTotalHits(), is(1L));
         assertThat(results.getSearchHit(0).getContent().getTitle(), is("Fallout 3"));
 
         // Delete elastic games
-        elasticGames.deleteByGameId(game1Id);
-        elasticGames.deleteByGameId(game2Id);
-        elasticGames.deleteByGameId(game3Id);
+        elasticGames.deleteByTitle(game1Title);
+        elasticGames.deleteByTitle(game2Title);
+        elasticGames.deleteByTitle(game3Title);
     }
 }

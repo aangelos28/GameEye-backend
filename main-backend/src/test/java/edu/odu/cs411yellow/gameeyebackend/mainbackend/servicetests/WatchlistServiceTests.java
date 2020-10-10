@@ -1,7 +1,9 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.servicetests;
 
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.User;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.WatchedGame;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.UserRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.WatchlistService;
 import org.junit.Test;
@@ -29,6 +31,9 @@ public class WatchlistServiceTests {
     private UserRepository users;
 
     @Autowired
+    private GameRepository games;
+
+    @Autowired
     private WatchlistService watchlistService;
 
     @Test
@@ -44,19 +49,24 @@ public class WatchlistServiceTests {
         users.save(user);
 
         // Add games to the user's watchlist
-        final String game1Id = "5f78f69e7588682adc444b04";
-        final String game2Id = "5f78f69e7588682adc444b08";
-        final String game3Id = "5f78f69d7588682adc444aff";
-        watchlistService.addWatchlistGame(userFirebaseId, game1Id);
-        watchlistService.addWatchlistGame(userFirebaseId, game2Id);
-        watchlistService.addWatchlistGame(userFirebaseId, game3Id);
+        final String game1Title = "Fallout 3";
+        final String game2Title = "Fallout 2";
+        final String game3Title = "Fallout: New Vegas";
+
+        Game game1 = games.findGameByTitle(game1Title);
+        Game game2 = games.findGameByTitle(game2Title);
+        Game game3 = games.findGameByTitle(game3Title);
+
+        watchlistService.addWatchlistGame(userFirebaseId, game1.getId());
+        watchlistService.addWatchlistGame(userFirebaseId, game2.getId());
+        watchlistService.addWatchlistGame(userFirebaseId, game3.getId());
 
         List<WatchedGame> watchlist = watchlistService.getWatchlistGames(userFirebaseId);
 
         // Verify that games are present
-        assertThat(watchlist, hasItem(hasProperty("gameId", is(game1Id))));
-        assertThat(watchlist, hasItem(hasProperty("gameId", is(game2Id))));
-        assertThat(watchlist, hasItem(hasProperty("gameId", is(game3Id))));
+        assertThat(watchlist, hasItem(hasProperty("gameId", is(game1.getId()))));
+        assertThat(watchlist, hasItem(hasProperty("gameId", is(game2.getId()))));
+        assertThat(watchlist, hasItem(hasProperty("gameId", is(game3.getId()))));
 
         // Delete user
         users.deleteByFirebaseId(userFirebaseId);
@@ -75,12 +85,17 @@ public class WatchlistServiceTests {
         users.save(user);
 
         // Add games to the user's watchlist
-        final String game1Id = "5f78f69e7588682adc444b04";
-        final String game2Id = "5f78f69e7588682adc444b08";
-        final String game3Id = "5f78f69d7588682adc444aff";
-        watchlistService.addWatchlistGame(userFirebaseId, game1Id);
-        watchlistService.addWatchlistGame(userFirebaseId, game2Id);
-        watchlistService.addWatchlistGame(userFirebaseId, game3Id);
+        final String game1Title = "Fallout 3";
+        final String game2Title = "Fallout 2";
+        final String game3Title = "Fallout: New Vegas";
+
+        Game game1 = games.findGameByTitle(game1Title);
+        Game game2 = games.findGameByTitle(game2Title);
+        Game game3 = games.findGameByTitle(game3Title);
+
+        watchlistService.addWatchlistGame(userFirebaseId, game1.getId());
+        watchlistService.addWatchlistGame(userFirebaseId, game2.getId());
+        watchlistService.addWatchlistGame(userFirebaseId, game3.getId());
 
         // Delete watchlist games
         watchlistService.deleteWatchlistGame(userFirebaseId, 2);
@@ -89,9 +104,9 @@ public class WatchlistServiceTests {
 
         List<WatchedGame> watchlist = watchlistService.getWatchlistGames(userFirebaseId);
 
-        assertThat(watchlist, not(hasItem(hasProperty("gameId", is(game1Id)))));
-        assertThat(watchlist, not(hasItem(hasProperty("gameId", is(game2Id)))));
-        assertThat(watchlist, not(hasItem(hasProperty("gameId", is(game3Id)))));
+        assertThat(watchlist, not(hasItem(hasProperty("gameId", is(game1.getId())))));
+        assertThat(watchlist, not(hasItem(hasProperty("gameId", is(game2.getId())))));
+        assertThat(watchlist, not(hasItem(hasProperty("gameId", is(game3.getId())))));
 
         // Delete user
         users.deleteByFirebaseId(userFirebaseId);
