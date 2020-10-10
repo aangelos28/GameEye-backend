@@ -38,8 +38,8 @@ public class IgdbTokenContainer {
                 .baseUrl("https://id.twitch.tv")
                 .build();
 
-        logger.info(String.format("Client id:", clientId));
-        logger.info(String.format("Client secret:", clientSecret));
+        logger.info(String.format("Client id set from properties as %s", clientId));
+        logger.info(String.format("Client secret set from properties as %s", clientSecret));
 
         AuthResponse authResponse = webClient.post()
                 .uri(uriBuilder -> uriBuilder
@@ -51,8 +51,6 @@ public class IgdbTokenContainer {
                 .retrieve()
                 .bodyToMono(AuthResponse.class)
                 .block();
-
-        logger.info(String.format("Client id:", authResponse.accessToken));
 
         this.clientId = clientId;
         this.clientSecret = clientSecret;

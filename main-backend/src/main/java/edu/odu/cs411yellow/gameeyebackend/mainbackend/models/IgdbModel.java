@@ -9,44 +9,43 @@ import java.util.List;
 public class IgdbModel {
 
     public static class GameResponse {
-        public String id;
+        @JsonProperty("id")
         public String igdbId;
-        public String name;
+        @JsonProperty("name")
+        public String title;
         @JsonProperty("platforms")
-        public List<PlatformResponse> platformResponses;
+        public List<PlatformResponse> platforms;
         @JsonProperty("updated_at")
-        public int lastUpdated;
+        public int lastUpdatedInSeconds;
         @JsonProperty("genres")
-        public List<GenreResponse> genreResponses;
+        public List<GenreResponse> genres;
         @JsonProperty("websites")
-        public List<WebsiteResponse> websiteResponses;
+        public List<WebsiteResponse> sourceUrls;
 
         public GameResponse() {
-            this.id = "";
             this.igdbId = "";
-            this.name = "";
-            this.platformResponses = new ArrayList<>();
-            this.lastUpdated = 0;
-            this.genreResponses = new ArrayList<>();
-            this.websiteResponses = new ArrayList<>();
+            this.title = "";
+            this.platforms = new ArrayList<>();
+            this.lastUpdatedInSeconds = 0;
+            this.genres = new ArrayList<>();
+            this.sourceUrls = new ArrayList<>();
         }
 
-        public GameResponse(String id, String igdbId, String name, List<PlatformResponse> platformResponses,
-                            List<GenreResponse> genreResponses, int lastUpdated,
-                            List<WebsiteResponse> websiteResponses) {
-            this.id = id;
+        public GameResponse(String igdbId, String title, List<PlatformResponse> platforms,
+                            List<GenreResponse> genres, int lastUpdatedInSeconds,
+                            List<WebsiteResponse> sourceUrls) {
             this.igdbId = igdbId;
-            this.name = name;
-            this.platformResponses = platformResponses;
-            this.lastUpdated = lastUpdated;
-            this.genreResponses = genreResponses;
-            this.websiteResponses = websiteResponses;
+            this.title = title;
+            this.platforms = platforms;
+            this.lastUpdatedInSeconds = lastUpdatedInSeconds;
+            this.genres = genres;
+            this.sourceUrls = sourceUrls;
         }
 
         public List<String> getGenresFromGenreResponses() {
             List<String> genres = new ArrayList<>();
 
-            for(GenreResponse genreResponse: this.genreResponses) {
+            for(GenreResponse genreResponse: this.genres) {
                 genres.add(genreResponse.name);
 
             }
@@ -62,7 +61,7 @@ public class IgdbModel {
             String igdbRedditEnumValue = "14";
             String igdbTwitterEnumValue = "5";
 
-            for(WebsiteResponse websiteResponse: websiteResponses) {
+            for(WebsiteResponse websiteResponse: this.sourceUrls) {
                 if(igdbOfficialEnumValue.equals(websiteResponse.category)) {
                     sourceUrls.setPublisherUrl(websiteResponse.url);
                 } else if (igdbSteamEnumValue.equals(websiteResponse.category)) {
@@ -80,7 +79,7 @@ public class IgdbModel {
         public List<String> getPlatformsFromPlatformResponses() {
             List<String> platforms = new ArrayList<>();
 
-            for(PlatformResponse platformResponse: this.platformResponses) {
+            for(PlatformResponse platformResponse: this.platforms) {
                 platforms.add(platformResponse.name);
 
             }
@@ -91,17 +90,19 @@ public class IgdbModel {
         public Game toGame() {
             String id = "";
             String igdbId = this.igdbId;
-            String title = this.name;
+            String title = this.title;
             List<String> platforms = this.getPlatformsFromPlatformResponses();
             String status = "";
 
             // Convert UNIX epoch timestamp from IGDB to year, month, day format
-            Date lastUpdated = new java.util.Date((long)this.lastUpdated*1000);
+            Date lastUpdated = new java.util.Date((long)this.lastUpdatedInSeconds * 1000);
             List<String> genres = this.getGenresFromGenreResponses();
             SourceUrls sourceUrls = this.getSourceUrlsFromWebsiteResponses();
             Resources resources = new Resources();
+            int watchers = 0;
 
-            Game game = new Game(id, igdbId, title, platforms, status, lastUpdated, genres, sourceUrls, resources);
+            Game game = new Game(id, igdbId, title, platforms, status, lastUpdated,
+                                 genres, sourceUrls, resources, watchers);
 
             return game;
         }

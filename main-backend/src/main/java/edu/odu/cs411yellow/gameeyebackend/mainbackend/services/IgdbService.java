@@ -4,7 +4,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import static edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel.GameResponse;
+
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.security.IgdbTokenContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -22,16 +27,17 @@ public class IgdbService {
     private final WebClient webClient;
     IgdbTokenContainer token;
 
+    Logger logger = LoggerFactory.getLogger(IgdbService.class);
+
     @Autowired
     public IgdbService(WebClient.Builder webClientBuilder, @Value("${igdb.baseurl}") String igdbUrl,
                        IgdbTokenContainer token) {
         this.token = token;
         this.webClient = webClientBuilder
                 .baseUrl(igdbUrl)
-                .defaultHeader("Client-ID",token.getClientId())
-                .defaultHeader("Authorization","Bearer " + token.getAccessToken())
+                .defaultHeader("Client-ID", token.getClientId())
+                .defaultHeader("Authorization", "Bearer " + token.getAccessToken())
                 .build();
-
     }
 
     public String getCompanies() {
@@ -42,10 +48,9 @@ public class IgdbService {
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
-
     }
 
-    public GameResponse getGameById(int id) throws JsonProcessingException {
+    public GameResponse getGameResponseById(int id) throws JsonProcessingException {
         String fieldsClause = "fields name, updated_at, genres.name, websites.url, websites.category, platforms.name; ";
         String whereClause = "where id = " + id + ";";
 
@@ -59,8 +64,6 @@ public class IgdbService {
                 .bodyToMono(String.class)
                 .block();
 
-
-        System.out.println(gameJson);
         List<GameResponse> gameResponseList = new ObjectMapper().readValue(gameJson, new TypeReference<>() {
         });
 
@@ -69,53 +72,96 @@ public class IgdbService {
         }
 
         return gameResponse;
-
     }
 
-    public List<GameResponse> getGamesByRange(int lowerId, int upperId) throws JsonProcessingException{
+    public List<GameResponse> getGameResponsesByRangeWithLimit(int minId, int maxId, int limit) throws JsonProcessingException {
+        int inclusiveMinId = minId - 1;
+        int inclusiveMaxId = maxId + 1;
 
-        List<GameResponse> gameResponses = new ArrayList<>();
+        String fieldsClause = "fields name, updated_at, genres.name, websites.url, websites.category, platforms.name; ";
+        String whereClause = "where id > " + inclusiveMinId + " & id < " + inclusiveMaxId + ";";
+        String limitClause = "limit " + limit + ";";
+
         GameResponse gameResponse = new GameResponse();
 
-        for (int id = lowerId; id < upperId + 1; id++) {
-            gameResponse = getGameById(id);
+        String gameJson = webClient.post()
+                .uri("/games")
+                .contentType(MediaType.TEXT_PLAIN)
+                .bodyValue(fieldsClause + whereClause + limitClause)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
 
-            if (!gameResponse.name.equals("")) {
-                gameResponses.add(gameResponse);
-
-            }
-
-        }
-
-        return gameResponses;
-
-    }
-
-    public List<GameResponse> getGamesByOffset(int offset) throws JsonProcessingException {
-        List<GameResponse> gameResponses = new ArrayList<>();
-
-        int id = offset;
-        /**
-         * Tracks number of null responses from IGDB.
-         * Null responses may be a sign a random game that has been removed or the end of the database is reached.
-         * The threshold is currently set to 100 successive nulls.
-         */
-        int nullCount = 0;
-
-        while (nullCount != 100) {
-            id++;
-            GameResponse gameResponse = getGameById(id);
-            if (gameResponse.igdbId.equals("")) {
-                nullCount++;
-            }
-            else {
-                gameResponses.add(gameResponse);
-                nullCount--;
-            }
-
-        }
+        List<GameResponse> gameResponses = new ObjectMapper().readValue(gameJson, new TypeReference<>() {});
 
         return gameResponses;
     }
 
+    public List<GameResponse> getGameResponsesByRange(int minId, int maxId) throws JsonProcessingException {
+        List<GameResponse> games = new ArrayList<>();
+        int limit = 250;
+        int remainder = maxId - minId + 1;
+        int currentMaxId = maxId;
+        int currentMinId = minId;
+
+        while (remainder > 0) {
+            List<GameResponse> gameResponses;
+
+            if (remainder >= limit) {
+                currentMaxId = currentMinId + limit;
+                remainder -= limit;
+
+                gameResponses = getGameResponsesByRangeWithLimit(currentMinId, currentMaxId, limit);
+
+                logger.info("Retrieved IGDB games in ID range of " + currentMinId + "-" + currentMaxId);
+
+                currentMinId = currentMaxId + 1;
+            } else {
+                currentMaxId = maxId;
+                gameResponses = getGameResponsesByRangeWithLimit(currentMinId, currentMaxId, limit);
+
+                logger.info("Retrieved IGDB games ID range of " + currentMinId + "-" + currentMaxId);
+
+                remainder = (remainder - currentMaxId - currentMinId + 1);
+            }
+
+            games.addAll(gameResponses);
+        }
+
+        return games;
+    }
+
+    public List<Game> convertGameResponsesToGames(List<GameResponse> gameResponses) {
+        List<Game> games = new ArrayList<>();
+
+        for (GameResponse gameResponse : gameResponses) {
+            if (gameResponse.igdbId != "") {
+                Game game = gameResponse.toGame();
+                games.add(game);
+            }
+        }
+
+        return games;
+    }
+
+    public Game getGameById(int id) throws JsonProcessingException {
+        GameResponse gameResponse = getGameResponseById(id);
+        Game game = gameResponse.toGame();
+
+        return game;
+    }
+
+    public List<Game> getGamesByRangeWithLimit(int minId, int maxId, int limit) throws JsonProcessingException {
+        List<GameResponse> gameResponses = getGameResponsesByRangeWithLimit(minId, maxId, limit);
+        List<Game> games = convertGameResponsesToGames(gameResponses);
+
+        return games;
+    }
+
+    public List<Game> getGamesByRange(int minId, int maxId) throws JsonProcessingException {
+        List<GameResponse> gameResponses = getGameResponsesByRange(minId, maxId);
+        List<Game> games = convertGameResponsesToGames(gameResponses);
+
+        return games;
+    }
 }
