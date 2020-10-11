@@ -138,14 +138,6 @@ public class Game {
         return this.watchers;
     }
 
-    public void incrementWatchers() {
-        watchers++;
-    }
-
-    public void decrementWatchers() {
-        watchers--;
-    }
-
     public List<Article> findArticles(List<String> articleIds) {
         List<Article> foundArticles = new ArrayList<>();
 
