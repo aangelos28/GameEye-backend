@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 public class ProfileService
 {
 
-    UserRepository userRepository;
+   UserRepository userRepository;
     Logger logger = LoggerFactory.getLogger(ProfileService.class);
 
     @Autowired
@@ -34,11 +34,5 @@ public class ProfileService
         userRepository.save(newbie);
     }
 
-    public void deleteAccount(final String firebaseID){
-
-        final User user = this.userRepository.findUserByFirebaseId(firebaseID);
-
-
-        }
 
 }
