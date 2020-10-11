@@ -159,7 +159,6 @@ public class Article {
         Article that = (Article) o;
 
         return Objects.equals(id, that.id)
-                && Objects.equals(impactScore, that.impactScore)
                 && Objects.equals(url, that.url)
                 && Objects.equals(newsWebsite, that.newsWebsite)
                 && Objects.equals(thumbnail, that.thumbnail)
@@ -167,5 +166,10 @@ public class Article {
                 && Objects.equals(publicationDate, that.publicationDate)
                 && Objects.equals(lastUpdated, that.lastUpdated)
                 && Objects.equals(impactScore, that.impactScore);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, url, newsWebsite, thumbnail, snippet, impactScore);
     }
 }

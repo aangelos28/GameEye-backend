@@ -119,4 +119,9 @@ public class NewsWebsite {
                 && Objects.equals(rssFeedUrl, that.rssFeedUrl)
                 && Objects.equals(lastUpdated, that.lastUpdated);
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, logo, siteUrl, rssFeedUrl);
+    }
 }

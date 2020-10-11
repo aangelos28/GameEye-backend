@@ -40,12 +40,11 @@ public class ImageRepositoryTest {
 
     @AfterEach
     public void deleteImageFromGameEyeTest() {
-
         String imageId = insertedImage.getId();
 
-        if(images.existsById(imageId))
+        if(images.existsById(imageId)) {
             images.delete(insertedImage);
-
+        }
     }
 
     @Test

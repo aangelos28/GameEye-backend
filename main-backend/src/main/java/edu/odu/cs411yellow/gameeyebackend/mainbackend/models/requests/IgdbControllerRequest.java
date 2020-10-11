@@ -7,13 +7,15 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.models.requests;
 public class IgdbControllerRequest {
     private int minId;
     private int maxId;
+    private int limit;
 
     public IgdbControllerRequest() {
     }
 
-    public IgdbControllerRequest(int minId, int maxId) {
+    public IgdbControllerRequest(int minId, int maxId, int limit) {
         this.minId = minId;
         this.maxId = maxId;
+        this.limit = limit;
     }
 
     public int getMinId() {
@@ -30,5 +32,13 @@ public class IgdbControllerRequest {
 
     public void setMaxId(int maxId) {
         this.maxId = maxId;
+    }
+
+    public int getLimit() {
+        return limit;
+    }
+
+    public void setLimit(int limit) {
+        this.limit = limit;
     }
 }

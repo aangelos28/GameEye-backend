@@ -82,7 +82,6 @@ public class UserRepositoryTest {
 
         // Write testUser to GameEyeTest
         users.insert(testUser);
-
     }
 
     @AfterEach
@@ -98,7 +97,6 @@ public class UserRepositoryTest {
         User foundUser = users.findUserById(foundUserId);
 
         assert(foundUser.getId().equals(testUser.getId()));
-
     }
 
     @Test
@@ -107,7 +105,6 @@ public class UserRepositoryTest {
         User foundUser = users.findUserByFirebaseId(foundUserFirebaseId);
 
         assert(foundUser.getFirebaseId().equals(testUser.getFirebaseId()));
-
     }
 
     @Test
@@ -124,7 +121,6 @@ public class UserRepositoryTest {
 
             assert(foundGameId.equals(testGameId));
         }
-
     }
 
     @Test
@@ -153,11 +149,7 @@ public class UserRepositoryTest {
                 String foundArticleId = foundArticleIds.get(j);
                 String testArticleId = testArticleIds.get(j);
                 assert(foundArticleId.equals(testArticleId));
-
             }
-
         }
-
     }
-
 }

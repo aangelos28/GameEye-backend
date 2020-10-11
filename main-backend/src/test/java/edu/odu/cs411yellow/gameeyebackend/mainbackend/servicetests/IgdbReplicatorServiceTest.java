@@ -38,12 +38,13 @@ public class IgdbReplicatorServiceTest {
         // Test for adding new games
         int minId = 1;
         int maxId = 10;
+        int limit = 10;
 
-        List<Game> igdbGames = igdbService.getGamesByRange(minId, maxId);
+        List<Game> igdbGames = igdbService.getGamesByRange(minId, maxId, limit);
         List<Game> preReplicationTestDbGames = new ArrayList<>();
 
         // Replicate new games to db.
-        igdbReplicator.replicateIgdbByRange(minId, maxId);
+        igdbReplicator.replicateIgdbByRange(minId, maxId, limit);
 
         // Find new games from db.
         for (int igdbId = minId; igdbId < maxId-minId+2; igdbId++) {
@@ -84,12 +85,13 @@ public class IgdbReplicatorServiceTest {
         // Test for adding new games
         int minId = 1;
         int maxId = 10;
+        int limit = 10;
 
-        List<Game> igdbGames = igdbService.getGamesByRange(minId, maxId);
+        List<Game> igdbGames = igdbService.getGamesByRange(minId, maxId, limit);
         List<Game> preReplicationTestDbGames = new ArrayList<>();
 
         // Replicate new games to db.
-        igdbReplicator.replicateIgdbByRange(minId, maxId);
+        igdbReplicator.replicateIgdbByRange(minId, maxId, limit);
 
         // Find new games from db.
         for (int igdbId = minId; igdbId < maxId-minId+2; igdbId++) {
@@ -98,7 +100,7 @@ public class IgdbReplicatorServiceTest {
 
         // Test for updating existing games. Ensure only required fields are overwritten.
         List<Game> postReplicationTestDbGames = new ArrayList<>();
-        igdbReplicator.replicateIgdbByRange(minId, maxId);
+        igdbReplicator.replicateIgdbByRange(minId, maxId, limit);
 
         // Find updated games in db.
         for (int igdbId = minId; igdbId < maxId-minId+2; igdbId++) {
@@ -123,16 +125,16 @@ public class IgdbReplicatorServiceTest {
             SourceUrls preRepSourceUrls = preRepGame.getSourceUrls();
             SourceUrls postRepSourceUrls = postRepGame.getSourceUrls();
 
-            if (preRepSourceUrls.getPublisherUrl() != "") {
+            if (!preRepSourceUrls.getPublisherUrl().equals("")) {
                 assertThat(postRepSourceUrls.getPublisherUrl(), notNullValue());
             }
-            if (preRepSourceUrls.getSteamUrl() != "") {
+            if (!preRepSourceUrls.getSteamUrl().equals("")) {
                 assertThat(postRepSourceUrls.getSteamUrl(), notNullValue());
             }
-            if (preRepSourceUrls.getSubRedditUrl() != "") {
+            if (!preRepSourceUrls.getSubRedditUrl().equals("")) {
                 assertThat(postRepSourceUrls.getSubRedditUrl(), notNullValue());
             }
-            if (preRepSourceUrls.getTwitterUrl() != "") {
+            if (!preRepSourceUrls.getTwitterUrl().equals("")) {
                 assertThat(postRepSourceUrls.getTwitterUrl(), notNullValue());
             }
         }

@@ -49,9 +49,9 @@ public class NewsWebsiteRepositoryTest {
     public void deleteInsertedNewsWebsiteFromGameEyeTest() {
         String newsWebsiteId = insertedNewsWebsite.getId();
 
-        if (newsWebsites.existsNewsWebsiteById(newsWebsiteId))
+        if (newsWebsites.existsNewsWebsiteById(newsWebsiteId)) {
             newsWebsites.delete(insertedNewsWebsite);
-
+        }
     }
 
     @Test
@@ -66,6 +66,5 @@ public class NewsWebsiteRepositoryTest {
         assert(foundNewsWebsite.getSiteUrl().equals(insertedNewsWebsite.getSiteUrl()));
         assert(foundNewsWebsite.getRssFeedUrl().equals(insertedNewsWebsite.getRssFeedUrl()));
         assert(foundNewsWebsite.getLastUpdated().equals(insertedNewsWebsite.getLastUpdated()));
-
     }
 }

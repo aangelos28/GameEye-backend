@@ -174,4 +174,8 @@ public class Game {
                 && Objects.equals(watchers, that.watchers);
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(id,igdbId,title,platforms,status,genres,sourceUrls,resources);
+    }
 }

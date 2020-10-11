@@ -34,8 +34,8 @@ public class GameTest {
     Game insertedGame;
 
     @BeforeEach
-    public void insertGameIntoGameEyeTest () {
-        String gameId = "5e98bf94a3464d35b824d04f";
+    public void insertGameTest() {
+        String gameId = "";
         String igdbId = "";
         String gameTitle = "Doom Eternal";
         List<String> platforms = new ArrayList<>(Arrays.asList("Stadia", "Xbox One", "Nintendo Switch",
@@ -112,21 +112,20 @@ public class GameTest {
     }
 
     @AfterEach
-    public void deleteGameFromGameEyeTest () {
+    public void deleteGameTest() {
         String gameId = insertedGame.getId();
 
-        if (games.existsById(gameId))
+        if (games.existsById(gameId)) {
             games.deleteById(gameId);
+        }
 
         Assert.assertFalse(games.existsById(gameId));
     }
 
-    //TODO Implement equal() for Game and use in test.
     @Test
-    public void testFindArticles () {
-
-        String gameId = insertedGame.getId();
-        Game foundGame = games.findGameById(gameId);
+    public void testFindArticles() {
+        String gameTitle = insertedGame.getTitle();
+        Game foundGame = games.findGameByTitle(gameTitle);
 
         Resources actualResources = insertedGame.getResources();
 

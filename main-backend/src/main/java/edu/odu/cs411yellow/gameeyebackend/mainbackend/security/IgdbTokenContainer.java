@@ -18,7 +18,6 @@ public class IgdbTokenContainer {
 
     public IgdbTokenContainer(@Value("${igdb.clientid}") String clientId, @Value("${igdb.clientsecret}") String clientSecret) {
         retrieveAccessToken(clientId, clientSecret);
-
     }
 
     public String getAccessToken() {
@@ -57,5 +56,4 @@ public class IgdbTokenContainer {
         this.accessToken = authResponse.accessToken;
         this.expirationInSeconds = authResponse.expiresIn;
     }
-
 }

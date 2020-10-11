@@ -25,16 +25,17 @@ public class IgdbReplicatorService {
         this.gameRepository = gameRepository;
     }
 
-    public void replicateIgdbByRange(int minId, int maxId) throws JsonProcessingException {
-        logger.info("Replicating potentially " + (maxId - minId + 1) + " games; range: " + minId + "-" + maxId);
-        List<Game> games = igdbService.getGamesByRange(minId, maxId);
+    public void replicateIgdbByRange(int minId, int maxId, int limit) throws JsonProcessingException {
+        logger.info(String.format("Replicating potentially %1$s games; range: %2$s-%3$s; limit: %4$s.",
+                                  (maxId - minId + 1), minId, maxId, limit));
+        List<Game> games = igdbService.getGamesByRange(minId, maxId, limit);
 
         int updatedGames = 0;
         int newGames = 0;
 
         for (Game newGame: games) {
             // Check that the new game is not null
-            if (newGame.getIgdbId() != "") {
+            if (!newGame.getIgdbId().equals("")) {
                 // Update if new game exists by igdbId
                 if (gameRepository.existsByIgdbId(newGame.getIgdbId())) {
                     Game existingGame = gameRepository.findByIgdbId(newGame.getIgdbId());
@@ -47,16 +48,16 @@ public class IgdbReplicatorService {
                     SourceUrls newSourceUrls = newGame.getSourceUrls();
                     SourceUrls existingSourceUrls = existingGame.getSourceUrls();
 
-                    if (newSourceUrls.getPublisherUrl() != "") {
+                    if (!newSourceUrls.getPublisherUrl().equals("")) {
                         existingSourceUrls.setPublisherUrl(newSourceUrls.getPublisherUrl());
                     }
-                    if (newSourceUrls.getSteamUrl() != "") {
+                    if (!newSourceUrls.getSteamUrl().equals("")) {
                         existingSourceUrls.setSteamUrl(newSourceUrls.getSteamUrl());
                     }
-                    if (newSourceUrls.getSubRedditUrl() != "") {
+                    if (!newSourceUrls.getSubRedditUrl().equals("")) {
                         existingSourceUrls.setSubRedditUrl(newSourceUrls.getSubRedditUrl());
                     }
-                    if (newSourceUrls.getTwitterUrl() != "") {
+                    if (!newSourceUrls.getTwitterUrl().equals("")) {
                         existingSourceUrls.setTwitterUrl(newSourceUrls.getTwitterUrl());
                     }
 

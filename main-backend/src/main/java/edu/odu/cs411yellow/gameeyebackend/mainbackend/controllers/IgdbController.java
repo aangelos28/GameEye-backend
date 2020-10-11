@@ -26,16 +26,15 @@ public class IgdbController {
     /**
      * Replicates game data from IGDB to the GameEye database.
      *
-     * @@param request HTTP request body
+     * @param request HTTP request body
      */
-    @PostMapping(path = "private-admin/igdb/populate", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/private-admin/igdb/populate", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> replicateIgdbByRange(@RequestBody IgdbControllerRequest request) {
-
         try {
-            igdbReplicatorService.replicateIgdbByRange(request.getMinId(), request.getMaxId());
+            igdbReplicatorService.replicateIgdbByRange(request.getMinId(), request.getMaxId(), request.getLimit());
             return ResponseEntity.status(HttpStatus.CREATED).body("Replicated games.");
         } catch (Exception ex) {
-            ex.printStackTrace();;
+            ex.printStackTrace();
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to replicate games.");
         }
     }

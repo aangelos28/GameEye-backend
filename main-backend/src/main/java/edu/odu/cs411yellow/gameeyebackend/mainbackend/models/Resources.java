@@ -63,4 +63,8 @@ public class Resources {
                 && Objects.equals(images, that.images);
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(articles,images);
+    }
 }

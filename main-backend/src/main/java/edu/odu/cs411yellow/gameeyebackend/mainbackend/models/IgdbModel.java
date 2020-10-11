@@ -42,33 +42,33 @@ public class IgdbModel {
             this.sourceUrls = sourceUrls;
         }
 
-        public List<String> getGenresFromGenreResponses() {
+        public List<String> getGenres() {
             List<String> genres = new ArrayList<>();
 
-            for(GenreResponse genreResponse: this.genres) {
+            for (GenreResponse genreResponse: this.genres) {
                 genres.add(genreResponse.name);
-
             }
 
             return genres;
         }
 
-        public SourceUrls getSourceUrlsFromWebsiteResponses() {
+        public SourceUrls getSourceUrls() {
             SourceUrls sourceUrls = new SourceUrls();
 
-            String igdbOfficialEnumValue = "1";
-            String igdbSteamEnumValue = "13";
-            String igdbRedditEnumValue = "14";
-            String igdbTwitterEnumValue = "5";
+            for (WebsiteResponse websiteResponse: this.sourceUrls) {
+                String responseCode = websiteResponse.category;
+                String officialCode = SourceUrlCategory.official.toString();
+                String steamCode = SourceUrlCategory.steam.toString();
+                String subRedditCode = SourceUrlCategory.subReddit.toString();
+                String twitterCode = SourceUrlCategory.twitter.toString();
 
-            for(WebsiteResponse websiteResponse: this.sourceUrls) {
-                if(igdbOfficialEnumValue.equals(websiteResponse.category)) {
+                if (officialCode.equals(responseCode)) {
                     sourceUrls.setPublisherUrl(websiteResponse.url);
-                } else if (igdbSteamEnumValue.equals(websiteResponse.category)) {
+                } else if (steamCode.equals(responseCode)) {
                     sourceUrls.setSteamUrl(websiteResponse.url);
-                } else if (igdbRedditEnumValue.equals(websiteResponse.category)) {
+                } else if (subRedditCode.equals(responseCode)) {
                     sourceUrls.setSubRedditUrl(websiteResponse.url);
-                } else if (igdbTwitterEnumValue.equals(websiteResponse.category)) {
+                } else if (twitterCode.equals(responseCode)) {
                     sourceUrls.setTwitterUrl(websiteResponse.url);
                 }
             }
@@ -76,12 +76,11 @@ public class IgdbModel {
             return sourceUrls;
         }
 
-        public List<String> getPlatformsFromPlatformResponses() {
+        public List<String> getPlatforms() {
             List<String> platforms = new ArrayList<>();
 
-            for(PlatformResponse platformResponse: this.platforms) {
+            for (PlatformResponse platformResponse: this.platforms) {
                 platforms.add(platformResponse.name);
-
             }
 
             return platforms;
@@ -91,13 +90,13 @@ public class IgdbModel {
             String id = "";
             String igdbId = this.igdbId;
             String title = this.title;
-            List<String> platforms = this.getPlatformsFromPlatformResponses();
+            List<String> platforms = this.getPlatforms();
             String status = "";
 
             // Convert UNIX epoch timestamp from IGDB to year, month, day format
             Date lastUpdated = new java.util.Date((long)this.lastUpdatedInSeconds * 1000);
-            List<String> genres = this.getGenresFromGenreResponses();
-            SourceUrls sourceUrls = this.getSourceUrlsFromWebsiteResponses();
+            List<String> genres = this.getGenres();
+            SourceUrls sourceUrls = this.getSourceUrls();
             Resources resources = new Resources();
             int watchers = 0;
 
@@ -106,7 +105,6 @@ public class IgdbModel {
 
             return game;
         }
-
     }
 
     public static class GenreResponse {
@@ -121,7 +119,6 @@ public class IgdbModel {
         public GenreResponse(String id, String name) {
             this.id = id;
             this.name = name;
-
         }
     }
 
@@ -140,7 +137,6 @@ public class IgdbModel {
             this.id = id;
             this.url = url;
             this.category = category;
-
         }
     }
 
@@ -156,7 +152,6 @@ public class IgdbModel {
         public PlatformResponse(String id, String name) {
             this.id = id;
             this.name = name;
-
         }
     }
 
@@ -193,6 +188,22 @@ public class IgdbModel {
         public CompanyResponse(String id, String name) {
             this.id = id;
             this.name = name;
+        }
+    }
+
+    /**
+     * Website category enums from IGDB API v4 docs.
+     */
+    public enum SourceUrlCategory {
+        official("1"),
+        steam("13"),
+        subReddit("14"),
+        twitter("5");
+
+        private final String categoryCode;
+
+        SourceUrlCategory(String categoryCode) {
+            this.categoryCode = categoryCode;
         }
     }
 }

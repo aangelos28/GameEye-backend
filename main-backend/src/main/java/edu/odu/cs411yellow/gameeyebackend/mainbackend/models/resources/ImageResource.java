@@ -73,4 +73,9 @@ public class ImageResource {
                 && Objects.equals(lastUpdated, that.lastUpdated)
                 && Objects.equals(title, that.title);
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, imageId, title);
+    }
 }

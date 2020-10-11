@@ -3,6 +3,7 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.models;
 import org.springframework.data.annotation.PersistenceConstructor;
 
 import javax.xml.transform.Source;
+import java.util.Objects;
 
 /**
  * Holds the source URLs for a game.
@@ -82,9 +83,14 @@ public class SourceUrls {
         if (this == o ) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SourceUrls that = (SourceUrls) o;
-        return this.publisherUrl.equals(that.publisherUrl) &&
-               this.steamUrl.equals(that.steamUrl) &&
-               this.subRedditUrl.equals(that.subRedditUrl) &&
-               this.twitterUrl.equals(that.twitterUrl);
+        return Objects.equals(publisherUrl, that.publisherUrl)
+                && Objects.equals(steamUrl, that.steamUrl)
+                && Objects.equals(subRedditUrl, that.subRedditUrl)
+                && Objects.equals(twitterUrl, that.twitterUrl);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(publisherUrl, steamUrl, subRedditUrl, twitterUrl);
     }
 }
