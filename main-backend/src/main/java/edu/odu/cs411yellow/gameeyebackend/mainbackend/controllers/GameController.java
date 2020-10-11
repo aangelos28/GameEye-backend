@@ -1,7 +1,7 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.controllers;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.elasticsearch.ElasticGame;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.AutocompletionService;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ElasticGameRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ import java.util.List;
  */
 @RestController
 public class GameController {
-    AutocompletionService autocompletionService;
+    ElasticGameRepository elasticGames;
 
     Logger logger = LoggerFactory.getLogger(GameController.class);
 
@@ -47,8 +47,8 @@ public class GameController {
     }
 
     @Autowired
-    public GameController(AutocompletionService autocompletionService) {
-        this.autocompletionService = autocompletionService;
+    public GameController(ElasticGameRepository elasticGames) {
+        this.elasticGames = elasticGames;
     }
 
     /**
@@ -57,10 +57,10 @@ public class GameController {
      * @param request HTTP request body.
      * @return List of autocompletions
      */
-    @GetMapping(path = "/private/games/complete", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/private/game/complete", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<GameTitleAutocompletionResponse>> getTitleCompletions(@RequestBody GameTitleAutocompletionRequest request) {
         // Autocomplete title
-        SearchHits<ElasticGame> searchHits = autocompletionService.autocompleteGameTitle(request.gameTitle, 5);
+        SearchHits<ElasticGame> searchHits = elasticGames.autocompleteGameTitle(request.gameTitle, 5);
 
         if (searchHits.getTotalHits() == 0) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

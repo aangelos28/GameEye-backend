@@ -5,7 +5,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface GameRepository extends MongoRepository<Game, String> {
+public interface GameRepository extends MongoRepository<Game, String>, GameRepositoryCustom {
     Game findByTitle(String title);
 
     Game findGameByTitle(String title);
@@ -24,5 +24,5 @@ public interface GameRepository extends MongoRepository<Game, String> {
 
     void deleteByTitle(String title);
 
-    void deleteByIgdbId(String igdbId);
+    boolean existsById(Game game);
 }

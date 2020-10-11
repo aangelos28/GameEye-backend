@@ -67,7 +67,7 @@ public class UserService {
      * @param userId     Id of the user profile to disable.
      * @param userStatus User profile status to set
      */
-    public void setUserStatus(final String userId, UserStatus userStatus) {
+    public void setUserStatus(final String userId, final UserStatus userStatus) {
         User user = users.findUserByFirebaseId(userId);
         user.setStatus(userStatus);
 

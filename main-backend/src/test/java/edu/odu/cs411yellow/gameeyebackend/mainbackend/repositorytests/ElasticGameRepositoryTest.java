@@ -4,7 +4,6 @@ import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.elasticsearch.ElasticGame;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ElasticGameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.AutocompletionService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,15 +20,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @SpringBootTest
 @ActiveProfiles("test")
 @TestPropertySource(locations = "classpath:application-test.properties")
-public class ElasticGameAutocompletionTest {
+public class ElasticGameRepositoryTest {
     @Autowired
     private ElasticGameRepository elasticGames;
 
     @Autowired
     private GameRepository games;
-
-    @Autowired
-    AutocompletionService autocompletionService;
 
     @Test
     public void testInsertElasticGames() {
@@ -86,11 +82,11 @@ public class ElasticGameAutocompletionTest {
         assertThat(elasticGame5.getTitle(), is(game5.getTitle()));
 
         // Delete elastic games
-        /*elasticGames.deleteByTitle(game1Title);
+        elasticGames.deleteByTitle(game1Title);
         elasticGames.deleteByTitle(game2Title);
         elasticGames.deleteByTitle(game3Title);
         elasticGames.deleteByTitle(game4Title);
-        elasticGames.deleteByTitle(game5Title);*/
+        elasticGames.deleteByTitle(game5Title);
     }
 
     @Test
@@ -117,7 +113,7 @@ public class ElasticGameAutocompletionTest {
         elasticGames.save(elasticGame3);
 
         // Search for Fallout 3
-        SearchHits<ElasticGame> results = autocompletionService.autocompleteGameTitle("fout 3", 1);
+        SearchHits<ElasticGame> results = elasticGames.autocompleteGameTitle("fout 3", 1);
 
         assertThat(results.getTotalHits(), is(1L));
         assertThat(results.getSearchHit(0).getContent().getTitle(), is("Fallout 3"));

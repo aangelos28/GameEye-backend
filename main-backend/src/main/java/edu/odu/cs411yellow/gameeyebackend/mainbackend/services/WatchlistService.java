@@ -62,6 +62,9 @@ public class WatchlistService {
             // Add game to watchlist
             watchlist.add(newGame);
             users.save(user);
+
+            // Increment the number of watchers for the game
+            games.incrementWatchers(gameId);
         }
     }
 
@@ -87,7 +90,11 @@ public class WatchlistService {
         }
 
         // Remove game from watchlist
+        final String gameId = watchlist.get(gameIndex).getGameId();
         watchlist.remove(gameIndex);
         users.save(user);
+
+        // Increment the number of watchers for the game
+        games.decrementWatchers(gameId);
     }
 }
