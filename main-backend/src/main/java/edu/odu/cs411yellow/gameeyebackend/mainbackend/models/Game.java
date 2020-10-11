@@ -22,7 +22,6 @@ public class Game {
 
     private String igdbId;
 
-    @Indexed(unique = true)
     private String title;
 
     private List<String> platforms;
@@ -37,6 +36,7 @@ public class Game {
 
     private Resources resources;
 
+    @Indexed
     private int watchers;
 
     @PersistenceConstructor
