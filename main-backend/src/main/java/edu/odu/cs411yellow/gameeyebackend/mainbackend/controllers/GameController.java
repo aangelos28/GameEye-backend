@@ -57,7 +57,7 @@ public class GameController {
      * @param request HTTP request body.
      * @return List of autocompletions
      */
-    @GetMapping(path = "/private/games/complete", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/private/game/complete", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<GameTitleAutocompletionResponse>> getTitleCompletions(@RequestBody GameTitleAutocompletionRequest request) {
         // Autocomplete title
         SearchHits<ElasticGame> searchHits = autocompletionService.autocompleteGameTitle(request.gameTitle, 5);
