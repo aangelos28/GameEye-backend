@@ -20,5 +20,7 @@ public interface GameRepository extends MongoRepository<Game, String>, GameRepos
 
     void deleteById(String id);
 
+    void deleteByIgdbId(String id);
+
     void deleteByTitle(String title);
 }
