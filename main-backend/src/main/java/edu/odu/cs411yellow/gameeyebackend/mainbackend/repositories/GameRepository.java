@@ -14,8 +14,6 @@ public interface GameRepository extends MongoRepository<Game, String>, GameRepos
 
     Game findByIgdbId(String idgbIdb);
 
-    boolean existsById(Game game);
-
     boolean existsByIgdbId(String igdbId);
 
     boolean existsByTitle(String title);
@@ -23,6 +21,4 @@ public interface GameRepository extends MongoRepository<Game, String>, GameRepos
     void deleteById(String id);
 
     void deleteByTitle(String title);
-
-    boolean existsById(Game game);
 }

@@ -28,7 +28,7 @@ public class IgdbController {
      *
      * @param request HTTP request body
      */
-    @PostMapping(path = "/private-admin/igdb/populate", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/private-admin/igdb/replicate", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> replicateIgdbByRange(@RequestBody IgdbControllerRequest request) {
         try {
             igdbReplicatorService.replicateIgdbByRange(request.getMinId(), request.getMaxId(), request.getLimit());
