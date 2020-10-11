@@ -1,11 +1,13 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models;
 
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.ImageResource;
 import org.bson.types.Binary;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * Class representing a document in the "News Websites" collection.
@@ -104,4 +106,22 @@ public class NewsWebsite {
         this.lastUpdated = lastUpdated;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o ) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NewsWebsite that = (NewsWebsite) o;
+
+        return Objects.equals(id, that.id)
+                && Objects.equals(name, that.name)
+                && Objects.equals(logo, that.logo)
+                && Objects.equals(siteUrl, that.siteUrl)
+                && Objects.equals(rssFeedUrl, that.rssFeedUrl)
+                && Objects.equals(lastUpdated, that.lastUpdated);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, logo, siteUrl, rssFeedUrl);
+    }
 }

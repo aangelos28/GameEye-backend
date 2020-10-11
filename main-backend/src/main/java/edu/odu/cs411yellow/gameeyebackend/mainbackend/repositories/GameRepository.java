@@ -8,9 +8,17 @@ import org.springframework.stereotype.Repository;
 public interface GameRepository extends MongoRepository<Game, String>, GameRepositoryCustom {
     Game findByTitle(String title);
 
+    Game findGameByTitle(String title);
+
     Game findGameById(String id);
 
-    Game findGameByTitle(String title);
+    Game findByIgdbId(String idgbIdb);
+
+    boolean existsById(Game game);
+
+    boolean existsByIgdbId(String igdbId);
+
+    boolean existsByTitle(String title);
 
     void deleteById(String id);
 

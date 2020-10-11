@@ -29,13 +29,14 @@ import java.util.List;
 public class GameTest {
 
     @Autowired
-    private GameRepository gameRepository;
+    private GameRepository games;
 
     Game insertedGame;
 
     @BeforeEach
-    public void insertGameIntoGameEyeTest () {
-        String gameId = "5e98bf94a3464d35b824d04f";
+    public void insertGameTest() {
+        String gameId = "";
+        String igdbId = "";
         String gameTitle = "Doom Eternal";
         List<String> platforms = new ArrayList<>(Arrays.asList("Stadia", "Xbox One", "Nintendo Switch",
                 "PS4", "Mobile"));
@@ -75,7 +76,7 @@ public class GameTest {
                 newsWebsiteLogo, newsWebsiteUrl,
                 newsWebsiteRssFeedUrl, newsWebsiteLastUpdated);
 
-        // Declare image
+        // Declare thumbnail
         String imageId = "5ea108ea34019c1d1c818c02";
         String type = "thumbnail";
         Binary imageData = new Binary(new byte[1]);
@@ -102,31 +103,31 @@ public class GameTest {
         List<Article> articles = new ArrayList<>(Arrays.asList(article));
 
         Resources resources = new Resources(images, articles);
+        int watchers = 0;
 
-        insertedGame = new Game(gameId, gameTitle, platforms, status, gameLastUpdated, genres,
-                                sourceUrls, resources);
+        insertedGame = new Game(gameId, igdbId, gameTitle, platforms, status, gameLastUpdated, genres,
+                                sourceUrls, resources, watchers);
 
-        gameRepository.save(insertedGame);
+        games.save(insertedGame);
     }
 
     @AfterEach
-    public void deleteGameFromGameEyeTest () {
+    public void deleteGameTest() {
         String gameId = insertedGame.getId();
 
-        if (gameRepository.existsById(gameId))
-            gameRepository.deleteById(gameId);
+        if (games.existsById(gameId)) {
+            games.deleteById(gameId);
+        }
 
-        Assert.assertFalse(gameRepository.existsById(gameId));
+        Assert.assertFalse(games.existsById(gameId));
     }
 
     @Test
-    public void testFindArticles () {
-
-        String gameId = insertedGame.getId();
-        Game foundGame = gameRepository.findGameById(gameId);
+    public void testFindArticles() {
+        String gameTitle = insertedGame.getTitle();
+        Game foundGame = games.findGameByTitle(gameTitle);
 
         Resources actualResources = insertedGame.getResources();
-
 
         String articleId = "5ea1c2e777dabd049ce92788";
 

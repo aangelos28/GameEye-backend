@@ -15,6 +15,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,13 +30,14 @@ import java.util.List;
 public class GameRepositoryTest {
 
     @Autowired
-    private GameRepository gameRepository;
+    private GameRepository games;
 
     Game insertedGame;
 
     @BeforeEach
-    public void insertGameIntoGameEyeTest () {
-        String gameId = "5e98bf94a3464d35b824d04f";
+    public void insertGameIntoGameEyeTest() {
+        String gameId = "";
+        String igdbId = "";
         String gameTitle = "Doom Eternal";
         List<String> platforms = new ArrayList<>(Arrays.asList("Stadia", "Xbox One", "Nintendo Switch",
                                                            "PS4", "Mobile"));
@@ -101,33 +104,32 @@ public class GameRepositoryTest {
         List<Article> articles = new ArrayList<>(Arrays.asList(article));
 
         Resources resources = new Resources(images, articles);
+        int watchers = 0;
 
-        Game testGame = new Game(gameId, gameTitle, platforms, status, gameLastUpdated, genres,
-                                 sourceUrls, resources);
+        Game testGame = new Game(gameId, igdbId, gameTitle, platforms, status, gameLastUpdated, genres,
+                                 sourceUrls, resources, watchers);
         insertedGame = testGame;
 
-        gameRepository.save(testGame);
+        games.save(testGame);
     }
 
     @AfterEach
     public void deleteInsertedGame() {
-        String gameId = insertedGame.getId();
+        String gameTitle = insertedGame.getTitle();
 
-        if (gameRepository.existsById(gameId))
-            gameRepository.deleteById(gameId);
+        if (games.existsByTitle(gameTitle)) {
+            games.deleteByTitle(gameTitle);
+        }
 
-        Assert.assertFalse(gameRepository.existsById(gameId));
-
+        assertThat(games.existsByTitle(gameTitle), is(true));
     }
 
     @Test
     public void findGameById() {
-        String gameId = insertedGame.getId();
+        String gameTitle = insertedGame.getTitle();
 
-        Game foundGame = gameRepository.findGameById(gameId);
+        Game foundGame = games.findByTitle(gameTitle);
 
-        assert(foundGame.getId().equals(insertedGame.getId()));
-
+        assertThat(insertedGame, equalTo(foundGame));
     }
-
 }

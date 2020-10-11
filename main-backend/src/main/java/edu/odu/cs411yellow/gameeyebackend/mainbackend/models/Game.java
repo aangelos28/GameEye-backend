@@ -1,15 +1,16 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.ImageResource;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.repository.Query;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Class representing a document in the "Games" database collection.
@@ -18,6 +19,8 @@ import java.util.List;
 public class Game {
     @Id
     private final String id;
+
+    private String igdbId;
 
     @Indexed(unique = true)
     private String title;
@@ -34,10 +37,13 @@ public class Game {
 
     private Resources resources;
 
+    private int watchers;
+
     @PersistenceConstructor
-    public Game(String id, String title, List<String> platforms, String status, Date lastUpdated,
-                List<String> genres, SourceUrls sourceUrls, Resources resources) {
+    public Game(String id, String igdbId, String title, List<String> platforms, String status, Date lastUpdated,
+                List<String> genres, SourceUrls sourceUrls, Resources resources, int watchers) {
         this.id = id;
+        this.igdbId = igdbId;
         this.title = title;
         this.platforms = platforms;
         this.status = status;
@@ -45,9 +51,11 @@ public class Game {
         this.genres = genres;
         this.sourceUrls = sourceUrls;
         this.resources = resources;
+        this.watchers = watchers;
     }
     public Game() {
         this.id = "";
+        this.igdbId = "";
         this.title = "";
         this.platforms = new ArrayList<>();
         this.status = "";
@@ -55,10 +63,19 @@ public class Game {
         this.genres = new ArrayList<>();
         this.sourceUrls = new SourceUrls();
         this.resources = new Resources();
+        this.watchers = 0;
     }
 
     public String getId() {
         return this.id;
+    }
+
+    public String getIgdbId() {
+        return igdbId;
+    }
+
+    public void setIgdbId(String igdbId) {
+        this.igdbId = igdbId;
     }
 
     public String getTitle() {
@@ -117,6 +134,18 @@ public class Game {
         this.resources = resources;
     }
 
+    public int getWatchers() {
+        return this.watchers;
+    }
+
+    public void incrementWatchers() {
+        watchers++;
+    }
+
+    public void decrementWatchers() {
+        watchers--;
+    }
+
     public List<Article> findArticles(List<String> articleIds) {
         List<Article> foundArticles = new ArrayList<>();
 
@@ -127,4 +156,26 @@ public class Game {
         return foundArticles;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o ) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Game that = (Game) o;
+
+        return Objects.equals(id, that.id)
+                && Objects.equals(igdbId, that.igdbId)
+                && Objects.equals(title, that.title)
+                && Objects.equals(platforms, that.platforms)
+                && Objects.equals(status, that.status)
+                && Objects.equals(lastUpdated, that.lastUpdated)
+                && Objects.equals(genres, that.genres)
+                && Objects.equals(sourceUrls, that.sourceUrls)
+                && Objects.equals(resources, that.resources)
+                && Objects.equals(watchers, that.watchers);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id,igdbId,title,platforms,status,genres,sourceUrls,resources);
+    }
 }

@@ -25,7 +25,7 @@ import java.util.List;
 public class UserRepositoryTest {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserRepository users;
 
     User testUser;
 
@@ -81,39 +81,36 @@ public class UserRepositoryTest {
         testUser = new User(userId, firebaseId, status, plan, preferences, watchList);
 
         // Write testUser to GameEyeTest
-        userRepository.insert(testUser);
-
+        users.insert(testUser);
     }
 
     @AfterEach
     public void deleteTestUserFromGameEyeTest() {
         String userId = testUser.getId();
-        if (userRepository.existsById(userId))
-            userRepository.deleteById(userId);
+        if (users.existsById(userId))
+            users.deleteById(userId);
     }
 
     @Test
     public void findUserById() {
         String foundUserId = testUser.getId();
-        User foundUser = userRepository.findUserById(foundUserId);
+        User foundUser = users.findUserById(foundUserId);
 
         assert(foundUser.getId().equals(testUser.getId()));
-
     }
 
     @Test
     public void findUserByFirebaseId() {
         String foundUserFirebaseId = testUser.getFirebaseId();
-        User foundUser = userRepository.findUserByFirebaseId(foundUserFirebaseId);
+        User foundUser = users.findUserByFirebaseId(foundUserFirebaseId);
 
         assert(foundUser.getFirebaseId().equals(testUser.getFirebaseId()));
-
     }
 
     @Test
     public void findUsersWatchListAndCheckAgainstAvailableGames() {
         String foundUserId = testUser.getId();
-        User foundUser = userRepository.findUserById(foundUserId);
+        User foundUser = users.findUserById(foundUserId);
 
         List<WatchedGame> foundUserWatchList = foundUser.getWatchList();
         List<WatchedGame> testUserWatchList = testUser.getWatchList();
@@ -124,14 +121,13 @@ public class UserRepositoryTest {
 
             assert(foundGameId.equals(testGameId));
         }
-
     }
 
     @Test
     public void findArticlesInUsersWatchList() {
         String foundUserId = testUser.getId();
 
-        User foundUser = userRepository.findUserById(foundUserId);
+        User foundUser = users.findUserById(foundUserId);
 
         List<WatchedGame> foundUserWatchList = foundUser.getWatchList();
         List<WatchedGame> testUserWatchList = testUser.getWatchList();
@@ -153,11 +149,7 @@ public class UserRepositoryTest {
                 String foundArticleId = foundArticleIds.get(j);
                 String testArticleId = testArticleIds.get(j);
                 assert(foundArticleId.equals(testArticleId));
-
             }
-
         }
-
     }
-
 }

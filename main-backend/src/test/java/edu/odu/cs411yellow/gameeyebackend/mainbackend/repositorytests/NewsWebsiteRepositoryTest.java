@@ -22,7 +22,7 @@ import java.util.Date;
 public class NewsWebsiteRepositoryTest {
 
     @Autowired
-    private NewsWebsiteRepository newsWebsiteRepository;
+    private NewsWebsiteRepository newsWebsites;
 
     NewsWebsite insertedNewsWebsite;
 
@@ -42,23 +42,23 @@ public class NewsWebsiteRepositoryTest {
                                               newsWebsiteRssFeedUrl, newsWebsiteLastUpdated);
 
         // Save news website in database
-        newsWebsiteRepository.save(insertedNewsWebsite);
+        newsWebsites.save(insertedNewsWebsite);
     }
 
     @AfterEach
     public void deleteInsertedNewsWebsiteFromGameEyeTest() {
         String newsWebsiteId = insertedNewsWebsite.getId();
 
-        if (newsWebsiteRepository.existsNewsWebsiteById(newsWebsiteId))
-            newsWebsiteRepository.delete(insertedNewsWebsite);
-
+        if (newsWebsites.existsNewsWebsiteById(newsWebsiteId)) {
+            newsWebsites.delete(insertedNewsWebsite);
+        }
     }
 
     @Test
     public void findNewsWebsiteById() {
         String newsWebsiteId = insertedNewsWebsite.getId();
 
-        NewsWebsite foundNewsWebsite = newsWebsiteRepository.findNewsWebsiteById(newsWebsiteId);
+        NewsWebsite foundNewsWebsite = newsWebsites.findNewsWebsiteById(newsWebsiteId);
 
         assert(foundNewsWebsite.getId().equals(insertedNewsWebsite.getId()));
         assert(foundNewsWebsite.getName().equals(insertedNewsWebsite.getName()));
@@ -66,6 +66,5 @@ public class NewsWebsiteRepositoryTest {
         assert(foundNewsWebsite.getSiteUrl().equals(insertedNewsWebsite.getSiteUrl()));
         assert(foundNewsWebsite.getRssFeedUrl().equals(insertedNewsWebsite.getRssFeedUrl()));
         assert(foundNewsWebsite.getLastUpdated().equals(insertedNewsWebsite.getLastUpdated()));
-
     }
 }
