@@ -1,4 +1,4 @@
-package edu.odu.cs411yellow.gameeyebackend.mainbackend.services;
+package edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.elasticsearch.ElasticGame;
 import org.elasticsearch.common.unit.Fuzziness;
@@ -10,18 +10,13 @@ import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
-import org.springframework.stereotype.Service;
 
-/**
- * Provides autocompletion features for game titles.
- */
-@Service
-public class AutocompletionService {
+public class ElasticGameRepositoryCustomImpl implements ElasticGameRepositoryCustom {
 
     private final ElasticsearchOperations elasticSearch;
 
     @Autowired
-    AutocompletionService(@Qualifier("elasticsearchOperations") ElasticsearchOperations elasticSearch) {
+    ElasticGameRepositoryCustomImpl(@Qualifier("elasticsearchOperations") ElasticsearchOperations elasticSearch) {
         this.elasticSearch = elasticSearch;
     }
 
@@ -32,7 +27,8 @@ public class AutocompletionService {
      * @param maxResults Maximum autocompletion results to get
      * @return List of autocompleted games
      */
-    public SearchHits<ElasticGame> autocompleteGameTitle(final String title, final int maxResults) {
+    @Override
+    public SearchHits<ElasticGame> autocompleteGameTitle(String title, int maxResults) {
         // Query ElasticSearch
         NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(QueryBuilders.matchQuery("title", title)

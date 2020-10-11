@@ -3,7 +3,7 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.elasticsearch.ElasticGame;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
-public interface ElasticGameRepository extends ElasticsearchRepository<ElasticGame, String> {
+public interface ElasticGameRepository extends ElasticsearchRepository<ElasticGame, String>, ElasticGameRepositoryCustom {
     ElasticGame findByTitle(String title);
 
     ElasticGame findByGameId(String gameId);
