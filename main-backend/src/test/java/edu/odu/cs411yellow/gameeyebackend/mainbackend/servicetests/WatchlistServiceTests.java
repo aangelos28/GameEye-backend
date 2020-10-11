@@ -53,9 +53,26 @@ public class WatchlistServiceTests {
         final String game2Title = "Fallout 2";
         final String game3Title = "Fallout: New Vegas";
 
-        Game game1 = games.findGameByTitle(game1Title);
-        Game game2 = games.findGameByTitle(game2Title);
-        Game game3 = games.findGameByTitle(game3Title);
+        // Insert test games
+        // Delete games if they exist
+        games.deleteByTitle(game1Title);
+        games.deleteByTitle(game2Title);
+        games.deleteByTitle(game3Title);
+
+        Game game1 = new Game();
+        game1.setTitle(game1Title);
+        Game game2 = new Game();
+        game2.setTitle(game2Title);
+        Game game3 = new Game();
+        game3.setTitle(game3Title);
+
+        games.save(game1);
+        games.save(game2);
+        games.save(game3);
+
+        game1 = games.findGameByTitle(game1Title);
+        game2 = games.findGameByTitle(game2Title);
+        game3 = games.findGameByTitle(game3Title);
 
         watchlistService.addWatchlistGame(userFirebaseId, game1.getId());
         watchlistService.addWatchlistGame(userFirebaseId, game2.getId());
@@ -70,6 +87,11 @@ public class WatchlistServiceTests {
 
         // Delete user
         users.deleteByFirebaseId(userFirebaseId);
+
+        // Delete inserted games
+        games.deleteByTitle(game1Title);
+        games.deleteByTitle(game2Title);
+        games.deleteByTitle(game3Title);
     }
 
     @Test
@@ -89,9 +111,26 @@ public class WatchlistServiceTests {
         final String game2Title = "Fallout 2";
         final String game3Title = "Fallout: New Vegas";
 
-        Game game1 = games.findGameByTitle(game1Title);
-        Game game2 = games.findGameByTitle(game2Title);
-        Game game3 = games.findGameByTitle(game3Title);
+        // Insert test games
+        // Delete games if they exist
+        games.deleteByTitle(game1Title);
+        games.deleteByTitle(game2Title);
+        games.deleteByTitle(game3Title);
+
+        Game game1 = new Game();
+        game1.setTitle(game1Title);
+        Game game2 = new Game();
+        game2.setTitle(game2Title);
+        Game game3 = new Game();
+        game3.setTitle(game3Title);
+
+        games.save(game1);
+        games.save(game2);
+        games.save(game3);
+
+        game1 = games.findGameByTitle(game1Title);
+        game2 = games.findGameByTitle(game2Title);
+        game3 = games.findGameByTitle(game3Title);
 
         watchlistService.addWatchlistGame(userFirebaseId, game1.getId());
         watchlistService.addWatchlistGame(userFirebaseId, game2.getId());
@@ -110,5 +149,10 @@ public class WatchlistServiceTests {
 
         // Delete user
         users.deleteByFirebaseId(userFirebaseId);
+
+        // Delete inserted games
+        games.deleteByTitle(game1Title);
+        games.deleteByTitle(game2Title);
+        games.deleteByTitle(game3Title);
     }
 }

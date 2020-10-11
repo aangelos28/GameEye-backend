@@ -35,6 +35,31 @@ public class ElasticGameRepositoryTest {
         final String game4Title = "Fallout 2";
         final String game5Title = "Fallout: New Vegas";
 
+        // Insert test games
+        // Delete test games if already present
+        games.deleteByTitle(game1Title);
+        games.deleteByTitle(game2Title);
+        games.deleteByTitle(game3Title);
+        games.deleteByTitle(game4Title);
+        games.deleteByTitle(game5Title);
+
+        Game game1 = new Game();
+        game1.setTitle(game1Title);
+        Game game2 = new Game();
+        game2.setTitle(game2Title);
+        Game game3 = new Game();
+        game3.setTitle(game3Title);
+        Game game4 = new Game();
+        game4.setTitle(game4Title);
+        Game game5 = new Game();
+        game5.setTitle(game5Title);
+
+        games.save(game1);
+        games.save(game2);
+        games.save(game3);
+        games.save(game4);
+        games.save(game5);
+
         // Delete elastic games if already present
         elasticGames.deleteByTitle(game1Title);
         elasticGames.deleteByTitle(game2Title);
@@ -42,11 +67,11 @@ public class ElasticGameRepositoryTest {
         elasticGames.deleteByTitle(game4Title);
         elasticGames.deleteByTitle(game5Title);
 
-        Game game1 = games.findGameByTitle(game1Title);
-        Game game2 = games.findGameByTitle(game2Title);
-        Game game3 = games.findGameByTitle(game3Title);
-        Game game4 = games.findGameByTitle(game4Title);
-        Game game5 = games.findGameByTitle(game5Title);
+        game1 = games.findGameByTitle(game1Title);
+        game2 = games.findGameByTitle(game2Title);
+        game3 = games.findGameByTitle(game3Title);
+        game4 = games.findGameByTitle(game4Title);
+        game5 = games.findGameByTitle(game5Title);
 
         ElasticGame elasticGame1 = new ElasticGame(game1);
         ElasticGame elasticGame2 = new ElasticGame(game2);
@@ -87,6 +112,13 @@ public class ElasticGameRepositoryTest {
         elasticGames.deleteByTitle(game3Title);
         elasticGames.deleteByTitle(game4Title);
         elasticGames.deleteByTitle(game5Title);
+
+        // Delete test games
+        games.deleteByTitle(game1Title);
+        games.deleteByTitle(game2Title);
+        games.deleteByTitle(game3Title);
+        games.deleteByTitle(game4Title);
+        games.deleteByTitle(game5Title);
     }
 
     @Test
@@ -95,14 +127,31 @@ public class ElasticGameRepositoryTest {
         final String game2Title = "Fallout 3";
         final String game3Title = "Vampire: The Masquerade - Bloodlines";
 
+        // Insert test games
+        // Delete test games if already present
+        games.deleteByTitle(game1Title);
+        games.deleteByTitle(game2Title);
+        games.deleteByTitle(game3Title);
+
+        Game game1 = new Game();
+        game1.setTitle(game1Title);
+        Game game2 = new Game();
+        game2.setTitle(game2Title);
+        Game game3 = new Game();
+        game3.setTitle(game3Title);
+
+        games.save(game1);
+        games.save(game2);
+        games.save(game3);
+
         // Delete elastic games if already present
         elasticGames.deleteByTitle(game1Title);
         elasticGames.deleteByTitle(game1Title);
         elasticGames.deleteByTitle(game1Title);
 
-        Game game1 = games.findGameByTitle(game1Title);
-        Game game2 = games.findGameByTitle(game2Title);
-        Game game3 = games.findGameByTitle(game3Title);
+        game1 = games.findGameByTitle(game1Title);
+        game2 = games.findGameByTitle(game2Title);
+        game3 = games.findGameByTitle(game3Title);
 
         ElasticGame elasticGame1 = new ElasticGame(game1);
         ElasticGame elasticGame2 = new ElasticGame(game2);
@@ -122,5 +171,10 @@ public class ElasticGameRepositoryTest {
         elasticGames.deleteByTitle(game1Title);
         elasticGames.deleteByTitle(game2Title);
         elasticGames.deleteByTitle(game3Title);
+
+        // Delete test games
+        games.deleteByTitle(game1Title);
+        games.deleteByTitle(game2Title);
+        games.deleteByTitle(game3Title);
     }
 }
