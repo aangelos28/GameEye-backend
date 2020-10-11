@@ -6,15 +6,11 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
-import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Provides autocompletion features for game titles.
@@ -36,7 +32,7 @@ public class AutocompletionService {
      * @param maxResults Maximum autocompletion results to get
      * @return List of autocompleted games
      */
-    public SearchHits<ElasticGame> autocompleteGameTitle(String title, int maxResults) {
+    public SearchHits<ElasticGame> autocompleteGameTitle(final String title, final int maxResults) {
         // Query ElasticSearch
         NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(QueryBuilders.matchQuery("title", title)
