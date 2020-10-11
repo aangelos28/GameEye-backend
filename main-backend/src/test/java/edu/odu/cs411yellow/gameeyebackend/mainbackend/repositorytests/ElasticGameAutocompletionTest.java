@@ -86,11 +86,11 @@ public class ElasticGameAutocompletionTest {
         assertThat(elasticGame5.getTitle(), is(game5.getTitle()));
 
         // Delete elastic games
-        elasticGames.deleteByTitle(game1Title);
+        /*elasticGames.deleteByTitle(game1Title);
         elasticGames.deleteByTitle(game2Title);
         elasticGames.deleteByTitle(game3Title);
         elasticGames.deleteByTitle(game4Title);
-        elasticGames.deleteByTitle(game5Title);
+        elasticGames.deleteByTitle(game5Title);*/
     }
 
     @Test
