@@ -18,6 +18,7 @@ import java.util.List;
  */
 @Service
 public class WatchlistService {
+
     UserRepository users;
     GameRepository games;
 
@@ -32,11 +33,11 @@ public class WatchlistService {
     /**
      * Get the watchlist of a user.
      *
-     * @param firebaseUserId The firebase id of the user.
+     * @param firebaseId The firebase id of the user.
      * @return List of watched games.
      */
-    public List<WatchedGame> getWatchlistGames(final String firebaseUserId) {
-        final User user = this.users.findUserByFirebaseId(firebaseUserId);
+    public List<WatchedGame> getWatchlistGames(final String firebaseId) {
+        final User user = users.findUserByFirebaseId(firebaseId);
 
         return user.getWatchList();
     }
@@ -44,11 +45,11 @@ public class WatchlistService {
     /**
      * Add a game to a user's watchlist.
      *
-     * @param firebaseUserId The firebase id of the user.
-     * @param gameId         Id of the game to add.
+     * @param firebaseId The firebase id of the user.
+     * @param gameId     Id of the game to add.
      */
-    public void addWatchlistGame(final String firebaseUserId, final String gameId) {
-        final User user = this.users.findUserByFirebaseId(firebaseUserId);
+    public void addWatchlistGame(final String firebaseId, final String gameId) {
+        final User user = this.users.findUserByFirebaseId(firebaseId);
         final Game game = this.games.findGameById(gameId);
 
         if (game == null) return;
