@@ -11,10 +11,10 @@ import org.springframework.util.Assert;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles("test")
-public class GameSpotWebScraperTests {
+public class GameSpotScraperTests {
 
     @Autowired
-    GameSpotWebScraper gsTest;
+    GameSpotScraper gsTest;
 
     @Test
     public void testScrape() {

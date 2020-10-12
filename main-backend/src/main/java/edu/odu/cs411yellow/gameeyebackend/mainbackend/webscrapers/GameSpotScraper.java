@@ -21,7 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class GameSpotWebScraper implements WebScraper {
+public class GameSpotScraper implements WebScraper {
 
     NewsWebsiteRepository newsWebsites;
     private List<Article> articles;
@@ -29,7 +29,7 @@ public class GameSpotWebScraper implements WebScraper {
     private DateFormat format;
 
     @Autowired
-    public GameSpotWebScraper(NewsWebsiteRepository newsWebsites){
+    public GameSpotScraper(NewsWebsiteRepository newsWebsites){
         this.newsWebsites = newsWebsites;
         articles = new ArrayList<>();
         url= newsWebsites.findByName("GameSpot").getRssFeedUrl();
