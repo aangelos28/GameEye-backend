@@ -32,6 +32,7 @@ public class ElasticGameCreationService {
     /**
      * Inserts the title and id of every game to ElasticSearch.
      * Note: The ElasticSearch index should be empty.
+     *
      * @return Number of created elastic games
      */
     public long createElasticGamesFromGames() {
@@ -51,8 +52,6 @@ public class ElasticGameCreationService {
                 ElasticGame elasticGame = new ElasticGame();
                 elasticGame.setGameId(doc.get("_id").toString());
                 elasticGame.setTitle((String) doc.get("title"));
-
-                logger.info(elasticGame.getGameId());
 
                 elasticGameBuffer.add(elasticGame);
 
