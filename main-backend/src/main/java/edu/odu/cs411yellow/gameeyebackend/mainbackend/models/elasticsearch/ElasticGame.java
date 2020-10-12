@@ -42,6 +42,11 @@ public class ElasticGame {
         this.title = game.getTitle();
     }
 
+    public ElasticGame() {
+        this.gameId = "";
+        this.title = "";
+    }
+
     public String getId() {
         return id;
     }

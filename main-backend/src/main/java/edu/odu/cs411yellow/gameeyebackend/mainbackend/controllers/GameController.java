@@ -37,12 +37,12 @@ public class GameController {
      * Represents an HTTP response body for game title autocompletion.
      */
     private static class GameTitleAutocompletionResponse {
-        public String gameTitle;
-        public String gameId;
+        public String title;
+        public String id;
 
-        public GameTitleAutocompletionResponse(String gameTitle, String gameId) {
-            this.gameTitle = gameTitle;
-            this.gameId = gameId;
+        public GameTitleAutocompletionResponse(String title, String id) {
+            this.title = title;
+            this.id = id;
         }
     }
 
