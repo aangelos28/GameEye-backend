@@ -23,8 +23,7 @@ import java.util.List;
 @Service
 public class IGNScraper implements WebScraper {
     NewsWebsiteRepository newsWebsites;
-
-    //private String url = newsWebsites.findByName("IGN").getRssFeedUrl();
+    
     private List<Article> articles;
     String url;
     private DateFormat format;
