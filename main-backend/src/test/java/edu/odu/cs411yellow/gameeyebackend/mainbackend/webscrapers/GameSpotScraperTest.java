@@ -11,7 +11,7 @@ import org.springframework.util.Assert;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles("test")
-public class GameSpotScraperTests {
+public class GameSpotScraperTest {
 
     @Autowired
     GameSpotScraper gsTest;
