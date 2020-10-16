@@ -34,6 +34,7 @@ public class GameSpotScraper implements WebScraper {
         articles = new ArrayList<>();
         url= newsWebsites.findByName("GameSpot").getRssFeedUrl();
         format = new SimpleDateFormat("E, d MMMM yyyy kk:mm:ss z");
+
     }
 
     /**
