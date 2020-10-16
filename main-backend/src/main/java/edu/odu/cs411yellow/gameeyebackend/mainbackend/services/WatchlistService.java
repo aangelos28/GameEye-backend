@@ -58,6 +58,26 @@ public class WatchlistService {
     }
 
     /**
+     * Gets the watchlist entry with index i.
+     *
+     * @param firebaseId The firebase id of the user.
+     * @param index Watchlist entry index
+     * @return Watched game undex index i
+     */
+    public WatchedGameResponse getWatchlistGame(final String firebaseId, final int index) {
+        final User user = users.findUserByFirebaseId(firebaseId);
+
+        final WatchedGame watchedGame = user.getWatchList().get(index);
+        final Game game = games.findGameById(watchedGame.getGameId());
+
+        final WatchedGameResponse watchedGameResponse = new WatchedGameResponse(watchedGame);
+        watchedGameResponse.setGameTitle(game.getTitle());
+        // TODO add IGDB logo url
+
+        return watchedGameResponse;
+    }
+
+    /**
      * Add a game to a user's watchlist.
      *
      * @param firebaseId The firebase id of the user.

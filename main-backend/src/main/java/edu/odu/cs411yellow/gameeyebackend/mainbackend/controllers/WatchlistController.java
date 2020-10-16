@@ -1,7 +1,6 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.controllers;
 
 import com.google.firebase.auth.FirebaseToken;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.WatchedGame;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.requests.WatchlistGameRequest;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.responses.WatchedGameResponse;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.WatchlistService;
@@ -43,6 +42,20 @@ public class WatchlistController {
         final FirebaseToken fbToken = (FirebaseToken) auth.getPrincipal();
 
         return watchlistService.getWatchlistGames(fbToken.getUid());
+    }
+
+    /**
+     * Returns the ith game in a user's watchlist.
+     *
+     * @param index Index of the game in the watchlist to get
+     * @return Watched game under index
+     */
+    @GetMapping(path = "/private/watchlist/game/{index}")
+    public WatchedGameResponse getWatchlistGame(@PathVariable int index) {
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final FirebaseToken fbToken = (FirebaseToken) auth.getPrincipal();
+
+        return watchlistService.getWatchlistGame(fbToken.getUid(), index);
     }
 
     /**
