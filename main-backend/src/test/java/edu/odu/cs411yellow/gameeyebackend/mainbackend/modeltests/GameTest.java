@@ -1,10 +1,15 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.modeltests;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.*;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.ImageResource;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
-import org.bson.types.Binary;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ImageRepository;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.NewsWebsiteRepository;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.IgdbService;
+import org.elasticsearch.index.mapper.Mapper;
 import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,29 +36,21 @@ public class GameTest {
     @Autowired
     private GameRepository games;
 
+    @Autowired
+    private ImageRepository imageRepository;
+
+    @Autowired
+    private NewsWebsiteRepository news;
+
+    @Autowired
+    private IgdbService igdbService;
+
     Game insertedGame;
+    String articleId = "5ea1c2e777dabd049ce92788";
 
     @BeforeEach
-    public void insertGameTest() {
-        String gameId = "";
-        String igdbId = "";
-        String gameTitle = "Doom Eternal";
-        List<String> platforms = new ArrayList<>(Arrays.asList("Stadia", "Xbox One", "Nintendo Switch",
-                "PS4", "Mobile"));
-        String status = "Released";
-        Date gameLastUpdated = new Date(120, 9, 23);
-        List<String> genres = new ArrayList<>(Arrays.asList("first-person shooter"));
-
-        // Declare sourceUrls
-        String publisherUrl = "https://bethesda.net/en/game/doom";
-        String steamUrl = "https://store.steampowered.com/app/782330/DOOM_Eternal/";
-        String subRedditUrl = "https://www.reddit.com/r/Doometernal/";
-        String twitterUrl = "https://twitter.com/DOOM?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor";
-
-        SourceUrls sourceUrls = new SourceUrls(publisherUrl, steamUrl,
-                subRedditUrl, twitterUrl);
-
-        // Declare gameImage
+    public void insertGameTest() throws JsonProcessingException {
+        // Declare resource images
         String gameImageId = "5ea1c2b677dabd049ce92784";
         String imageTitle = "gameplay";
         String imageRefId = "5ea10b6d34019c1d1c818c03";
@@ -64,27 +61,14 @@ public class GameTest {
 
         List<ImageResource> images = new ArrayList<>(Arrays.asList(imageResource));
 
-        // Declare newsWebsite
-        String newsWebsiteId = "5e9fbb092937d83b902ec992";
-        String newsWebsiteName = "IGN";
-        Binary newsWebsiteLogo = new Binary(new byte[1]);
-        String newsWebsiteUrl = "https://www.ign.com/";
-        String newsWebsiteRssFeedUrl = "https://corp.ign.com/feeds";
-        Date newsWebsiteLastUpdated = new Date(120, 4, 21);
+        // Retrieve newsWebsite from newsWebsites collection
+        NewsWebsite newsWebsite = news.findByName("IGN");
 
-        NewsWebsite newsWebsite = new NewsWebsite(newsWebsiteId, newsWebsiteName,
-                newsWebsiteLogo, newsWebsiteUrl,
-                newsWebsiteRssFeedUrl, newsWebsiteLastUpdated);
-
-        // Declare thumbnail
-        String imageId = "5ea108ea34019c1d1c818c02";
-        String type = "thumbnail";
-        Binary imageData = new Binary(new byte[1]);
-
-        Image thumbnail = new Image(imageId, type, imageData);
+        // Retrieve thumbnail from images collection
+        String imageId = "5f7aa192685dad531c57d54d";
+        Image thumbnail = imageRepository.findImageById(imageId);
 
         // Declare article object
-        String articleId = "5ea1c2e777dabd049ce92788";
         String articleTitle = "Doom Eternal Single-Player Review";
         String articleUrl = "https://www.ign.com/articles/doom-eternal-single-player-review";
 
@@ -103,23 +87,23 @@ public class GameTest {
         List<Article> articles = new ArrayList<>(Arrays.asList(article));
 
         Resources resources = new Resources(images, articles);
-        int watchers = 0;
 
-        insertedGame = new Game(gameId, igdbId, gameTitle, platforms, status, gameLastUpdated, genres,
-                                sourceUrls, resources, watchers);
+        int doomEternalId = 103298;
+        insertedGame = igdbService.getGameById(doomEternalId);
+        insertedGame.setResources(resources);
 
         games.save(insertedGame);
     }
 
     @AfterEach
     public void deleteGameTest() {
-        String gameId = insertedGame.getId();
+        String gameTitle = insertedGame.getTitle();
 
-        if (games.existsById(gameId)) {
-            games.deleteById(gameId);
+        if (games.existsByTitle(gameTitle)) {
+            games.deleteByTitle(gameTitle);
         }
 
-        Assert.assertFalse(games.existsById(gameId));
+        Assert.assertFalse(games.existsByTitle(gameTitle));
     }
 
     @Test
@@ -128,8 +112,6 @@ public class GameTest {
         Game foundGame = games.findGameByTitle(gameTitle);
 
         Resources actualResources = insertedGame.getResources();
-
-        String articleId = "5ea1c2e777dabd049ce92788";
 
         List<String> articleIds = new ArrayList<>(Arrays.asList(articleId));
 
