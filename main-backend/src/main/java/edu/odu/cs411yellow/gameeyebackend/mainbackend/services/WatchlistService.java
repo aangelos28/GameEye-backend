@@ -4,6 +4,7 @@ import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.User;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.WatchedGame;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.ResourceNotifications;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.responses.WatchedGameResponse;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.UserRepository;
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -40,6 +42,25 @@ public class WatchlistService {
         final User user = users.findUserByFirebaseId(firebaseId);
 
         return user.getWatchList();
+    }
+
+    /**
+     * Converts a list of watched games to watched game responses.
+     * @param watchedGames List of watched games
+     * @return List of watched game responses
+     */
+    public List<WatchedGameResponse> toWatchedGameResponses(List<WatchedGame> watchedGames) {
+        List<WatchedGameResponse> watchedGameResponses = new ArrayList<>(watchedGames.size());
+
+        for (WatchedGame watchedGame : watchedGames) {
+            String gameId = watchedGame.getGameId();
+            Game game = games.findGameById(gameId);
+            // TODO add IGDB logo url
+            WatchedGameResponse watchedGameResponse = new WatchedGameResponse(gameId, game.getTitle(), "", watchedGame.getNotificationCount());
+            watchedGameResponses.add(watchedGameResponse);
+        }
+
+        return watchedGameResponses;
     }
 
     /**
