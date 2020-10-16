@@ -28,6 +28,8 @@ public class Game {
 
     private String status;
 
+    private String logoUrl;
+
     private Date lastUpdated;
 
     private List<String> genres;
@@ -40,13 +42,14 @@ public class Game {
     private int watchers;
 
     @PersistenceConstructor
-    public Game(String id, String igdbId, String title, List<String> platforms, String status, Date lastUpdated,
-                List<String> genres, SourceUrls sourceUrls, Resources resources, int watchers) {
+    public Game(String id, String igdbId, String title, List<String> platforms, String status, String logoUrl,
+                Date lastUpdated, List<String> genres, SourceUrls sourceUrls, Resources resources, int watchers) {
         this.id = id;
         this.igdbId = igdbId;
         this.title = title;
         this.platforms = platforms;
         this.status = status;
+        this.logoUrl = logoUrl;
         this.lastUpdated = lastUpdated;
         this.genres = genres;
         this.sourceUrls = sourceUrls;
@@ -59,6 +62,7 @@ public class Game {
         this.title = "";
         this.platforms = new ArrayList<>();
         this.status = "";
+        this.logoUrl = "";
         this.lastUpdated = new Date();
         this.genres = new ArrayList<>();
         this.sourceUrls = new SourceUrls();
@@ -100,6 +104,14 @@ public class Game {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getLogoUrl() {
+        return logoUrl;
+    }
+
+    public void setLogoUrl(String logoUrl) {
+        this.logoUrl = logoUrl;
     }
 
     public Date getLastUpdated() {
@@ -159,6 +171,7 @@ public class Game {
                 && Objects.equals(title, that.title)
                 && Objects.equals(platforms, that.platforms)
                 && Objects.equals(status, that.status)
+                && Objects.equals(logoUrl, that.logoUrl)
                 && Objects.equals(lastUpdated, that.lastUpdated)
                 && Objects.equals(genres, that.genres)
                 && Objects.equals(sourceUrls, that.sourceUrls)
@@ -168,6 +181,6 @@ public class Game {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id,igdbId,title,platforms,status,genres,sourceUrls,resources);
+        return Objects.hash(id,igdbId,title,platforms,status,logoUrl,genres,sourceUrls,resources);
     }
 }

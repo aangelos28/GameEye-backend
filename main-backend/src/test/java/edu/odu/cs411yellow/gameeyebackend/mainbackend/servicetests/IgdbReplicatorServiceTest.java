@@ -40,7 +40,7 @@ public class IgdbReplicatorServiceTest {
         int maxId = 10;
         int limit = 10;
 
-        List<Game> igdbGames = igdbService.getGamesByRange(minId, maxId, limit);
+        List<Game> igdbGames = igdbService.retrieveGamesByRangeWithLimit(minId, maxId, limit);
         List<Game> preReplicationTestDbGames = new ArrayList<>();
 
         // Replicate new games to db.
@@ -87,7 +87,7 @@ public class IgdbReplicatorServiceTest {
         int maxId = 10;
         int limit = 10;
 
-        List<Game> igdbGames = igdbService.getGamesByRange(minId, maxId, limit);
+        List<Game> igdbGames = igdbService.retrieveGamesByRangeWithLimit(minId, maxId, limit);
         List<Game> preReplicationTestDbGames = new ArrayList<>();
 
         // Replicate new games to db.
