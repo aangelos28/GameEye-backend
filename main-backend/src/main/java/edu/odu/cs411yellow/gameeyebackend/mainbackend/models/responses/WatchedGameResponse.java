@@ -1,29 +1,24 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models.responses;
 
-import java.util.Objects;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.WatchedGame;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.ResourceNotifications;
 
 /**
  * Response for watchlist game entries.
  */
-public class WatchedGameResponse {
-    private String gameId;
+public class WatchedGameResponse extends WatchedGame {
     private String gameTitle;
     private String logoUrl;
-    private Integer notificationCount;
 
-    public WatchedGameResponse(String gameId, String gameTitle, String logoUrl, Integer notificationCount) {
-        this.gameId = gameId;
+    public WatchedGameResponse(String gameId, Integer notificationCount,
+                               ResourceNotifications resourceNotifications, String gameTitle, String logoUrl) {
+        super(gameId, notificationCount, resourceNotifications);
         this.gameTitle = gameTitle;
         this.logoUrl = logoUrl;
-        this.notificationCount = notificationCount;
     }
 
-    public String getGameId() {
-        return gameId;
-    }
-
-    public void setGameId(String gameId) {
-        this.gameId = gameId;
+    public WatchedGameResponse(WatchedGame watchedGame) {
+        super(watchedGame);
     }
 
     public String getGameTitle() {
@@ -40,29 +35,5 @@ public class WatchedGameResponse {
 
     public void setLogoUrl(String logoUrl) {
         this.logoUrl = logoUrl;
-    }
-
-    public Integer getNotificationCount() {
-        return notificationCount;
-    }
-
-    public void setNotificationCount(Integer notificationCount) {
-        this.notificationCount = notificationCount;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        WatchedGameResponse that = (WatchedGameResponse) o;
-        return gameId.equals(that.gameId) &&
-                Objects.equals(gameTitle, that.gameTitle) &&
-                Objects.equals(logoUrl, that.logoUrl) &&
-                notificationCount.equals(that.notificationCount);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(gameId, gameTitle, logoUrl, notificationCount);
     }
 }

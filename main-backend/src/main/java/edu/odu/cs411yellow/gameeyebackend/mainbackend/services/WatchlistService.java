@@ -38,25 +38,19 @@ public class WatchlistService {
      * @param firebaseId The firebase id of the user.
      * @return List of watched games.
      */
-    public List<WatchedGame> getWatchlistGames(final String firebaseId) {
+    public List<WatchedGameResponse> getWatchlistGames(final String firebaseId) {
         final User user = users.findUserByFirebaseId(firebaseId);
 
-        return user.getWatchList();
-    }
-
-    /**
-     * Converts a list of watched games to watched game responses.
-     * @param watchedGames List of watched games
-     * @return List of watched game responses
-     */
-    public List<WatchedGameResponse> toWatchedGameResponses(List<WatchedGame> watchedGames) {
+        List<WatchedGame> watchedGames = user.getWatchList();
         List<WatchedGameResponse> watchedGameResponses = new ArrayList<>(watchedGames.size());
 
         for (WatchedGame watchedGame : watchedGames) {
             String gameId = watchedGame.getGameId();
             Game game = games.findGameById(gameId);
+
+            WatchedGameResponse watchedGameResponse = new WatchedGameResponse(watchedGame);
+            watchedGameResponse.setGameTitle(game.getTitle());
             // TODO add IGDB logo url
-            WatchedGameResponse watchedGameResponse = new WatchedGameResponse(gameId, game.getTitle(), "", watchedGame.getNotificationCount());
             watchedGameResponses.add(watchedGameResponse);
         }
 

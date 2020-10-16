@@ -6,11 +6,11 @@ import org.springframework.data.annotation.PersistenceConstructor;
 import java.util.Objects;
 
 public class WatchedGame {
-    private String gameId;
+    protected String gameId;
 
-    private Integer notificationCount;
+    protected Integer notificationCount;
 
-    private ResourceNotifications resourceNotifications;
+    protected ResourceNotifications resourceNotifications;
 
     @PersistenceConstructor
     public WatchedGame(String gameId, Integer notificationCount,
@@ -18,6 +18,12 @@ public class WatchedGame {
         this.gameId = gameId;
         this.notificationCount = notificationCount;
         this.resourceNotifications = resourceNotifications;
+    }
+
+    public WatchedGame(WatchedGame other) {
+        this.gameId = other.gameId;
+        this.notificationCount = other.notificationCount;
+        this.resourceNotifications = other.resourceNotifications;
     }
 
     public WatchedGame(Game game) {

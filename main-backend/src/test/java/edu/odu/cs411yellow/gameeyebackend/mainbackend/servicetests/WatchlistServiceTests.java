@@ -3,6 +3,7 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.servicetests;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.User;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.WatchedGame;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.responses.WatchedGameResponse;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.UserRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.WatchlistService;
@@ -82,7 +83,7 @@ public class WatchlistServiceTests {
         watchlistService.addWatchlistGame(userFirebaseId, game2.getId());
         watchlistService.addWatchlistGame(userFirebaseId, game3.getId());
 
-        List<WatchedGame> watchlist = watchlistService.getWatchlistGames(userFirebaseId);
+        List<WatchedGameResponse> watchlist = watchlistService.getWatchlistGames(userFirebaseId);
 
         // Verify that games are present
         game1 = games.findGameByTitle(game1Title);
