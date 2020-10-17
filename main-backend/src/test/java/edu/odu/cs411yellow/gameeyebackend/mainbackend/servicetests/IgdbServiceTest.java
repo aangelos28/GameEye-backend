@@ -41,7 +41,7 @@ public class IgdbServiceTest {
     }
 
     @Test
-    public void testGetGameById() throws JsonProcessingException {
+    public void testGetGameById() {
         int igdbId = 300;
         Game game = igdbService.getGameById(igdbId);
 
@@ -49,33 +49,33 @@ public class IgdbServiceTest {
     }
 
     @Test
-    public void testGetGamesByRangeWithLimit() throws JsonProcessingException {
+    public void testGetGamesByRangeWithLimit() {
         int minId = 1;
         int maxId = 10;
         int limit = 10;
 
-        List<Game> games = igdbService.getGamesByRangeWithLimit(minId, maxId, limit);
+        List<Game> games = igdbService.retrieveGamesByRangeWithLimit(minId, maxId, limit);
 
         assert(games.size()==10);
     }
 
     @Test
-    public void testGetGamesByRange() throws JsonProcessingException {
+    public void testGetGamesByRange() {
         int minId = 1;
         int maxId = 100;
         int limit = 100;
 
-        List<Game> games = igdbService.getGamesByRange(minId, maxId, limit);
+        List<Game> games = igdbService.retrieveGamesByRangeWithLimit(minId, maxId, limit);
         assert(games.size()==100);
     }
 
     @Test
-    public void testConvertGameResponsesToGames() throws JsonProcessingException {
+    public void testConvertGameResponsesToGames() {
         int minId = 1;
         int maxId = 100;
         int limit = 100;
 
-        List<GameResponse> responses = igdbService.getGameResponsesByRange(minId, maxId, limit);
+        List<GameResponse> responses = igdbService.getGameResponsesWithMultipleRequests(minId, maxId, limit);
         List<Game> games = igdbService.convertGameResponsesToGames(responses);
 
         for (int gameIndex = 0; gameIndex < games.size(); gameIndex++) {

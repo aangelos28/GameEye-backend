@@ -42,6 +42,7 @@ public class GameRepositoryTest {
         List<String> platforms = new ArrayList<>(Arrays.asList("Stadia", "Xbox One", "Nintendo Switch",
                                                            "PS4", "Mobile"));
         String status = "Released";
+        String logoUrl = "images.igdb.com/igdb/image/upload/t_thumb/co1lvj.jpg";
         Date gameLastUpdated = new Date(120, 9, 23);
         List<String> genres = new ArrayList<>(Arrays.asList("first-person shooter"));
 
@@ -106,7 +107,7 @@ public class GameRepositoryTest {
         Resources resources = new Resources(images, articles);
         int watchers = 0;
 
-        Game testGame = new Game(gameId, igdbId, gameTitle, platforms, status, gameLastUpdated, genres,
+        Game testGame = new Game(gameId, igdbId, gameTitle, platforms, status, logoUrl, gameLastUpdated, genres,
                                  sourceUrls, resources, watchers);
         insertedGame = testGame;
 
