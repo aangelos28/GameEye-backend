@@ -26,7 +26,6 @@ public class UniversalScraper implements WebScraper {
     NewsWebsiteRepository newsWebsites;
     private List<Article> articles;
     private List<NewsWebsite> sites;
-    String url;
     private DateFormat format;
 
     @Autowired
@@ -38,7 +37,6 @@ public class UniversalScraper implements WebScraper {
         sites.add(newsWebsites.findByName("Eurogamer"));
         sites.add(newsWebsites.findByName("IGN"));
         sites.add(newsWebsites.findByName("PC Gamer"));
-        url= "";
         format = new SimpleDateFormat("E, d MMMM yyyy kk:mm:ss z");
     }
 
@@ -50,7 +48,7 @@ public class UniversalScraper implements WebScraper {
 
         try {
             for (var newsSite : sites){
-                url = newsSite.getRssFeedUrl();
+                String url = newsSite.getRssFeedUrl();
                 Document rssFeed = Jsoup.connect(url).get();
 
                 Elements items = rssFeed.select("item");

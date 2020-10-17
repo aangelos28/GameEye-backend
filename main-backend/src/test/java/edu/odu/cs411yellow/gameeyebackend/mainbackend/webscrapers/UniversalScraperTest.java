@@ -1,5 +1,4 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.webscrapers;
-
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,19 +10,18 @@ import org.springframework.util.Assert;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles("test")
-public class GameSpotScraperTest {
+public class UniversalScraperTest {
+
 
     @Autowired
-    GameSpotScraper gsTest;
+    public UniversalScraper test;
 
+    //Take a SnapShot of the Rss feed
     @Test
     public void testScrape() {
-
-        gsTest.scrape();
-        System.out.print(gsTest.toString());
-        Assert.noNullElements(gsTest.getArticles(), "Error: Articles not Scraped");
-
-
+        test.scrape();
+        System.out.print(test.toString());
+        Assert.noNullElements(test.getArticles(), "Error: Articles not Scraped");
     }
 
 
