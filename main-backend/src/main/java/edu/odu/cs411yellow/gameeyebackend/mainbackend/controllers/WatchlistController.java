@@ -1,8 +1,8 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.controllers;
 
 import com.google.firebase.auth.FirebaseToken;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.WatchedGame;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.requests.WatchlistGameRequest;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.responses.WatchedGameResponse;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.WatchlistService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,11 +37,25 @@ public class WatchlistController {
      * @return List of games.
      */
     @GetMapping(path = "/private/watchlist", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<WatchedGame> getWatchlistGames() {
+    public List<WatchedGameResponse> getWatchlistGames() {
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         final FirebaseToken fbToken = (FirebaseToken) auth.getPrincipal();
 
         return watchlistService.getWatchlistGames(fbToken.getUid());
+    }
+
+    /**
+     * Returns the ith game in a user's watchlist.
+     *
+     * @param index Index of the game in the watchlist to get
+     * @return Watched game under index
+     */
+    @GetMapping(path = "/private/watchlist/game/{index}")
+    public WatchedGameResponse getWatchlistGame(@PathVariable int index) {
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final FirebaseToken fbToken = (FirebaseToken) auth.getPrincipal();
+
+        return watchlistService.getWatchlistGame(fbToken.getUid(), index);
     }
 
     /**
@@ -92,7 +106,7 @@ public class WatchlistController {
         final String userId = request.getUserId();
 
         try {
-            final List<WatchedGame> watchlist = watchlistService.getWatchlistGames(userId);
+            final List<WatchedGameResponse> watchlist = watchlistService.getWatchlistGames(userId);
 
             logger.info(String.format("ADMIN: Got watchlist of user %s.", userId));
 

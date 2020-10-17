@@ -4,6 +4,7 @@ import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.User;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.WatchedGame;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.ResourceNotifications;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.responses.WatchedGameResponse;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.UserRepository;
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -36,10 +38,43 @@ public class WatchlistService {
      * @param firebaseId The firebase id of the user.
      * @return List of watched games.
      */
-    public List<WatchedGame> getWatchlistGames(final String firebaseId) {
+    public List<WatchedGameResponse> getWatchlistGames(final String firebaseId) {
         final User user = users.findUserByFirebaseId(firebaseId);
 
-        return user.getWatchList();
+        List<WatchedGame> watchedGames = user.getWatchList();
+        List<WatchedGameResponse> watchedGameResponses = new ArrayList<>(watchedGames.size());
+
+        for (WatchedGame watchedGame : watchedGames) {
+            String gameId = watchedGame.getGameId();
+            Game game = games.findGameById(gameId);
+
+            WatchedGameResponse watchedGameResponse = new WatchedGameResponse(watchedGame);
+            watchedGameResponse.setGameTitle(game.getTitle());
+            // TODO add IGDB logo url
+            watchedGameResponses.add(watchedGameResponse);
+        }
+
+        return watchedGameResponses;
+    }
+
+    /**
+     * Gets the watchlist entry with index i.
+     *
+     * @param firebaseId The firebase id of the user.
+     * @param index Watchlist entry index
+     * @return Watched game undex index i
+     */
+    public WatchedGameResponse getWatchlistGame(final String firebaseId, final int index) {
+        final User user = users.findUserByFirebaseId(firebaseId);
+
+        final WatchedGame watchedGame = user.getWatchList().get(index);
+        final Game game = games.findGameById(watchedGame.getGameId());
+
+        final WatchedGameResponse watchedGameResponse = new WatchedGameResponse(watchedGame);
+        watchedGameResponse.setGameTitle(game.getTitle());
+        // TODO add IGDB logo url
+
+        return watchedGameResponse;
     }
 
     /**
