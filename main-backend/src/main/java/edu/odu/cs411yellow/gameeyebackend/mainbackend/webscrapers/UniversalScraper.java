@@ -53,7 +53,6 @@ public class UniversalScraper implements WebScraper {
                 articles.add(toAdd);
             }
 
-            }
 
         }
         catch(Exception ex){
