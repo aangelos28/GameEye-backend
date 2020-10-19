@@ -25,18 +25,12 @@ public class UniversalScraper implements WebScraper {
 
     NewsWebsiteRepository newsWebsites;
     private List<Article> articles;
-    private List<NewsWebsite> sites;
     private DateFormat format;
 
     @Autowired
     public UniversalScraper(NewsWebsiteRepository newsWebsites){
         this.newsWebsites = newsWebsites;
         articles = new ArrayList<>();
-        sites = new ArrayList<>();
-        sites.add(newsWebsites.findByName("GameSpot"));
-        sites.add(newsWebsites.findByName("Eurogamer"));
-        sites.add(newsWebsites.findByName("IGN"));
-        sites.add(newsWebsites.findByName("PC Gamer"));
         format = new SimpleDateFormat("E, d MMMM yyyy kk:mm:ss z");
     }
 
@@ -44,19 +38,20 @@ public class UniversalScraper implements WebScraper {
      * Initiate the scrape
      */
     @Override
-    public List<Article> scrape() {
+    public List<Article> scrape(String newsOutlet) {
 
         try {
-            for (var newsSite : sites){
-                String url = newsSite.getRssFeedUrl();
-                Document rssFeed = Jsoup.connect(url).get();
+            NewsWebsite newsSite = newsWebsites.findByName(newsOutlet);
 
-                Elements items = rssFeed.select("item");
+            String url = newsSite.getRssFeedUrl();
+            Document rssFeed = Jsoup.connect(url).get();
 
-                for (var i : items){
-                    Article toAdd = createArticle(i,newsSite);
-                    articles.add(toAdd);
-                }
+            Elements items = rssFeed.select("item");
+
+            for (var i : items){
+                Article toAdd = createArticle(i,newsSite);
+                articles.add(toAdd);
+            }
 
             }
 

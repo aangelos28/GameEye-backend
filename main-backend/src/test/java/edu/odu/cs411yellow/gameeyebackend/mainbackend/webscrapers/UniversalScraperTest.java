@@ -19,7 +19,19 @@ public class UniversalScraperTest {
     //Take a SnapShot of the Rss feed
     @Test
     public void testScrape() {
-        test.scrape();
+        test.scrape("GameSpot");
+        System.out.print(test.toString());
+        Assert.noNullElements(test.getArticles(), "Error: Articles not Scraped");
+
+        test.scrape("Eurogamer");
+        System.out.print(test.toString());
+        Assert.noNullElements(test.getArticles(), "Error: Articles not Scraped");
+
+        test.scrape("IGN");
+        System.out.print(test.toString());
+        Assert.noNullElements(test.getArticles(), "Error: Articles not Scraped");
+
+        test.scrape("PC Gamer");
         System.out.print(test.toString());
         Assert.noNullElements(test.getArticles(), "Error: Articles not Scraped");
     }
