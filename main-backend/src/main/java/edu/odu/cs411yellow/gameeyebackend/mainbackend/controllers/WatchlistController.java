@@ -37,11 +37,17 @@ public class WatchlistController {
      * @return List of games.
      */
     @GetMapping(path = "/private/watchlist", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<WatchedGameResponse> getWatchlistGames() {
+    public ResponseEntity<?> getWatchlistGames(@RequestParam(required = false) boolean brief) {
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         final FirebaseToken fbToken = (FirebaseToken) auth.getPrincipal();
+        final String userId = fbToken.getUid();
 
-        return watchlistService.getWatchlistGames(fbToken.getUid());
+        if (brief) {
+            return ResponseEntity.ok(watchlistService.getWatchlistGamesShort(userId));
+        }
+        else {
+            return ResponseEntity.ok(watchlistService.getWatchlistGames(userId));
+        }
     }
 
     /**
@@ -51,11 +57,17 @@ public class WatchlistController {
      * @return Watched game under index
      */
     @GetMapping(path = "/private/watchlist/game/{index}")
-    public WatchedGameResponse getWatchlistGame(@PathVariable int index) {
+    public ResponseEntity<?> getWatchlistGame(@PathVariable int index, @RequestParam(required = false) boolean brief) {
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         final FirebaseToken fbToken = (FirebaseToken) auth.getPrincipal();
+        final String userId = fbToken.getUid();
 
-        return watchlistService.getWatchlistGame(fbToken.getUid(), index);
+        if (brief) {
+            return ResponseEntity.ok(watchlistService.getWatchlistGameShort(userId, index));
+        }
+        else {
+            return ResponseEntity.ok(watchlistService.getWatchlistGame(userId, index));
+        }
     }
 
     /**

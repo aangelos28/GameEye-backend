@@ -7,13 +7,13 @@ import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.Resourc
  * Response for watchlist game entries.
  */
 public class WatchedGameResponse extends WatchedGame {
-    private String gameTitle;
+    private String title;
     private String logoUrl;
 
     public WatchedGameResponse(String gameId, Integer notificationCount,
-                               ResourceNotifications resourceNotifications, String gameTitle, String logoUrl) {
+                               ResourceNotifications resourceNotifications, String title, String logoUrl) {
         super(gameId, notificationCount, resourceNotifications);
-        this.gameTitle = gameTitle;
+        this.title = title;
         this.logoUrl = logoUrl;
     }
 
@@ -21,12 +21,12 @@ public class WatchedGameResponse extends WatchedGame {
         super(watchedGame);
     }
 
-    public String getGameTitle() {
-        return gameTitle;
+    public String getTitle() {
+        return title;
     }
 
-    public void setGameTitle(String gameTitle) {
-        this.gameTitle = gameTitle;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getLogoUrl() {
