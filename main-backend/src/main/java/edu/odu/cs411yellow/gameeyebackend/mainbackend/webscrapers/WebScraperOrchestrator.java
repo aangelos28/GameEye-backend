@@ -5,33 +5,41 @@ import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.NewsWebsiteRe
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ElasticGameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.NewsWebsite;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import  edu.odu.cs411yellow.gameeyebackend.mainbackend.webscrapers.IGNScraper;
-import  edu.odu.cs411yellow.gameeyebackend.mainbackend.webscrapers.EuroGamerScraper;
-import  edu.odu.cs411yellow.gameeyebackend.mainbackend.webscrapers.GameSpotScraper;
-import  edu.odu.cs411yellow.gameeyebackend.mainbackend.webscrapers.MockNewsScraper;
-import  edu.odu.cs411yellow.gameeyebackend.mainbackend.webscrapers.PCGamerScraper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.stereotype.Service;
+import org.springframework.core.task.TaskExecutor;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 
-
-public class WebScraperOrchestrator {
+@Component
+public class WebScraperOrchestrator{
 
     NewsWebsiteRepository newsWebsiteRepository;
-    List<Object> scrapers = new ArrayList<Object>();
+    List<WebScraper> scrapers = new ArrayList<WebScraper>();
+
+    WebScraper ign;
+    WebScraper gameSpot;
+    WebScraper euroGamer;
+    WebScraper pcGamer;
+    WebScraper mockSite;
+
 
     @Autowired
     public WebScraperOrchestrator(){
 
-        IGNScraper ign = new IGNScraper(newsWebsiteRepository);
-        GameSpotScraper gameSpot= new GameSpotScraper(newsWebsiteRepository);
-        EuroGamerScraper euroGamer= new EuroGamerScraper(newsWebsiteRepository);
-        PCGamerScraper pcGamer = new PCGamerScraper(newsWebsiteRepository);
-        MockNewsScraper mockSite = new MockNewsScraper(newsWebsiteRepository);
+        this.ign = new IGNScraper(newsWebsiteRepository);
+        this.gameSpot= new GameSpotScraper(newsWebsiteRepository);
+        this.euroGamer= new EuroGamerScraper(newsWebsiteRepository);
+        this.pcGamer = new PCGamerScraper(newsWebsiteRepository);
+        this.mockSite = new MockNewsScraper(newsWebsiteRepository);
 
         scrapers.add(ign);
         scrapers.add(gameSpot);
@@ -41,21 +49,33 @@ public class WebScraperOrchestrator {
     }
 
     public void forceScrape(){
-        //TODO
+        for (WebScraper scraper:scrapers) {
+            scraper.scrape();
+        }
+
+        /*ign.scrape();
+        gameSpot.scrape();
+        euroGamer.scrape();
+        pcGamer.scrape();
+        mockSite.scrape();*/
     }
 
+    @Scheduled (cron = "0 0 8,20 * * *")    //Schedules method to run at 8:00 AM and 8:00PM
     public void initiateBiDailyScrape(){
         //TODO
     }
 
+    @Autowired
     public Boolean checkArticleDuplicates(){
         return false;
     }
 
+    @Autowired
     public void insertDataIntoDatabase(){
         //TODO
     }
 
+    @Autowired
     public void performArticleGameReferenceSearch(){
         //TODO
         //Consult Chris
