@@ -20,7 +20,7 @@ public class MockNewsScraperTest {
     @Test
     public void testScrape() {
 
-        MNtest.scrape();
+        MNtest.scrape("GameEye Mock News");
         System.out.print(MNtest.toString());
         Assert.noNullElements(MNtest.getArticles(), "Error: Articles not Scraped");
 
