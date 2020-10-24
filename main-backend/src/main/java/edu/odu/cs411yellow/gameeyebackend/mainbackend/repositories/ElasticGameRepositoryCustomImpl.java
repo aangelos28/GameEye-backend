@@ -39,4 +39,18 @@ public class ElasticGameRepositoryCustomImpl implements ElasticGameRepositoryCus
 
         return elasticSearch.search(searchQuery, ElasticGame.class, IndexCoordinates.of("games"));
     }
+
+    /**
+     * Finds referenced games in a news article
+     *
+     * @param articleTitle Article Title to find references
+     * @return List of referenced games
+     */
+    @Override
+    public SearchHits<ElasticGame> ReferencedGames(String articleTitle) {
+        SearchHits<ElasticGame> referencedGames = autocompleteGameTitle(articleTitle, 25);
+
+
+        return null;
+    }
 }

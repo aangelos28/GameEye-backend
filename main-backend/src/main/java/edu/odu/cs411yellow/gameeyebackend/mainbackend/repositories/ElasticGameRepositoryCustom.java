@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ElasticGameRepositoryCustom {
     SearchHits<ElasticGame> autocompleteGameTitle(final String title, final int maxResults);
+    SearchHits<ElasticGame> ReferencedGames(final String articleTitle);
 }
