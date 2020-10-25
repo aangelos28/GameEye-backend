@@ -1,16 +1,15 @@
-package edu.odu.cs411yellow.gameeyebackend.mainbackend.modeltests;
+package edu.odu.cs411yellow.gameeyebackend.mainbackend.servicetests;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.*;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.ImageResource;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ImageRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.NewsWebsiteRepository;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.GameService;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.IgdbReplicatorService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.IgdbService;
-import org.elasticsearch.index.mapper.Mapper;
-import org.junit.Assert;
+import org.bson.types.Binary;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,30 +25,68 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles("test")
-@TestPropertySource(locations="classpath:application-test.properties")
-public class GameTest {
+@TestPropertySource(locations = "classpath:application-test.properties")
+public class GameServiceTest {
+    @Autowired
+    private GameService gameService;
+
+    @Autowired
+    private IgdbReplicatorService igdbReplicator;
+
+    @Autowired
+    private IgdbService igdbService;
 
     @Autowired
     private GameRepository games;
 
     @Autowired
-    private ImageRepository imageRepository;
-
-    @Autowired
     private NewsWebsiteRepository news;
 
     @Autowired
-    private IgdbService igdbService;
-
-    Game insertedGame;
-    String articleId = "5ea1c2e777dabd049ce92788";
+    private ImageRepository imageRepository;
 
     @BeforeEach
-    public void insertGameTest() {
+    public void insertGames() {
+    }
+
+    @Test
+    public void testGetLogoUrl() {
+        igdbReplicator.replicateIgdbByRange(100000, 100200, 250);
+
+        String gameIgdbId1 = "100000";
+        String gameIgdbId2 = "100083";
+        String gameIgdbId3 = "100152";
+
+        Game game1 = games.findByIgdbId(gameIgdbId1);
+        Game game2 = games.findByIgdbId(gameIgdbId2);
+        Game game3 = games.findByIgdbId(gameIgdbId3);
+
+        String logoUrl1 = gameService.getLogoUrl(game1.getId());
+        String logoUrl2 = gameService.getLogoUrl(game2.getId());
+        String logoUrl3 = gameService.getLogoUrl(game3.getId());
+
+        // Check that logoUrls match
+        assertThat(logoUrl1, is(game1.getLogoUrl()));
+        assertThat(logoUrl2, is(game2.getLogoUrl()));
+        assertThat(logoUrl3, is(game3.getLogoUrl()));
+
+        // Check that logoUrls contain ".jpg"
+        assertThat(logoUrl1, containsString(".jpg"));
+        assertThat(logoUrl2, containsString(".jpg"));
+        assertThat(logoUrl3, containsString(".jpg"));
+
+        games.deleteAll();
+    }
+
+    @Test
+    public void testGetArticles() {
         // Declare resource images
         String gameImageId = "5ea1c2b677dabd049ce92784";
         String imageTitle = "gameplay";
@@ -60,6 +97,8 @@ public class GameTest {
                 imageRefId, imageLastUpdated);
 
         List<ImageResource> images = new ArrayList<>(Arrays.asList(imageResource));
+
+        String articleId = "5ea1c2e777dabd049ce92788";
 
         // Retrieve newsWebsite from newsWebsites collection
         NewsWebsite newsWebsite = news.findByName("IGN");
@@ -89,40 +128,14 @@ public class GameTest {
         Resources resources = new Resources(images, articles);
 
         int doomEternalId = 103298;
-        insertedGame = igdbService.getGameById(doomEternalId);
-        insertedGame.setResources(resources);
+        Game newGame = igdbService.getGameById(doomEternalId);
+        newGame.setResources(resources);
 
-        games.save(insertedGame);
-    }
+        games.insert(newGame);
+        Game insertedGame = games.findGameByTitle(newGame.getTitle());
 
-    @AfterEach
-    public void deleteGameTest() {
-        String gameTitle = insertedGame.getTitle();
+        assertThat(gameService.getArticles(insertedGame.getId()), is(insertedGame.getResources().getArticles()));
 
-        if (games.existsByTitle(gameTitle)) {
-            games.deleteByTitle(gameTitle);
-        }
-
-        Assert.assertFalse(games.existsByTitle(gameTitle));
-    }
-
-    @Test
-    public void testFindArticles() {
-        String gameTitle = insertedGame.getTitle();
-        Game foundGame = games.findGameByTitle(gameTitle);
-
-        Resources actualResources = insertedGame.getResources();
-
-        List<String> articleIds = new ArrayList<>(Arrays.asList(articleId));
-
-        List<Article> actualArticles = actualResources.getArticles();
-        List<Article> foundArticles = foundGame.findArticles(articleIds);
-
-        for (int i = 0; i < foundArticles.size(); i++) {
-            Article foundArticle = foundArticles.get(i);
-            Article actualArticle = actualArticles.get(i);
-
-            assert(foundArticle.equals(actualArticle));
-        }
+        games.delete(insertedGame);
     }
 }

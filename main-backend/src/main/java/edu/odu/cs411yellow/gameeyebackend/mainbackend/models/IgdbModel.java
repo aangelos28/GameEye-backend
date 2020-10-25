@@ -2,6 +2,7 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.xml.transform.Source;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -57,18 +58,14 @@ public class IgdbModel {
 
             for (WebsiteResponse websiteResponse: this.sourceUrls) {
                 String responseCode = websiteResponse.category;
-                String officialCode = SourceUrlCategory.official.toString();
-                String steamCode = SourceUrlCategory.steam.toString();
-                String subRedditCode = SourceUrlCategory.subReddit.toString();
-                String twitterCode = SourceUrlCategory.twitter.toString();
 
-                if (officialCode.equals(responseCode)) {
+                if (responseCode.equals(SourceUrlCategory.official.toString())) {
                     sourceUrls.setPublisherUrl(websiteResponse.url);
-                } else if (steamCode.equals(responseCode)) {
+                } else if (responseCode.equals(SourceUrlCategory.steam.toString())) {
                     sourceUrls.setSteamUrl(websiteResponse.url);
-                } else if (subRedditCode.equals(responseCode)) {
+                } else if (responseCode.equals(SourceUrlCategory.subReddit.toString())) {
                     sourceUrls.setSubRedditUrl(websiteResponse.url);
-                } else if (twitterCode.equals(responseCode)) {
+                } else if (responseCode.equals(SourceUrlCategory.twitter.toString())) {
                     sourceUrls.setTwitterUrl(websiteResponse.url);
                 }
             }
@@ -226,6 +223,11 @@ public class IgdbModel {
 
         SourceUrlCategory(String categoryCode) {
             this.categoryCode = categoryCode;
+        }
+
+        @Override
+        public String toString() {
+            return this.categoryCode;
         }
     }
 }

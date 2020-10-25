@@ -1,8 +1,9 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.services;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.SourceUrls;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.elasticsearch.ElasticGame;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ElasticGameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,13 +17,16 @@ import java.util.List;
 public class IgdbReplicatorService {
     IgdbService igdbService;
     GameRepository gameRepository;
+    ElasticGameRepository elasticGames;
 
     Logger logger = LoggerFactory.getLogger(IgdbReplicatorService.class);
 
     @Autowired
-    public IgdbReplicatorService(IgdbService igdbService, GameRepository gameRepository) {
+    public IgdbReplicatorService(IgdbService igdbService, GameRepository gameRepository,
+                                 ElasticGameRepository elasticGames) {
         this.igdbService = igdbService;
         this.gameRepository = gameRepository;
+        this.elasticGames = elasticGames;
     }
 
     public void replicateIgdbByRange(int minId, int maxId, int limit) {
@@ -62,15 +66,28 @@ public class IgdbReplicatorService {
                         existingSourceUrls.setTwitterUrl(newSourceUrls.getTwitterUrl());
                     }
 
+                    // Save new urls in existing
+                    existingGame.setSourceUrls(existingSourceUrls);
+
                     // Save updated existing game
                     existingGame.setLastUpdated(new Date());
                     gameRepository.save(existingGame);
+
+                    // Update Elasticsearch database
+                    ElasticGame elasticGame = new ElasticGame(existingGame);
+                    elasticGames.save(elasticGame);
+
                     updatedGames++;
                 }
                 else {
                     // Save new game
                     newGame.setLastUpdated(new Date());
                     gameRepository.save(newGame);
+
+                    // Add new game to Elasticsearch database
+                    ElasticGame elasticGame = new ElasticGame(newGame);
+                    elasticGames.save(elasticGame);
+
                     newGames++;
                 }
             }

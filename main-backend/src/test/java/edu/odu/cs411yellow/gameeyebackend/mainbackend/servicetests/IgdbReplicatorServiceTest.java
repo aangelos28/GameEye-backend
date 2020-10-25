@@ -34,7 +34,7 @@ public class IgdbReplicatorServiceTest {
     GameRepository gameRepository;
 
     @Test
-    public void testReplicateIgdbByRangeForNewGames() throws JsonProcessingException {
+    public void testReplicateIgdbByRangeForNewGames() {
         // Test for adding new games
         int minId = 1;
         int maxId = 10;
@@ -81,7 +81,7 @@ public class IgdbReplicatorServiceTest {
     }
 
     @Test
-    public void testReplicateIgdbByRangeForUpdatingExistingGames() throws JsonProcessingException {
+    public void testReplicateIgdbByRangeForUpdatingExistingGames() {
         // Test for adding new games
         int minId = 1;
         int maxId = 10;
