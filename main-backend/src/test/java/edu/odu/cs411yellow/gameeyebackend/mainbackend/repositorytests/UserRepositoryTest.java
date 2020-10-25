@@ -30,10 +30,9 @@ public class UserRepositoryTest {
     User testUser;
 
     @BeforeEach
-    public void insertTestUserIntoGameEyeTest() {
+    public void insertTestUserIntoGameEyeTest() throws Exception {
 
         String userId = "5e98dc5da3464d35b824d052";
-        String firebaseId = "123456789";
         UserStatus status = UserStatus.inactive;
         UserPlan plan = UserPlan.free;
 
@@ -78,7 +77,7 @@ public class UserRepositoryTest {
         List<WatchedGame> watchList = new ArrayList<>(Arrays.asList(watchedGame));
 
         // Set testUser
-        testUser = new User(userId, firebaseId, status, plan, preferences, watchList);
+        testUser = new User(userId, status, plan, preferences, watchList);
 
         // Write testUser to GameEyeTest
         users.insert(testUser);
@@ -100,11 +99,11 @@ public class UserRepositoryTest {
     }
 
     @Test
-    public void findUserByFirebaseId() {
-        String foundUserFirebaseId = testUser.getFirebaseId();
-        User foundUser = users.findUserByFirebaseId(foundUserFirebaseId);
+    public void testFindUserById() {
+        String id = testUser.getId();
+        User foundUser = users.findUserById(id);
 
-        assert(foundUser.getFirebaseId().equals(testUser.getFirebaseId()));
+        assert(foundUser.getId().equals(testUser.getId()));
     }
 
     @Test

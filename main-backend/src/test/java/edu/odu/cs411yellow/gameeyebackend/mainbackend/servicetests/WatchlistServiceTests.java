@@ -38,14 +38,14 @@ public class WatchlistServiceTests {
 
     @Test
     public void testAddDeleteWatchlistGames() throws Exception {
-        final String userFirebaseId = "WatchlistServiceTests-testAddWatchlistGames";
+        final String id = "WatchlistServiceTests-testAddWatchlistGames";
 
         // Delete user if present
-        users.deleteByFirebaseId(userFirebaseId);
+        users.deleteById(id);
 
         // Add test user
         User user = new User();
-        user.setFirebaseId(userFirebaseId);
+        user.setId(id);
         users.save(user);
 
         // Add games to the user's watchlist
@@ -78,11 +78,11 @@ public class WatchlistServiceTests {
         assertThat(game2.getWatchers(), is(0));
         assertThat(game2.getWatchers(), is(0));
 
-        watchlistService.addWatchlistGame(userFirebaseId, game1.getId());
-        watchlistService.addWatchlistGame(userFirebaseId, game2.getId());
-        watchlistService.addWatchlistGame(userFirebaseId, game3.getId());
+        watchlistService.addWatchlistGame(id, game1.getId());
+        watchlistService.addWatchlistGame(id, game2.getId());
+        watchlistService.addWatchlistGame(id, game3.getId());
 
-        List<WatchedGameResponse> watchlist = watchlistService.getWatchlistGames(userFirebaseId);
+        List<WatchedGameResponse> watchlist = watchlistService.getWatchlistGames(id);
 
         // Verify that games are present
         game1 = games.findGameByTitle(game1Title);
@@ -97,19 +97,19 @@ public class WatchlistServiceTests {
         assertThat(game2.getWatchers(), is(1));
 
         // Delete watchlist games
-        watchlistService.deleteWatchlistGameByIndex(userFirebaseId, 2);
-        watchlistService.deleteWatchlistGameByIndex(userFirebaseId, 1);
-        watchlistService.deleteWatchlistGameByIndex(userFirebaseId, 0);
+        watchlistService.deleteWatchlistGameByIndex(id, 2);
+        watchlistService.deleteWatchlistGameByIndex(id, 1);
+        watchlistService.deleteWatchlistGameByIndex(id, 0);
 
         game1 = games.findGameByTitle(game1Title);
         game2 = games.findGameByTitle(game2Title);
         game3 = games.findGameByTitle(game3Title);
         assertThat(game1.getWatchers(), is(0));
         assertThat(game2.getWatchers(), is(0));
-        assertThat(game2.getWatchers(), is(0));
+        assertThat(game3.getWatchers(), is(0));
 
         // Delete user
-        users.deleteByFirebaseId(userFirebaseId);
+        users.deleteById(id);
 
         // Delete inserted games
         games.deleteByTitle(game1Title);

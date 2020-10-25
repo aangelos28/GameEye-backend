@@ -13,9 +13,7 @@ import java.util.List;
 @Document("users")
 public class User {
     @Id
-    private final String id;
-
-    private String firebaseId;
+    private String id;
 
     private UserStatus status;
 
@@ -26,10 +24,12 @@ public class User {
     private List<WatchedGame> watchList;
 
     @PersistenceConstructor
-    public User(String id, String firebaseId, UserStatus status,
-                UserPlan plan, Preferences preferences, List<WatchedGame> watchList) {
+    public User(String id, UserStatus status, UserPlan plan, Preferences preferences, List<WatchedGame> watchList) throws Exception {
+        if (id.equals("")) {
+            throw new Exception("User id must not be null.");
+        }
+
         this.id = id;
-        this.firebaseId = firebaseId;
         this.status = status;
         this.plan = plan;
         this.preferences = preferences;
@@ -38,7 +38,6 @@ public class User {
 
     public User() {
         this.id = "";
-        this.firebaseId = "";
         this.status = UserStatus.active;
         this.plan = UserPlan.free;
         this.preferences = new Preferences();
@@ -49,12 +48,8 @@ public class User {
         return this.id;
     }
 
-    public String getFirebaseId() {
-        return this.firebaseId;
-    }
-
-    public void setFirebaseId(String firebaseId) {
-        this.firebaseId = firebaseId;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public UserStatus getStatus() {

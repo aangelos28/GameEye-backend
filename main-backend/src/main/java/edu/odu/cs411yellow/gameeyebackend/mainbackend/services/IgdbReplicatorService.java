@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -17,36 +18,40 @@ import java.util.List;
 public class IgdbReplicatorService {
     IgdbService igdbService;
     GameRepository gameRepository;
-    ElasticGameRepository elasticGames;
+    ElasticGameRepository elasticRepository;
 
     Logger logger = LoggerFactory.getLogger(IgdbReplicatorService.class);
 
     @Autowired
     public IgdbReplicatorService(IgdbService igdbService, GameRepository gameRepository,
-                                 ElasticGameRepository elasticGames) {
+                                 ElasticGameRepository elasticRepository) {
         this.igdbService = igdbService;
         this.gameRepository = gameRepository;
-        this.elasticGames = elasticGames;
+        this.elasticRepository = elasticRepository;
     }
 
     public void replicateIgdbByRange(int minId, int maxId, int limit) {
         logger.info(String.format("Replicating potentially %1$s games; range: %2$s-%3$s; limit: %4$s.",
                                   (maxId - minId + 1), minId, maxId, limit));
-        List<Game> games = igdbService.retrieveGamesByRangeWithLimit(minId, maxId, limit);
+        List<Game> newGames = igdbService.retrieveGamesByRangeWithLimit(minId, maxId, limit);
 
-        int updatedGames = 0;
-        int newGames = 0;
+        List<Game> mongoGames = new ArrayList<>();
+        List<ElasticGame> elasticGames = new ArrayList<>();
 
-        for (Game newGame: games) {
+        int updatedGameCount = 0;
+        int newGameCount = 0;
+
+        for (Game newGame: newGames) {
             // Check that the new game is not null
             if (!newGame.getIgdbId().equals("")) {
                 // Update if new game exists by igdbId
                 if (gameRepository.existsByIgdbId(newGame.getIgdbId())) {
                     Game existingGame = gameRepository.findByIgdbId(newGame.getIgdbId());
 
-                    // Update logoUrls, platforms, and genres
+                    // Update logoUrls, platforms, titles, and genres
                     existingGame.setLogoUrl(newGame.getLogoUrl());
                     existingGame.setPlatforms(newGame.getPlatforms());
+                    existingGame.setTitle(newGame.getTitle());
                     existingGame.setGenres(newGame.getGenres());
 
                     // Update sourceUrls
@@ -69,31 +74,36 @@ public class IgdbReplicatorService {
                     // Save new urls in existing
                     existingGame.setSourceUrls(existingSourceUrls);
 
-                    // Save updated existing game
+                    // Add updated existing game to mongoGames
                     existingGame.setLastUpdated(new Date());
-                    gameRepository.save(existingGame);
+                    mongoGames.add(existingGame);
 
-                    // Update Elasticsearch database
+                    // Add game to Elasticsearch array
                     ElasticGame elasticGame = new ElasticGame(existingGame);
-                    elasticGames.save(elasticGame);
+                    elasticGames.add(elasticGame);
 
-                    updatedGames++;
+                    updatedGameCount++;
                 }
                 else {
-                    // Save new game
+                    // Add updated existing game to mongoGames
                     newGame.setLastUpdated(new Date());
-                    gameRepository.save(newGame);
+                    mongoGames.add(newGame);
 
-                    // Add new game to Elasticsearch database
+                    // Add game to Elasticsearch array
                     ElasticGame elasticGame = new ElasticGame(newGame);
-                    elasticGames.save(elasticGame);
+                    elasticGames.add(elasticGame);
 
-                    newGames++;
+                    newGameCount++;
                 }
             }
         }
-        logger.info("Finished replication. " + "Added " + newGames + " new games and " +
-                    "updated " + updatedGames + ".");
+
+        // Save games to elastic and mongo
+        gameRepository.saveAll(mongoGames);
+        elasticRepository.saveAll(elasticGames);
+
+        logger.info("Finished replication. " + "Added " + newGameCount + " new games and " +
+                    "updated " + updatedGameCount + ".");
 
     }
 }

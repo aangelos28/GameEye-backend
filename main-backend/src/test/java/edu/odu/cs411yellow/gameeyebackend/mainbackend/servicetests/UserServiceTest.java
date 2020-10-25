@@ -37,7 +37,7 @@ public class UserServiceTest {
         // Get the user
         User user = userService.getUser(userId);
 
-        assertThat(user.getFirebaseId(), is(userId));
+        assertThat(user.getId(), is(userId));
 
         // Delete the user
         userService.deleteUser(userId);
