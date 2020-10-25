@@ -2,7 +2,6 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.servicetests;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.User;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.WatchedGame;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.responses.WatchedGameResponse;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.UserRepository;
@@ -98,9 +97,9 @@ public class WatchlistServiceTests {
         assertThat(game2.getWatchers(), is(1));
 
         // Delete watchlist games
-        watchlistService.deleteWatchlistGame(userFirebaseId, 2);
-        watchlistService.deleteWatchlistGame(userFirebaseId, 1);
-        watchlistService.deleteWatchlistGame(userFirebaseId, 0);
+        watchlistService.deleteWatchlistGameByIndex(userFirebaseId, 2);
+        watchlistService.deleteWatchlistGameByIndex(userFirebaseId, 1);
+        watchlistService.deleteWatchlistGameByIndex(userFirebaseId, 0);
 
         game1 = games.findGameByTitle(game1Title);
         game2 = games.findGameByTitle(game2Title);

@@ -25,10 +25,10 @@ public class IgdbReplicatorService {
         this.gameRepository = gameRepository;
     }
 
-    public void replicateIgdbByRange(int minId, int maxId, int limit) throws JsonProcessingException {
+    public void replicateIgdbByRange(int minId, int maxId, int limit) {
         logger.info(String.format("Replicating potentially %1$s games; range: %2$s-%3$s; limit: %4$s.",
                                   (maxId - minId + 1), minId, maxId, limit));
-        List<Game> games = igdbService.getGamesByRange(minId, maxId, limit);
+        List<Game> games = igdbService.retrieveGamesByRangeWithLimit(minId, maxId, limit);
 
         int updatedGames = 0;
         int newGames = 0;
@@ -40,7 +40,8 @@ public class IgdbReplicatorService {
                 if (gameRepository.existsByIgdbId(newGame.getIgdbId())) {
                     Game existingGame = gameRepository.findByIgdbId(newGame.getIgdbId());
 
-                    // Update platforms and genres
+                    // Update logoUrls, platforms, and genres
+                    existingGame.setLogoUrl(newGame.getLogoUrl());
                     existingGame.setPlatforms(newGame.getPlatforms());
                     existingGame.setGenres(newGame.getGenres());
 

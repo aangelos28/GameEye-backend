@@ -21,18 +21,16 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class GameSpotScraper implements WebScraper {
+public class UniversalScraper implements WebScraper {
 
     NewsWebsiteRepository newsWebsites;
     private List<Article> articles;
-    String url;
     private DateFormat format;
 
     @Autowired
-    public GameSpotScraper(NewsWebsiteRepository newsWebsites){
+    public UniversalScraper(NewsWebsiteRepository newsWebsites){
         this.newsWebsites = newsWebsites;
         articles = new ArrayList<>();
-        url= newsWebsites.findByName("GameSpot").getRssFeedUrl();
         format = new SimpleDateFormat("E, d MMMM yyyy kk:mm:ss z");
     }
 
@@ -40,20 +38,22 @@ public class GameSpotScraper implements WebScraper {
      * Initiate the scrape
      */
     @Override
-    public List<Article> scrape() {
+    public List<Article> scrape(String newsOutlet) {
 
         try {
-            NewsWebsite gameSpot = newsWebsites.findByName("GameSpot");
+            NewsWebsite newsSite = newsWebsites.findByName(newsOutlet);
 
+            String url = newsSite.getRssFeedUrl();
             Document rssFeed = Jsoup.connect(url).get();
 
             Elements items = rssFeed.select("item");
 
             for (var i : items){
-
-                Article toAdd = createArticle(i,gameSpot);
+                Article toAdd = createArticle(i,newsSite);
                 articles.add(toAdd);
             }
+
+
         }
         catch(Exception ex){
             ex.printStackTrace();
@@ -67,21 +67,36 @@ public class GameSpotScraper implements WebScraper {
 
         String url = i.select("link").text();
 
+        String snippet;
+
         //parse date
         String pubDate = i.select("pubDate").text();
         Date publicationDate = format.parse(pubDate);
 
         //parse snippet
-        Document body = Jsoup.parse(i.select("description").text());
-        Elements paragraph = body.select("p");
-        String snippet = paragraph.text();
+        if (site.getName().contentEquals("IGN")) {
+             snippet = i.select("description").text();
+        }
+
+        else if (site.getName().contentEquals("PC Gamer")){
+            Document body = Jsoup.parse(i.selectFirst("title").nextElementSibling().text());
+            Elements paragraph = body.select("p");
+            snippet = paragraph.text();
+        }
+
+        else {
+            Document body = Jsoup.parse(i.select("description").text());
+            Elements paragraph = body.select("p");
+            snippet = paragraph.text();
+        }
+
         if (snippet.length() > 255){
             snippet = snippet.substring(0,255);
         }
 
+        //create null image
         Image image = new Image(null, ".jpg",null);
 
-        //Create a Unique ID
         return new Article(null, title, url, site, image,
                 snippet, publicationDate, publicationDate, 0);
 

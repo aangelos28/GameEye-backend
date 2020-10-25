@@ -1,9 +1,8 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.services;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import static edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel.GameResponse;
 import static edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel.CompanyResponse;
-
+import static edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel.CoverResponse;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.security.IgdbTokenContainer;
@@ -68,7 +67,7 @@ public class IgdbService {
         return gameResponses.get(0);
     }
 
-    public List<GameResponse> getGameResponsesByRangeWithLimit(int minId, int maxId, int limit) {
+    public List<GameResponse> getGameResponsesWithSingleRequest(int minId, int maxId, int limit) {
         int inclusiveMinId = minId - 1;
         int inclusiveMaxId = maxId + 1;
 
@@ -88,7 +87,7 @@ public class IgdbService {
         return gameResponses;
     }
 
-    public List<GameResponse> getGameResponsesByRange(int minId, int maxId, int limit) {
+    public List<GameResponse> getGameResponsesWithMultipleRequests(int minId, int maxId, int limit) {
         List<GameResponse> games = new ArrayList<>();
         int remainder = maxId - minId + 1;
         int currentMaxId = maxId;
@@ -101,14 +100,14 @@ public class IgdbService {
                 currentMaxId = currentMinId + limit;
                 remainder -= limit;
 
-                gameResponses = getGameResponsesByRangeWithLimit(currentMinId, currentMaxId, limit);
+                gameResponses = getGameResponsesWithSingleRequest(currentMinId, currentMaxId, limit);
 
                 logger.info("Retrieved games in ID range " + currentMinId + "-" + currentMaxId + ".");
 
                 currentMinId = currentMaxId + 1;
             } else {
                 currentMaxId = maxId;
-                gameResponses = getGameResponsesByRangeWithLimit(currentMinId, currentMaxId, limit);
+                gameResponses = getGameResponsesWithSingleRequest(currentMinId, currentMaxId, limit);
 
                 logger.info("Retrieved games in ID range " + currentMinId + "-" + currentMaxId + ".");
 
@@ -121,12 +120,66 @@ public class IgdbService {
         return games;
     }
 
+    public List<CoverResponse> getCoverResponsesWithSingleRequest(int minId, int maxId, int limit) {
+        int inclusiveMinId = minId - 1;
+        int inclusiveMaxId = maxId + 1;
+
+        String fieldsClause = "fields url, game; ";
+        String whereClause = String.format("where game > %1$s & game < %2$s;", inclusiveMinId, inclusiveMaxId);
+        String limitClause = String.format("limit %s;",limit);
+        String requestBody = String.format("%1$s%2$s%3$s", fieldsClause, whereClause, limitClause);
+
+        List<CoverResponse> coverResponses = webClient.post()
+                .uri("/covers")
+                .contentType(MediaType.TEXT_PLAIN)
+                .bodyValue(requestBody)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<List<CoverResponse>>() {})
+                .block();
+
+        return coverResponses;
+    }
+
+    public List<CoverResponse> getCoverResponsesWithMultipleRequests(int minId, int maxId, int limit) {
+        List<CoverResponse> covers = new ArrayList<>();
+        int remainder = maxId - minId + 1;
+        int currentMaxId = maxId;
+        int currentMinId = minId;
+
+        while (remainder > 0) {
+            List<CoverResponse> coverResponses;
+
+            if (remainder > limit) {
+                currentMaxId = currentMinId + limit;
+                remainder -= limit;
+
+                coverResponses = getCoverResponsesWithSingleRequest(currentMinId, currentMaxId, limit);
+
+                logger.info("Retrieved covers for games in ID range " + currentMinId + "-" + currentMaxId + ".");
+
+                currentMinId = currentMaxId + 1;
+            } else {
+                currentMaxId = maxId;
+                coverResponses = getCoverResponsesWithSingleRequest(currentMinId, currentMaxId, limit);
+
+                logger.info("Retrieved covers for games in ID range " + currentMinId + "-" + currentMaxId + ".");
+
+                remainder = (remainder - currentMaxId - currentMinId + 1);
+            }
+
+            covers.addAll(coverResponses);
+        }
+
+        return covers;
+    }
+
     public List<Game> convertGameResponsesToGames(List<GameResponse> gameResponses) {
         List<Game> games = new ArrayList<>();
 
         for (GameResponse gameResponse : gameResponses) {
             if (!gameResponse.igdbId.equals("")) {
                 Game game = gameResponse.toGame();
+
                 games.add(game);
             }
         }
@@ -134,23 +187,27 @@ public class IgdbService {
         return games;
     }
 
-    public Game getGameById(int id) throws JsonProcessingException {
+    public Game getGameById(int id) {
         GameResponse gameResponse = getGameResponseById(id);
         Game game = gameResponse.toGame();
 
         return game;
     }
 
-    public List<Game> getGamesByRangeWithLimit(int minId, int maxId, int limit) throws JsonProcessingException {
-        List<GameResponse> gameResponses = getGameResponsesByRangeWithLimit(minId, maxId, limit);
+    public List<Game> retrieveGamesByRangeWithLimit(int minId, int maxId, int limit) {
+        List<GameResponse> gameResponses = getGameResponsesWithMultipleRequests(minId, maxId, limit);
+        List<CoverResponse> coverResponses = getCoverResponsesWithMultipleRequests(minId, maxId, limit);
+
         List<Game> games = convertGameResponsesToGames(gameResponses);
 
-        return games;
-    }
-
-    public List<Game> getGamesByRange(int minId, int maxId, int limit) throws JsonProcessingException {
-        List<GameResponse> gameResponses = getGameResponsesByRange(minId, maxId, limit);
-        List<Game> games = convertGameResponsesToGames(gameResponses);
+        for (Game game: games) {
+            for (CoverResponse cover: coverResponses) {
+                if (game.getIgdbId().equals(cover.gameId)) {
+                    game.setLogoUrl(cover.logoUrl);
+                    break;
+                }
+            }
+        }
 
         return games;
     }

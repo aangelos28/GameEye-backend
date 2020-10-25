@@ -92,6 +92,7 @@ public class IgdbModel {
             String title = this.title;
             List<String> platforms = this.getPlatforms();
             String status = "";
+            String logoUrl = "";
 
             // Convert UNIX epoch timestamp from IGDB to year, month, day format
             Date lastUpdated = new java.util.Date((long)this.lastUpdatedInSeconds * 1000);
@@ -100,7 +101,7 @@ public class IgdbModel {
             Resources resources = new Resources();
             int watchers = 0;
 
-            Game game = new Game(id, igdbId, title, platforms, status, lastUpdated,
+            Game game = new Game(id, igdbId, title, platforms, status, logoUrl, lastUpdated,
                                  genres, sourceUrls, resources, watchers);
 
             return game;
@@ -188,6 +189,27 @@ public class IgdbModel {
         public CompanyResponse(String id, String name) {
             this.id = id;
             this.name = name;
+        }
+    }
+
+    public static class CoverResponse {
+        @JsonProperty("id")
+        public String logoId;
+        @JsonProperty("url")
+        public String logoUrl;
+        @JsonProperty("game")
+        public String gameId;
+
+        public CoverResponse() {
+            this.logoId = "";
+            this.logoUrl = "";
+            this.gameId = "";
+        }
+
+        public CoverResponse(String id, String logoUrl, String gameId) {
+            this.logoId = id;
+            this.logoUrl = logoUrl;
+            this.gameId = gameId;
         }
     }
 
