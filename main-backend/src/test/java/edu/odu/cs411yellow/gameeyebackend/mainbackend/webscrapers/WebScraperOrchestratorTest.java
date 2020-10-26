@@ -27,6 +27,11 @@ public class WebScraperOrchestratorTest {
     }
 
     @Test
+    public void testCheckIrrelevantArticles(){
+        //TODO
+    }
+
+    @Test
     public void testInsertDataIntoDatabase(){
         //TODO
     }

@@ -62,6 +62,13 @@ public class WebScraperOrchestrator{
 
     @Autowired
     public Boolean checkArticleDuplicates(){
+
+        return false;
+    }
+
+    @Autowired
+    public Boolean checkIrrelevantArticles(){
+
         return false;
     }
 
