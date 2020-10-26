@@ -36,4 +36,9 @@ public class WebScraperOrchestratorTest {
         //TODO
     }
 
+    @Test
+    public void testRemoveFromCollection(){
+        //TODO
+    }
+
 }

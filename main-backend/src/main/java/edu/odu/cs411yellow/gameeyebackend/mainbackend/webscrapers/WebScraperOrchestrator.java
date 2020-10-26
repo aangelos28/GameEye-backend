@@ -82,4 +82,9 @@ public class WebScraperOrchestrator{
         //TODO
         //Consult Chris
     }
+
+    @Autowired
+    public void removeFromCollection(){
+        //TODO
+    }
 }
