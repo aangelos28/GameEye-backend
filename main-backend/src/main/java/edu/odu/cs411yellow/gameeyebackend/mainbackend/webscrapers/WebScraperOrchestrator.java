@@ -53,11 +53,6 @@ public class WebScraperOrchestrator{
             scraper.scrape();
         }
 
-        /*ign.scrape();
-        gameSpot.scrape();
-        euroGamer.scrape();
-        pcGamer.scrape();
-        mockSite.scrape();*/
     }
 
     @Scheduled (cron = "0 0 8,20 * * *")    //Schedules method to run at 8:00 AM and 8:00PM
