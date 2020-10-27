@@ -49,6 +49,15 @@ public class ElasticGameRepositoryCustomImpl implements ElasticGameRepositoryCus
     @Override
     public SearchHits<ElasticGame> ReferencedGames(String articleTitle) {
         SearchHits<ElasticGame> referencedGames = autocompleteGameTitle(articleTitle, 25);
+//        SearchHits<ElasticGame> referencedHits = new SearchHitsImpl<>();
+        for (var i: referencedGames) {
+            //TODO Get the Title and find how well it matches the title.
+            i.getContent().getTitle();
+
+
+
+
+        }
 
 
         return null;
