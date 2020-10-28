@@ -8,11 +8,18 @@ import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepositor
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.NewsWebsite;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.scheduling.TaskScheduler;
+import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 
 import java.io.IOException;
@@ -21,22 +28,31 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 
-@Component
+@Configurable
 public class WebScraperOrchestrator{
 
     NewsWebsiteRepository newsWebsiteRepository;
-    List<WebScraper> scrapers = new ArrayList<WebScraper>();
-    List<Article> scrapedArticles = new ArrayList<>();
 
-    //WebScraper ign;
-    //WebScraper gameSpot;
-    //WebScraper euroGamer;
-    //WebScraper pcGamer;
-    //WebScraper mockSite;
+    private List<WebScraper> scrapers;
 
+    private List<Article> scrapedArticles;
 
     @Autowired
-    public WebScraperOrchestrator(){
+    private MockNewsScraper mockNewsScraper;
+
+    /*@Autowired
+    IGNScraper ignScraper;
+    @Autowired
+    GameSpotScraper gameSpotScrapper;
+    @Autowired
+    EuroGamerScraper euroGamerScraper;
+    @Autowired
+    PCGamerScraper pcGamerScraper;*/
+
+
+    public WebScraperOrchestrator (){
+        this.scrapers = new ArrayList<WebScraper>();
+        this.scrapedArticles = new ArrayList<Article>();
 
         //this.ign = new IGNScraper(newsWebsiteRepository);
         //this.gameSpot= new GameSpotScraper(newsWebsiteRepository);
@@ -44,22 +60,36 @@ public class WebScraperOrchestrator{
         //this.pcGamer = new PCGamerScraper(newsWebsiteRepository);
         //this.mockSite = new MockNewsScraper(newsWebsiteRepository);
 
-        WebScraper ign = new IGNScraper(newsWebsiteRepository);
+
+        /*WebScraper ign = new IGNScraper(newsWebsiteRepository);
         WebScraper gameSpot= new GameSpotScraper(newsWebsiteRepository);
         WebScraper euroGamer= new EuroGamerScraper(newsWebsiteRepository);
         WebScraper pcGamer = new PCGamerScraper(newsWebsiteRepository);
-        WebScraper mockSite = new MockNewsScraper(newsWebsiteRepository);
+        WebScraper mockSite = new MockNewsScraper(newsWebsiteRepository);*/
 
-        scrapers.add(ign);
-        scrapers.add(gameSpot);
-        scrapers.add(euroGamer);
-        scrapers.add(pcGamer);
+        //WebScraper ign = ignScraper;
+        //WebScraper gameSpot = gameSpotScrapper;
+        //WebScraper euroGamer = euroGamerScraper;
+        //WebScraper pcGamer = euroGamerScraper;
+
+        WebScraper mockSite=mockNewsScraper;
+
+        //scrapers.add(ign);
+        //scrapers.add(gameSpot);
+        //scrapers.add(euroGamer);
+        //scrapers.add(pcGamer);
+        //scrapers.add(mockNewsScraper);
         scrapers.add(mockSite);
     }
 
-    public WebScraperOrchestrator (String target){
-        WebScraper targetScraper = null;
-        Boolean init = false;
+    @Autowired
+    public WebScraperOrchestrator (WebScraper target){
+        this.scrapers = new ArrayList<WebScraper>();
+        this.scrapedArticles = new ArrayList<Article>();
+
+        //WebScraper targetScraper = mockNewsScraper;
+
+        /*Boolean init = false;
         switch (target){
             case "IGN":
                 targetScraper = new IGNScraper(newsWebsiteRepository);
@@ -74,7 +104,8 @@ public class WebScraperOrchestrator{
                 init = true;
                 break;
             case "GameEye Mock News":
-                targetScraper = new MockNewsScraper(newsWebsiteRepository);
+                //targetScraper = new MockNewsScraper(newsWebsiteRepository);
+                targetScraper = mockNewsScraper;
                 init = true;
                 break;
             case "PC Gamer":
@@ -82,22 +113,30 @@ public class WebScraperOrchestrator{
                 init = true;
                 break;
             default:
-        }
+                //targetScraper = new MockNewsScraper(newsWebsiteRepository); //Temporary default
+                targetScraper = mockNewsScraper;
+        }*/
 
-        if(init){
+        /*if(init){
             scrapers.add(targetScraper);
         }
         else{
             throw new IllegalArgumentException("Invalid Scraper called");
-        }
+        }*/
 
+        //WebScraper mockSite=mockNewsScraper;
+        //scrapers.add(targetScraper);
 
+        //scrapers.add(mockNewsScraper);
+        //scrapers.add(mockSite);
+
+        scrapers.add(target);
     }
 
     public void forceScrape(){
         for (WebScraper scraper:scrapers) {
-            scraper.scrape();
-            List<Article> articleList = scraper.getArticles();
+            List<Article> articleList = scraper.scrape();
+            //List<Article> articleList = scraper.getArticles();
             for (Article art:articleList) {
                 if(!checkArticleDuplicates() && !checkIrrelevantArticles())
                     scrapedArticles.add(art);
@@ -105,40 +144,39 @@ public class WebScraperOrchestrator{
         }
     }
 
-    @Scheduled (cron = "0 0 8,20 * * *")    //Schedules method to run at 8:00 AM and 8:00PM
+    //@Scheduled (cron = "0 0 8,20 * * *")    //Schedules method to run at 8:00 AM and 8:00PM
     public void biDailyScrape(){
         //TODO
     }
 
-    @Autowired
     public Boolean checkArticleDuplicates(){
 
         return false;
     }
 
-    @Autowired
     public Boolean checkIrrelevantArticles(){
 
         return false;
     }
 
-    @Autowired
     public void insertDataIntoDatabase(){
         //TODO
     }
 
-    @Autowired
     public void performArticleGameReferenceSearch(){
         //TODO
         //Consult Chris
     }
 
-    @Autowired
     public void removeFromCollection(){
         //TODO
     }
 
-    public String ToString(){
+    public List<Article> getArticleCollection(){ return scrapedArticles; }
+
+    public List<WebScraper> getScrapers(){ return scrapers;}
+
+    public String toString(){
         ObjectMapper obj= new ObjectMapper();
         String scrapedArticlesStr="";
         for (Article a:scrapedArticles) {

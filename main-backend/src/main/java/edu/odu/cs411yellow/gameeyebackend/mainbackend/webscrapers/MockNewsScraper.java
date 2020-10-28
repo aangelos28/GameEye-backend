@@ -31,7 +31,7 @@ public class MockNewsScraper implements WebScraper{
     @Autowired
     public MockNewsScraper(NewsWebsiteRepository newsWebsites){
         this.newsWebsites = newsWebsites;
-        articles = new ArrayList<>();
+        articles = new ArrayList<Article>();
         url = newsWebsites.findByName("GameEye Mock News").getSiteUrl();
         format = new SimpleDateFormat("E, MMMM d, yyyy");
     }
