@@ -81,7 +81,7 @@ public class WebScraperOrchestrator{
         scrapers.add(mockSite);
     }
 
-    @Autowired
+
     public WebScraperOrchestrator (WebScraper target){
         this.scrapers = new ArrayList<WebScraper>();
         this.scrapedArticles = new ArrayList<Article>();
