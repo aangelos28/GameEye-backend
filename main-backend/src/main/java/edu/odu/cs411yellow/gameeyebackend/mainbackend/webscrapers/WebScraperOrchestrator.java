@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 
-@Configurable
 public class WebScraperOrchestrator{
 
     NewsWebsiteRepository newsWebsiteRepository;
