@@ -45,21 +45,57 @@ public class ElasticGameRepositoryCustomImpl implements ElasticGameRepositoryCus
      *
      * @param articleTitle Article Title to find references
      * @return List of referenced games
+     *          PROBABLY return list of IDs to games
      */
     @Override
     public SearchHits<ElasticGame> ReferencedGames(String articleTitle) {
         SearchHits<ElasticGame> referencedGames = autocompleteGameTitle(articleTitle, 25);
+
+
+        int longestMatchSize = 0;
+        String matchingID;
+        String matchingTitle;
 //        SearchHits<ElasticGame> referencedHits = new SearchHitsImpl<>();
         for (var i: referencedGames) {
             //TODO Get the Title and find how well it matches the title.
-            i.getContent().getTitle();
+            String gameTitle = i.getContent().getTitle();
+
+            int gameTitleLength = gameTitle.length();
+            int articleTitleLength = articleTitle.length();
+            int matchSize;
+
+            /**
+             * TODO Step 1 : Find best matching sequence Return Int, Set Best ID/Title
+             *      Step 2 : Set that return as best match
+             *      Step 3 : Cycle through List and set as needed.
+             *      Step 4 : If more than one is the best match return more.
+             */
+            matchSize = commonStringSize(articleTitle.toCharArray(),gameTitle.toCharArray(),
+                                            articleTitleLength,gameTitleLength);
+
+            if(longestMatchSize < matchSize) {
+                matchingID = i.getContent().getGameId();
+                matchingTitle = i.getContent().getTitle();
+            }
+
+            //TODO: Add case if (longestMatchSize == matchSize)
+
+
 
 
 
 
         }
 
-
         return null;
     }
+
+    @Override
+    public int commonStringSize(char X[], char Y[], int m, int n) {
+
+        return 0;
+    }
+
+
+
 }
