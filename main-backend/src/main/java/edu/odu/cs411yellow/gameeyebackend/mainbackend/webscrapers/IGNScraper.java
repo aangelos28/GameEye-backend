@@ -56,9 +56,12 @@ public class IGNScraper implements WebScraper {
 
                 //Adds article to collection if not already present in database
                 //to prevent duplicate articles
-                if (!checkDuplicateArticles(curr)) {
+
+                /*if (!checkDuplicateArticles(curr)) {
                     articles.add(curr);
-                }
+                }*/
+
+                articles.add(curr);
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,5 +1,6 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.webscrapers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.NewsWebsiteRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ElasticGameRepository;
@@ -14,6 +15,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 
+import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,6 +26,7 @@ public class WebScraperOrchestrator{
 
     NewsWebsiteRepository newsWebsiteRepository;
     List<WebScraper> scrapers = new ArrayList<WebScraper>();
+    List<Article> scrapedArticles = new ArrayList<>();
 
     //WebScraper ign;
     //WebScraper gameSpot;
@@ -85,7 +88,7 @@ public class WebScraperOrchestrator{
             scrapers.add(targetScraper);
         }
         else{
-            throw new IllegalArgumentException("Invalid Scraper");
+            throw new IllegalArgumentException("Invalid Scraper called");
         }
 
 
@@ -94,12 +97,16 @@ public class WebScraperOrchestrator{
     public void forceScrape(){
         for (WebScraper scraper:scrapers) {
             scraper.scrape();
+            List<Article> articleList = scraper.getArticles();
+            for (Article art:articleList) {
+                if(!checkArticleDuplicates() && !checkIrrelevantArticles())
+                    scrapedArticles.add(art);
+            }
         }
-
     }
 
     @Scheduled (cron = "0 0 8,20 * * *")    //Schedules method to run at 8:00 AM and 8:00PM
-    public void initiateBiDailyScrape(){
+    public void biDailyScrape(){
         //TODO
     }
 
@@ -129,5 +136,22 @@ public class WebScraperOrchestrator{
     @Autowired
     public void removeFromCollection(){
         //TODO
+    }
+
+    public String ToString(){
+        ObjectMapper obj= new ObjectMapper();
+        String scrapedArticlesStr="";
+        for (Article a:scrapedArticles) {
+            try {
+                String temp;
+                temp = obj.writerWithDefaultPrettyPrinter().writeValueAsString(a);
+                scrapedArticlesStr = scrapedArticlesStr + "\n" + temp;
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return scrapedArticlesStr;
     }
 }
