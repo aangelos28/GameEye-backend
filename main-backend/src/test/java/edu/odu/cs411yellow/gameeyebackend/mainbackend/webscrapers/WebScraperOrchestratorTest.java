@@ -21,8 +21,13 @@ public class WebScraperOrchestratorTest {
     @Autowired
     MockNewsScraper mock;
 
+    @Autowired
     WebScraperOrchestrator scrappy;
+
+    @Autowired
     WebScraperOrchestrator scrappyMock;
+
+    @Autowired
     NewsWebsiteRepository newsWebsiteRepository;
 
     @Before
@@ -44,7 +49,6 @@ public class WebScraperOrchestratorTest {
         WebScraper mockOrch = mock;
         //scrappyMock = new WebScraperOrchestrator(mockOrch);
         //scrappyMock = new WebScraperOrchestrator("GameEye Mock News");
-        scrappyMock = new WebScraperOrchestrator();
         scrappyMock.forceScrape();
         //System.out.println(scrappyMock.getScrapers());
         //System.out.println(scrappyMock.toString());

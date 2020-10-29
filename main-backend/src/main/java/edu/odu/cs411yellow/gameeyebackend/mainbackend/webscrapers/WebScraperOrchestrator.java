@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-
+@Service
 public class WebScraperOrchestrator{
 
     NewsWebsiteRepository newsWebsiteRepository;
@@ -36,7 +36,6 @@ public class WebScraperOrchestrator{
 
     private List<Article> scrapedArticles;
 
-    @Autowired
     private MockNewsScraper mockNewsScraper;
 
     /*@Autowired
@@ -48,10 +47,12 @@ public class WebScraperOrchestrator{
     @Autowired
     PCGamerScraper pcGamerScraper;*/
 
-
-    public WebScraperOrchestrator (){
+    @Autowired
+    public WebScraperOrchestrator (MockNewsScraper mockNewsScraper, NewsWebsiteRepository newsWebsiteRepository){
         this.scrapers = new ArrayList<WebScraper>();
         this.scrapedArticles = new ArrayList<Article>();
+        this.mockNewsScraper = mockNewsScraper;
+        this.newsWebsiteRepository = newsWebsiteRepository;
 
         //this.ign = new IGNScraper(newsWebsiteRepository);
         //this.gameSpot= new GameSpotScraper(newsWebsiteRepository);
