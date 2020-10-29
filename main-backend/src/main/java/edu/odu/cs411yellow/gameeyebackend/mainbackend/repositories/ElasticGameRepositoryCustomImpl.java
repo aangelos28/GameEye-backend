@@ -11,6 +11,9 @@ import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ElasticGameRepositoryCustomImpl implements ElasticGameRepositoryCustom {
 
     private final ElasticsearchOperations elasticSearch;
@@ -48,20 +51,23 @@ public class ElasticGameRepositoryCustomImpl implements ElasticGameRepositoryCus
      *          PROBABLY return list of IDs to games
      */
     @Override
-    public SearchHits<ElasticGame> ReferencedGames(String articleTitle) {
+    public List <String> ReferencedGames(String articleTitle) {
+
         SearchHits<ElasticGame> referencedGames = autocompleteGameTitle(articleTitle, 25);
 
-
+        int articleTitleLength = articleTitle.length();
         int longestMatchSize = 0;
-        String matchingID;
-        String matchingTitle;
+        List <String> matchingIDs = new ArrayList<>();
+//        String [] matchingID;
+
+//        String matchingTitle ;
 //        SearchHits<ElasticGame> referencedHits = new SearchHitsImpl<>();
+
         for (var i: referencedGames) {
             //TODO Get the Title and find how well it matches the title.
             String gameTitle = i.getContent().getTitle();
 
             int gameTitleLength = gameTitle.length();
-            int articleTitleLength = articleTitle.length();
             int matchSize;
 
             /**
@@ -74,27 +80,45 @@ public class ElasticGameRepositoryCustomImpl implements ElasticGameRepositoryCus
                                             articleTitleLength,gameTitleLength);
 
             if(longestMatchSize < matchSize) {
-                matchingID = i.getContent().getGameId();
-                matchingTitle = i.getContent().getTitle();
+                matchingIDs.clear();
+                matchingIDs.add(i.getContent().getGameId());
+//                matchingTitle = i.getContent().getTitle();
             }
 
             //TODO: Add case if (longestMatchSize == matchSize)
-
-
-
-
-
+            else if (longestMatchSize == matchSize){
+                matchingIDs.add(i.getContent().getGameId());
+            }
 
         }
 
-        return null;
+        return matchingIDs;
     }
 
     @Override
-    public int commonStringSize(char X[], char Y[], int m, int n) {
+    public int commonStringSize(char [] X, char [] Y, int m, int n) {
 
-        return 0;
+        int [][] longCommStr = new int[m + 1][n + 1];
+        int result = 0;  //Store length of the longest common substring
+
+        for (int i = 0; i <= m; i++)
+        {
+            for (int j = 0; j <= n; j++)
+            {
+                if (i == 0 || j == 0)
+                    longCommStr[i][j] = 0;
+                else if (X[i - 1] == Y[j - 1])
+                {
+                    longCommStr[i][j] = longCommStr[i - 1][j - 1] + 1;
+                    result = Integer.max(result, longCommStr[i][j]);
+                }
+                else
+                    longCommStr[i][j] = 0;
+            }
+        }
+        return result;
     }
+
 
 
 
