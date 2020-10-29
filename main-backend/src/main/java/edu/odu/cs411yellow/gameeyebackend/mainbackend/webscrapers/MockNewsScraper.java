@@ -27,12 +27,13 @@ public class MockNewsScraper implements WebScraper{
     private String url;
     private List<Article> articles;
     private DateFormat format;
+    private String name="GameEye Mock News";
 
     @Autowired
     public MockNewsScraper(NewsWebsiteRepository newsWebsites){
         this.newsWebsites = newsWebsites;
         articles = new ArrayList<Article>();
-        url = newsWebsites.findByName("GameEye Mock News").getSiteUrl();
+        url = newsWebsites.findByName(name).getSiteUrl();
         format = new SimpleDateFormat("E, MMMM d, yyyy");
     }
 
@@ -111,6 +112,14 @@ public class MockNewsScraper implements WebScraper{
     public Article getArticle(int index) {
         return articles.get(index);
     }
+
+    /**
+     * Retrieves name of the scraper
+     *
+     * @return String
+     */
+    @Override
+    public String getScrapperName(){ return name; }
 
     /**
      * Output to JSON format

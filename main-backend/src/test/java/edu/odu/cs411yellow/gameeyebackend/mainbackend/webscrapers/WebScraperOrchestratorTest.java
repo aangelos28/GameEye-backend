@@ -24,6 +24,14 @@ public class WebScraperOrchestratorTest {
 
     @Autowired
     MockNewsScraper mock;
+    @Autowired
+    IGNScraper ign;
+    @Autowired
+    PCGamerScraper pc;
+    @Autowired
+    EuroGamerScraper euro;
+    @Autowired
+    GameSpotScraper gamespot;
 
     @Autowired
     WebScraperOrchestrator scrappy;
@@ -34,7 +42,7 @@ public class WebScraperOrchestratorTest {
 
     @BeforeEach
     public void init(){
-        scrappyMock = new WebScraperOrchestrator(mock, newsWebsiteRepository);
+        scrappyMock = new WebScraperOrchestrator(mock, gamespot, ign, euro, pc, newsWebsiteRepository);
         //scrappyMock = new WebScraperOrchestrator("GameEye Mock News");
         //WebScraper mock = new MockNewsScraper(newsWebsiteRepository);
         //scrappyMock = new WebScraperOrchestrator(mock);
@@ -49,7 +57,6 @@ public class WebScraperOrchestratorTest {
 
     @Test
     public void testForceScrapeMockNews(){
-        //scrappyMock = new WebScraperOrchestrator(mock, newsWebsiteRepository);
         scrappyMock.forceScrape();
         System.out.println(scrappyMock.toString());
         assertEquals(mock.toString(),scrappyMock.toString());

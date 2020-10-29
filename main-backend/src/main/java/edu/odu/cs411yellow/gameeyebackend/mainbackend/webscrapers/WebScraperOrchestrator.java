@@ -39,26 +39,33 @@ public class WebScraperOrchestrator{
 
     private MockNewsScraper mockNewsScraper;
     private IGNScraper ignScraper;
-    private GameSpotScraper gameSpotScrapper;
+    private GameSpotScraper gameSpotScraper;
     private EuroGamerScraper euroGamerScraper;
     private PCGamerScraper pcGamerScraper;
 
     @Autowired
-    public WebScraperOrchestrator (MockNewsScraper mockNewsScraper, NewsWebsiteRepository newsWebsiteRepository){
+    public WebScraperOrchestrator (MockNewsScraper mockNewsScraper, GameSpotScraper gameSpotScraper,
+                                   IGNScraper ignScrapper, EuroGamerScraper euroGamerScraper,
+                                   PCGamerScraper pcGamerScraper, NewsWebsiteRepository newsWebsiteRepository){
         this.scrapers = new ArrayList<WebScraper>();
         this.scrapedArticles = new ArrayList<Article>();
 
         this.mockNewsScraper = mockNewsScraper;
+        this.gameSpotScraper = gameSpotScraper;
+        this.ignScraper = ignScrapper;
+        this.euroGamerScraper = euroGamerScraper;
+        this.pcGamerScraper = pcGamerScraper;
         this.newsWebsiteRepository = newsWebsiteRepository;
 
 
-        //scrapers.add(ign);
-        //scrapers.add(gameSpot);
-        //scrapers.add(euroGamer);
-        //scrapers.add(pcGamer);
+        //scrapers.add(ignScrapper);
+        //scrapers.add(gameSpotScraper);
+        //scrapers.add(euroGamerScraper);
+        //scrapers.add(pcGamerScraper);
         scrapers.add(mockNewsScraper);
-
     }
+
+
 
 
     public void forceScrape(){
@@ -67,6 +74,18 @@ public class WebScraperOrchestrator{
             for (Article art:articleList) {
                 if(!checkArticleDuplicates() && !checkIrrelevantArticles())
                     scrapedArticles.add(art);
+            }
+        }
+    }
+
+    public void forceScrape(String target){
+        for (WebScraper scraper:scrapers) {
+            if(scraper.getScrapperName().equals(target)) {
+                List<Article> articleList = scraper.scrape();
+                for (Article art : articleList) {
+                    if (!checkArticleDuplicates() && !checkIrrelevantArticles())
+                        scrapedArticles.add(art);
+                }
             }
         }
     }
@@ -101,7 +120,6 @@ public class WebScraperOrchestrator{
 
     public List<Article> getArticleCollection(){ return scrapedArticles; }
 
-    public List<WebScraper> getScrapers(){ return scrapers;}
 
     public String toString(){
         ObjectMapper obj= new ObjectMapper();

@@ -27,11 +27,12 @@ public class IGNScraper implements WebScraper {
     private List<Article> articles;
     String url;
     private DateFormat format;
+    private String name = "IGN";
 
     @Autowired
     public IGNScraper(NewsWebsiteRepository newsWebsites) {
         this.articles = new ArrayList<Article>();
-        this.url = newsWebsites.findByName("IGN").getSiteUrl();
+        this.url = newsWebsites.findByName(name).getSiteUrl();
         this.format = new SimpleDateFormat("E, d MMMM yyyy kk:mm:ss z");
     }
 
@@ -152,6 +153,14 @@ public class IGNScraper implements WebScraper {
 
         return false;
     }
+
+    /**
+     * Retrieves name of the scraper
+     *
+     * @return String
+     */
+    @Override
+    public String getScrapperName(){ return name; }
 
     /**
      * Output to JSON format

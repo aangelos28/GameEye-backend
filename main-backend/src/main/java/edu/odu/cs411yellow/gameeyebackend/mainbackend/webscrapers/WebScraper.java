@@ -49,6 +49,8 @@ public interface WebScraper {
      */
     Article createArticle(Element e, NewsWebsite newsSite) throws ParseException;
 
+    String getScrapperName();
+
     /**
      * Checks if newly created article object is already present in list of
      * extracted articles

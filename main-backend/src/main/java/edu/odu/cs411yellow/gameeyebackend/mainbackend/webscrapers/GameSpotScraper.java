@@ -27,12 +27,13 @@ public class GameSpotScraper implements WebScraper {
     private List<Article> articles;
     String url;
     private DateFormat format;
+    private String name="GameSpot";
 
     @Autowired
     public GameSpotScraper(NewsWebsiteRepository newsWebsites){
         this.newsWebsites = newsWebsites;
         articles = new ArrayList<>();
-        url= newsWebsites.findByName("GameSpot").getRssFeedUrl();
+        url= newsWebsites.findByName(name).getRssFeedUrl();
         format = new SimpleDateFormat("E, d MMMM yyyy kk:mm:ss z");
     }
 
@@ -110,6 +111,14 @@ public class GameSpotScraper implements WebScraper {
     public Article getArticle(int index) {
         return articles.get(index);
     }
+
+    /**
+     * Retrieves name of the scraper
+     *
+     * @return String
+     */
+    @Override
+    public String getScrapperName(){ return name; }
 
     /**
      * Output to JSON format
