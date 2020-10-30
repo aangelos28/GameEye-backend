@@ -1,6 +1,7 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.elasticsearch.ElasticGame;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,15 +47,14 @@ public class ElasticGameRepositoryCustomImpl implements ElasticGameRepositoryCus
     /**
      * Finds referenced games for a given news article
      *
-     * @param articleTitle Article Title to find references
-     * @return List of ID's
-     *
+     * @param article News Article to get article title from
+     * @return List of IDs of referenced games.
      */
     @Override
-    public List <String> ReferencedGames(String articleTitle) {
+    public List <String> referencedGames(Article article) {
 
+        String articleTitle = article.getTitle();
         SearchHits<ElasticGame> referencedGames = autocompleteGameTitle(articleTitle, 25);
-
         int articleTitleLength = articleTitle.length();
         int longestMatchSize = 0;
         List <String> matchingIDs = new ArrayList<>();
@@ -66,12 +66,6 @@ public class ElasticGameRepositoryCustomImpl implements ElasticGameRepositoryCus
             int gameTitleLength = gameTitle.length();
             int matchSize;
 
-            /**
-             * TODO Step 1 : Find best matching sequence Return Int, Set Best ID/Title
-             *      Step 2 : Set that return as best match
-             *      Step 3 : Cycle through List and set as needed.
-             *      Step 4 : If more than one is the best match return more.
-             */
             matchSize = commonStringSize(articleTitle.toCharArray(),gameTitle.toCharArray(),
                                             articleTitleLength,gameTitleLength);
 
@@ -80,7 +74,6 @@ public class ElasticGameRepositoryCustomImpl implements ElasticGameRepositoryCus
                 matchingIDs.add(i.getContent().getGameId());
             }
 
-            //TODO: Add case if (longestMatchSize == matchSize)
             else if (longestMatchSize == matchSize){
                 matchingIDs.add(i.getContent().getGameId());
             }
@@ -96,6 +89,7 @@ public class ElasticGameRepositoryCustomImpl implements ElasticGameRepositoryCus
         int [][] longCommStr = new int[m + 1][n + 1];
         int result = 0;  //Store length of the longest common substring
 
+        //Loop through both char arrays to find longest common string
         for (int i = 0; i <= m; i++)
         {
             for (int j = 0; j <= n; j++)
@@ -113,8 +107,6 @@ public class ElasticGameRepositoryCustomImpl implements ElasticGameRepositoryCus
         }
         return result;
     }
-
-
 
 
 }
