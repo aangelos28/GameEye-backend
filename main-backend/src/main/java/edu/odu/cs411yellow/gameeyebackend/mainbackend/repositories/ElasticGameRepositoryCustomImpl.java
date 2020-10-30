@@ -44,11 +44,11 @@ public class ElasticGameRepositoryCustomImpl implements ElasticGameRepositoryCus
     }
 
     /**
-     * Finds referenced games in a news article
+     * Finds referenced games for a given news article
      *
      * @param articleTitle Article Title to find references
-     * @return List of referenced games
-     *          PROBABLY return list of IDs to games
+     * @return List of ID's
+     *
      */
     @Override
     public List <String> ReferencedGames(String articleTitle) {
@@ -58,13 +58,9 @@ public class ElasticGameRepositoryCustomImpl implements ElasticGameRepositoryCus
         int articleTitleLength = articleTitle.length();
         int longestMatchSize = 0;
         List <String> matchingIDs = new ArrayList<>();
-//        String [] matchingID;
-
-//        String matchingTitle ;
-//        SearchHits<ElasticGame> referencedHits = new SearchHitsImpl<>();
 
         for (var i: referencedGames) {
-            //TODO Get the Title and find how well it matches the title.
+
             String gameTitle = i.getContent().getTitle();
 
             int gameTitleLength = gameTitle.length();
@@ -82,7 +78,6 @@ public class ElasticGameRepositoryCustomImpl implements ElasticGameRepositoryCus
             if(longestMatchSize < matchSize) {
                 matchingIDs.clear();
                 matchingIDs.add(i.getContent().getGameId());
-//                matchingTitle = i.getContent().getTitle();
             }
 
             //TODO: Add case if (longestMatchSize == matchSize)
