@@ -69,9 +69,8 @@ public class ElasticGameRepositoryCustomImpl implements ElasticGameRepositoryCus
             matchSize = commonStringSize(articleTitle.toCharArray(),gameTitle.toCharArray(),
                                             articleTitleLength,gameTitleLength);
 
-            //TODO: Add case for in which how long match needs to be
-            //      set matching ID
-            if(longestMatchSize < matchSize) {
+            //Assuming gameTitles are no less than 5 characters
+            if((longestMatchSize < matchSize) && (matchSize > 5)) {
                 matchingIDs.clear();
                 matchingIDs.add(i.getContent().getGameId());
             }
