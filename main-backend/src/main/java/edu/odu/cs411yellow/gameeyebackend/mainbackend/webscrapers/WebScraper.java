@@ -2,11 +2,10 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.webscrapers;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.NewsWebsite;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
+import org.jsoup.nodes.Element;
 
 import java.text.ParseException;
 import java.util.List;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 /**
  * Common interface for web scrapers to search for news articles and
@@ -19,7 +18,7 @@ public interface WebScraper {
      *
      * @return List of Articles
      */
-    List<Article> scrape();
+    List<Article> scrape(String newsOutlet);
     //void scrape();
 
     /**

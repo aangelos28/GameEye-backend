@@ -87,7 +87,7 @@ public class WatchlistService {
      * Gets the watchlist entry with index i.
      *
      * @param firebaseId The firebase id of the user.
-     * @param index Watchlist entry index
+     * @param index      Watchlist entry index
      * @return Watched game undex index i
      */
     public WatchedGameResponse getWatchlistGame(final String firebaseId, final int index) {
@@ -107,7 +107,7 @@ public class WatchlistService {
      * Gets the watchlist entry with index i.
      *
      * @param firebaseId The firebase id of the user.
-     * @param index Watchlist entry index
+     * @param index      Watchlist entry index
      * @return Watched game undex index i
      */
     public WatchedGameShortResponse getWatchlistGameShort(final String firebaseId, final int index) {
@@ -158,7 +158,7 @@ public class WatchlistService {
      * @param firebaseUserId The firebase id of the user.
      * @param gameIndex      Index of the game in the watchlist to delete.
      */
-    public void deleteWatchlistGame(final String firebaseUserId, final int gameIndex) throws Exception {
+    public void deleteWatchlistGameByIndex(final String firebaseUserId, final int gameIndex) throws Exception {
         final User user = this.users.findUserByFirebaseId(firebaseUserId);
 
         // Disallow negative game indices
@@ -177,6 +177,29 @@ public class WatchlistService {
         final String gameId = watchlist.get(gameIndex).getGameId();
         watchlist.remove(gameIndex);
         users.save(user);
+
+        // Increment the number of watchers for the game
+        games.decrementWatchers(gameId);
+    }
+
+    /**
+     * Delete a game from a user's watchlist.
+     *
+     * @param firebaseUserId The firebase id of the user.
+     * @param gameId         Id of the game to remove.
+     */
+    public void deleteWatchlistGameById(final String firebaseUserId, final String gameId) throws Exception {
+        final User user = this.users.findUserByFirebaseId(firebaseUserId);
+
+        final List<WatchedGame> watchlist = user.getWatchList();
+        boolean removed = watchlist.removeIf(watchedGame -> watchedGame.getGameId().equals(gameId));
+
+        // Remove game from watchlist
+        if (removed) {
+            users.save(user);
+        } else {
+            throw new Exception("Could not remove game from watchlist as it was not found.");
+        }
 
         // Increment the number of watchers for the game
         games.decrementWatchers(gameId);

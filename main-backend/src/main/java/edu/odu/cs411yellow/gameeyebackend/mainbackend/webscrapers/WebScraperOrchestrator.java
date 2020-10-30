@@ -38,10 +38,11 @@ public class WebScraperOrchestrator{
     private List<Article> scrapedArticles;
 
     private MockNewsScraper mockNewsScraper;
-    private IGNScraper ignScraper;
-    private GameSpotScraper gameSpotScraper;
-    private EuroGamerScraper euroGamerScraper;
-    private PCGamerScraper pcGamerScraper;
+    private UniversalScraper scrappy;
+    //private IGNScraper ignScraper;
+    //private GameSpotScraper gameSpotScraper;
+    //private EuroGamerScraper euroGamerScraper;
+    //private PCGamerScraper pcGamerScraper;
 
     @Autowired
     public WebScraperOrchestrator (MockNewsScraper mockNewsScraper, GameSpotScraper gameSpotScraper,
@@ -51,10 +52,10 @@ public class WebScraperOrchestrator{
         this.scrapedArticles = new ArrayList<Article>();
 
         this.mockNewsScraper = mockNewsScraper;
-        this.gameSpotScraper = gameSpotScraper;
-        this.ignScraper = ignScrapper;
-        this.euroGamerScraper = euroGamerScraper;
-        this.pcGamerScraper = pcGamerScraper;
+        //this.gameSpotScraper = gameSpotScraper;
+        //this.ignScraper = ignScrapper;
+        //this.euroGamerScraper = euroGamerScraper;
+        //this.pcGamerScraper = pcGamerScraper;
         this.newsWebsiteRepository = newsWebsiteRepository;
 
 
@@ -64,7 +65,6 @@ public class WebScraperOrchestrator{
         scrapers.add(pcGamerScraper);
         scrapers.add(mockNewsScraper);
     }
-
 
     /**
      * Forces a scrape from each scraper, cleans and stores the collected articles,

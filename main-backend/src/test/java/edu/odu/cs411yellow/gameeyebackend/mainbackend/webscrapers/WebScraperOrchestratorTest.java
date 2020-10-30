@@ -24,14 +24,17 @@ public class WebScraperOrchestratorTest {
 
     @Autowired
     MockNewsScraper mock;
+    //@Autowired
+    //IGNScraper ign;
+    //@Autowired
+    //PCGamerScraper pc;
+    //@Autowired
+    //EuroGamerScraper euro;
+    //@Autowired
+    //GameSpotScraper gs;
+
     @Autowired
-    IGNScraper ign;
-    @Autowired
-    PCGamerScraper pc;
-    @Autowired
-    EuroGamerScraper euro;
-    @Autowired
-    GameSpotScraper gs;
+    UniversalScraper ign;
 
     @Autowired
     WebScraperOrchestrator scrappy;

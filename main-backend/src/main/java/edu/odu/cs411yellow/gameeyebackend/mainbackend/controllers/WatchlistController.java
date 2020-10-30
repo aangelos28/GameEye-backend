@@ -44,8 +44,7 @@ public class WatchlistController {
 
         if (brief) {
             return ResponseEntity.ok(watchlistService.getWatchlistGamesShort(userId));
-        }
-        else {
+        } else {
             return ResponseEntity.ok(watchlistService.getWatchlistGames(userId));
         }
     }
@@ -64,8 +63,7 @@ public class WatchlistController {
 
         if (brief) {
             return ResponseEntity.ok(watchlistService.getWatchlistGameShort(userId, index));
-        }
-        else {
+        } else {
             return ResponseEntity.ok(watchlistService.getWatchlistGame(userId, index));
         }
     }
@@ -90,17 +88,36 @@ public class WatchlistController {
     }
 
     /**
-     * Deletes a game from a user's watchlist.
+     * Deletes a game from a user's watchlist
      *
      * @param gameIndex Index of the game in the watchlist to delete.
      */
     @DeleteMapping(path = "/private/watchlist/delete/{gameIndex}")
-    public ResponseEntity<?> deleteWatchlistGame(@PathVariable int gameIndex) {
+    public ResponseEntity<?> deleteWatchlistGameByIndex(@PathVariable int gameIndex) {
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         final FirebaseToken fbToken = (FirebaseToken) auth.getPrincipal();
 
         try {
-            watchlistService.deleteWatchlistGame(fbToken.getUid(), gameIndex);
+            watchlistService.deleteWatchlistGameByIndex(fbToken.getUid(), gameIndex);
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Deleted game from watchlist.");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to delete game with specified index");
+        }
+    }
+
+    /**
+     * Deletes a game with the specified id from a user's watchlist.
+     *
+     * @param request HTTP request body
+     */
+    @DeleteMapping(path = "/private/watchlist/delete")
+    public ResponseEntity<?> deleteWatchlistGameById(@RequestBody WatchlistGameRequest request) {
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final FirebaseToken fbToken = (FirebaseToken) auth.getPrincipal();
+
+        try {
+            watchlistService.deleteWatchlistGameById(fbToken.getUid(), request.getGameId());
             return ResponseEntity.status(HttpStatus.ACCEPTED).body("Deleted game from watchlist.");
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -172,7 +189,7 @@ public class WatchlistController {
         final String userId = request.getUserId();
 
         try {
-            watchlistService.deleteWatchlistGame(userId, gameIndex);
+            watchlistService.deleteWatchlistGameByIndex(userId, gameIndex);
 
             final String response = String.format("ADMIN: Deleted game %d from watchlist of user %s.", gameIndex, userId);
             logger.info(response);
