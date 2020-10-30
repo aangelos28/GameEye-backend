@@ -1,6 +1,7 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.controllers;
 
 import com.google.firebase.auth.FirebaseToken;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Preferences;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,14 @@ public class UserController {
         public String userId;
     }
 
+    private static class SettingsRequest
+    {
+        public Preferences preferences;
+
+        public Preferences getPreferences() {
+            return preferences;
+        }
+    }
     /**
      * Checks if a user profile exists.
      * @return True if the user profile exists, false otherwise
@@ -70,6 +79,22 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @PutMapping (path = "/private/settings/update", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> applySettings(@RequestBody SettingsRequest request)
+    {
+
+
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final FirebaseToken fbToken = (FirebaseToken) auth.getPrincipal();
+
+        try {
+            userService.AdjustSettings(fbToken.getUid(), request.getPreferences());
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Updated settings.");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to update settings.");
+        }
+    }
     /**
      * Deletes a user profile if it does not already exist.
      */

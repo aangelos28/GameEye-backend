@@ -1,5 +1,6 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.services;
 
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Preferences;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.User;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.UserStatus;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,5 +73,13 @@ public class UserService {
         user.setStatus(userStatus);
 
         users.save(user);
+    }
+
+    public void AdjustSettings(final String firebaseID, Preferences preferences)
+    {
+        final User user = this.users.findUserByFirebaseId(firebaseID);
+        user.setPreferences(preferences);
+        users.save(user);
+
     }
 }

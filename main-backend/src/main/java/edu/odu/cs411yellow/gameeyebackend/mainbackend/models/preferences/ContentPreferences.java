@@ -31,7 +31,7 @@ public class ContentPreferences {
     // Default constructor
     public ContentPreferences() {
         this.showArchivedResources = false;
-        this.showImpactScores = false;
+        this.showImpactScores = true;
         this.impactScores = new ArrayList<>(Arrays.asList(true, true, true));
 
     }
