@@ -58,69 +58,114 @@ public class WebScraperOrchestrator{
         this.newsWebsiteRepository = newsWebsiteRepository;
 
 
-        //scrapers.add(ignScrapper);
-        //scrapers.add(gameSpotScraper);
-        //scrapers.add(euroGamerScraper);
-        //scrapers.add(pcGamerScraper);
+        scrapers.add(ignScrapper);
+        scrapers.add(gameSpotScraper);
+        scrapers.add(euroGamerScraper);
+        scrapers.add(pcGamerScraper);
         scrapers.add(mockNewsScraper);
     }
 
 
-
-
+    /**
+     * Forces a scrape from each scraper, cleans and stores the collected articles,
+     * and inserts them into the database
+     */
     public void forceScrape(){
         for (WebScraper scraper:scrapers) {
             List<Article> articleList = scraper.scrape();
             for (Article art:articleList) {
-                if(!checkArticleDuplicates() && !checkIrrelevantArticles())
+                if(!checkArticleDuplicates(art) && !checkIrrelevantArticles(art))
                     scrapedArticles.add(art);
             }
         }
+
+        insertDataIntoDatabase();
     }
 
+    /**
+     * Forces a scrape from a specific scraper, cleans and stores the collected articles,
+     * and inserts them into the database
+     * @param target String ID for a scraper
+     */
     public void forceScrape(String target){
         for (WebScraper scraper:scrapers) {
             if(scraper.getScrapperName().equals(target)) {
                 List<Article> articleList = scraper.scrape();
                 for (Article art : articleList) {
-                    if (!checkArticleDuplicates() && !checkIrrelevantArticles())
+                    if (!checkArticleDuplicates(art) && !checkIrrelevantArticles(art))
                         scrapedArticles.add(art);
                 }
             }
         }
+
+        insertDataIntoDatabase();
     }
 
+    /**
+     * Forces a scrape from each scraper, cleans and stores the collected articles,
+     * and inserts them into the database twice a day at 8:00AM and 8:00PM
+     */
     @Scheduled (cron = "0 0 8,20 * * *")    //Schedules method to run at 8:00 AM and 8:00PM
     public void biDailyScrape(){
         //TODO
     }
 
-    public Boolean checkArticleDuplicates(){
-
+    /**
+     * Checks if the article already exists in the database
+     * @param a A scraped article
+     * @return Boolean
+     */
+    public Boolean checkArticleDuplicates(Article a){
+        //TODO
         return false;
     }
 
-    public Boolean checkIrrelevantArticles(){
-
+    /**
+     * Checks if the article is irrelevant and does not contain a game title
+     * @param a A scraped article
+     * @return Boolean
+     */
+    public Boolean checkIrrelevantArticles(Article a){
+        //TODO
         return false;
     }
 
+    /**
+     * Inserts collected, clean articles into the database
+     */
     public void insertDataIntoDatabase(){
         //TODO
     }
 
-    public void performArticleGameReferenceSearch(){
+    /**
+     * Performs an Elastic Search on article titles to find the game an article
+     * refers to
+     * @param a A scraped article
+     * @return Int ID for the game
+     */
+    public int performArticleGameReferenceSearch(Article a){
         //TODO
         //Consult Chris
+        return 0;
     }
 
+    /**
+     * Removes an article from the collection of scraped articles
+     */
     public void removeFromCollection(){
         //TODO
     }
 
+    /**
+     * Getter for collection of scraped articles
+     * @return A List of articles
+     */
     public List<Article> getArticleCollection(){ return scrapedArticles; }
 
-
+    /**
+     * Prints all collected articles in JSON
+     * @return JSON output of collected articles
+     */
     public String toString(){
         ObjectMapper obj= new ObjectMapper();
         String scrapedArticlesStr="";
