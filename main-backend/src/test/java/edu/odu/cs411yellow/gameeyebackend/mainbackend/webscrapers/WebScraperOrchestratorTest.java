@@ -34,7 +34,7 @@ public class WebScraperOrchestratorTest {
     //GameSpotScraper gs;
 
     @Autowired
-    UniversalScraper ign;
+    UniversalScraper scrap;
 
     @Autowired
     WebScraperOrchestrator scrappy;
@@ -45,7 +45,8 @@ public class WebScraperOrchestratorTest {
 
     @BeforeEach
     public void init(){
-        scrappyMock = new WebScraperOrchestrator(mock, gs, ign, euro, pc, newsWebsiteRepository);
+        //scrappyMock = new WebScraperOrchestrator(mock, gs, ign, euro, pc, newsWebsiteRepository);
+        scrappyMock = new WebScraperOrchestrator(scrap, mock, newsWebsiteRepository);
     }
 
     @Test
@@ -55,7 +56,7 @@ public class WebScraperOrchestratorTest {
 
     @Test
     public void testForceScrapeMockNews(){
-        scrappyMock.forceScrape("GameEye Mock News");
+        scrappyMock.forceScrape(mock);
         System.out.println(scrappyMock.toString());
         assertEquals(mock.toString(),scrappyMock.toString());
         assertEquals(mock.getArticles(), scrappyMock.getArticleCollection());
@@ -65,8 +66,8 @@ public class WebScraperOrchestratorTest {
     public void testForceScrapeGameSpot(){
         scrappyMock.forceScrape("GameSpot");
         System.out.println(scrappyMock.toString());
-        assertEquals(gs.toString(),scrappyMock.toString());
-        assertEquals(gs.getArticles(), scrappyMock.getArticleCollection());
+        assertEquals(scrap.toString(),scrappyMock.toString());
+        assertEquals(scrap.getArticles(), scrappyMock.getArticleCollection());
     }
 
     @Test
@@ -74,26 +75,26 @@ public class WebScraperOrchestratorTest {
         //TODO
         // Consult Jacob regarding IGN listing in database
 
-        //scrappyMock.forceScrape("IGN");
-        //System.out.println(scrappyMock.toString());
-        //assertEquals(ign.toString(),scrappyMock.toString());
-        //assertEquals(ign.getArticles(), scrappyMock.getArticleCollection());
+        scrappyMock.forceScrape("IGN");
+        System.out.println(scrappyMock.toString());
+        assertEquals(scrap.toString(),scrappyMock.toString());
+        assertEquals(scrap.getArticles(), scrappyMock.getArticleCollection());
     }
 
     @Test
     public void testForceScrapePCGamer(){
         scrappyMock.forceScrape("PC Gamer");
         System.out.println(scrappyMock.toString());
-        assertEquals(pc.toString(),scrappyMock.toString());
-        assertEquals(pc.getArticles(), scrappyMock.getArticleCollection());
+        assertEquals(scrap.toString(),scrappyMock.toString());
+        assertEquals(scrap.getArticles(), scrappyMock.getArticleCollection());
     }
 
     @Test
     public void testForceScrapeEuroGamer(){
         scrappyMock.forceScrape("Eurogamer");
         System.out.println(scrappyMock.toString());
-        assertEquals(euro.toString(),scrappyMock.toString());
-        assertEquals(euro.getArticles(), scrappyMock.getArticleCollection());
+        assertEquals(scrap.toString(),scrappyMock.toString());
+        assertEquals(scrap.getArticles(), scrappyMock.getArticleCollection());
     }
 
     @Test

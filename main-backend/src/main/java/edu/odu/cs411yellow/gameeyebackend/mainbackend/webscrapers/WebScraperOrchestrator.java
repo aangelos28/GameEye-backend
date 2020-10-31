@@ -39,31 +39,24 @@ public class WebScraperOrchestrator{
 
     private MockNewsScraper mockNewsScraper;
     private UniversalScraper scrappy;
+    private String[] scraperNames={"GameSpot","Eurogamer","PC Gamer", "IGN","GameEye Mock News"};
+
     //private IGNScraper ignScraper;
     //private GameSpotScraper gameSpotScraper;
     //private EuroGamerScraper euroGamerScraper;
     //private PCGamerScraper pcGamerScraper;
 
     @Autowired
-    public WebScraperOrchestrator (MockNewsScraper mockNewsScraper, GameSpotScraper gameSpotScraper,
-                                   IGNScraper ignScrapper, EuroGamerScraper euroGamerScraper,
-                                   PCGamerScraper pcGamerScraper, NewsWebsiteRepository newsWebsiteRepository){
+    public WebScraperOrchestrator (UniversalScraper scrappy, MockNewsScraper mockNewsScraper, NewsWebsiteRepository newsWebsiteRepository){
         this.scrapers = new ArrayList<WebScraper>();
         this.scrapedArticles = new ArrayList<Article>();
-
         this.mockNewsScraper = mockNewsScraper;
-        //this.gameSpotScraper = gameSpotScraper;
-        //this.ignScraper = ignScrapper;
-        //this.euroGamerScraper = euroGamerScraper;
-        //this.pcGamerScraper = pcGamerScraper;
+
+
         this.newsWebsiteRepository = newsWebsiteRepository;
 
+        this.scrappy = scrappy;
 
-        scrapers.add(ignScrapper);
-        scrapers.add(gameSpotScraper);
-        scrapers.add(euroGamerScraper);
-        scrapers.add(pcGamerScraper);
-        scrapers.add(mockNewsScraper);
     }
 
     /**
@@ -71,8 +64,9 @@ public class WebScraperOrchestrator{
      * and inserts them into the database
      */
     public void forceScrape(){
-        for (WebScraper scraper:scrapers) {
-            List<Article> articleList = scraper.scrape();
+
+        for(String scraper:scraperNames){
+            List<Article> articleList = scrappy.scrape(scraper);
             for (Article art:articleList) {
                 if(!checkArticleDuplicates(art) && !checkIrrelevantArticles(art))
                     scrapedArticles.add(art);
@@ -88,15 +82,30 @@ public class WebScraperOrchestrator{
      * @param target String ID for a scraper
      */
     public void forceScrape(String target){
-        for (WebScraper scraper:scrapers) {
-            if(scraper.getScrapperName().equals(target)) {
-                List<Article> articleList = scraper.scrape();
-                for (Article art : articleList) {
-                    if (!checkArticleDuplicates(art) && !checkIrrelevantArticles(art))
-                        scrapedArticles.add(art);
-                }
+
+        try{
+            List<Article> articleList = scrappy.scrape(target);
+            for (Article art:articleList) {
+                if(!checkArticleDuplicates(art) && !checkIrrelevantArticles(art))
+                    scrapedArticles.add(art);
             }
+        }catch (NullPointerException e){
+            e.printStackTrace();
         }
+
+
+        insertDataIntoDatabase();
+    }
+
+    public void forceScrape(WebScraper target){
+
+
+            List<Article> articleList = mockNewsScraper.scrape("GameEye Mock News");
+            for (Article art:articleList) {
+                if(!checkArticleDuplicates(art) && !checkIrrelevantArticles(art))
+                    scrapedArticles.add(art);
+            }
+
 
         insertDataIntoDatabase();
     }

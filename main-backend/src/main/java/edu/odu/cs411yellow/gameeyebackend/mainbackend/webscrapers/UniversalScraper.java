@@ -27,6 +27,7 @@ public class UniversalScraper implements WebScraper {
     private List<Article> articles;
     private DateFormat format;
     private String name;
+    //private String url;
 
     @Autowired
     public UniversalScraper(NewsWebsiteRepository newsWebsites){
