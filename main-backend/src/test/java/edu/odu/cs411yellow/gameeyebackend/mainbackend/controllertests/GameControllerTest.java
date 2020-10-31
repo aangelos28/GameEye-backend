@@ -1,5 +1,6 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.controllertests;
 
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.MainBackendApplication;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.controllers.GameController;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.GameService;
 import org.junit.jupiter.api.Test;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -21,6 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @ActiveProfiles("test")
+@ContextConfiguration(classes= MainBackendApplication.class)
 @TestPropertySource(locations="classpath:application-test.properties")
 @WebMvcTest(GameController.class)
 public class GameControllerTest {
