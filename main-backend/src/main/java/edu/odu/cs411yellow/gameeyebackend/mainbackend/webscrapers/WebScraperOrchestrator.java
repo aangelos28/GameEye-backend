@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.NewsWebsiteRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ElasticGameRepository;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ElasticGameRepositoryCustom;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ElasticGameRepositoryCustomImpl;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.elasticsearch.ElasticGame;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.NewsWebsite;
 
@@ -11,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
@@ -40,6 +44,11 @@ public class WebScraperOrchestrator{
     private MockNewsScraper mockNewsScraper;
     private UniversalScraper scrappy;
     private String[] scraperNames={"GameSpot","Eurogamer","PC Gamer", "IGN","GameEye Mock News"};
+
+    //private ElasticsearchOperations elasticSearch;
+    private ElasticGameRepositoryCustomImpl elastic;
+
+    private GameRepository games;
 
     //private IGNScraper ignScraper;
     //private GameSpotScraper gameSpotScraper;
@@ -147,15 +156,18 @@ public class WebScraperOrchestrator{
     }
 
     /**
-     * Performs an Elastic Search on article titles to find the game an article
+     * Performs an Elastic Search on article titles to find the games an article
      * refers to
      * @param a A scraped article
      * @return Int ID for the game
      */
-    public int performArticleGameReferenceSearch(Article a){
+    public List<String> performArticleGameReferenceSearch(Article a){
         //TODO
         //Consult Chris
-        return 0;
+
+        List<String> ids = elastic.referencedGames(a);
+
+        return ids;
     }
 
     /**

@@ -1,6 +1,12 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.webscrapers;
 
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ElasticGameRepository;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.elasticsearch.ElasticGame;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.NewsWebsiteRepository;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ElasticGameRepositoryCustomImpl;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,10 +17,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.Assert;
+
+import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -43,10 +52,22 @@ public class WebScraperOrchestratorTest {
     @Autowired
     NewsWebsiteRepository newsWebsiteRepository;
 
+    /*@Autowired
+    ElasticsearchOperations elasticSearch;*/
+
+    @Autowired
+    private ElasticGameRepository elasticGames;
+
+    //@Autowired
+    private ElasticGameRepositoryCustomImpl elastic;
+
+    @Autowired
+    private GameRepository games;
+
     @BeforeEach
     public void init(){
-        //scrappyMock = new WebScraperOrchestrator(mock, gs, ign, euro, pc, newsWebsiteRepository);
         scrappyMock = new WebScraperOrchestrator(scrap, mock, newsWebsiteRepository);
+        //scrappyMock = new WebScraperOrchestrator(scrap, mock, elastic, newsWebsiteRepository);
     }
 
     @Test
@@ -72,9 +93,6 @@ public class WebScraperOrchestratorTest {
 
     @Test
     public void testForceScrapeIGN(){
-        //TODO
-        // Consult Jacob regarding IGN listing in database
-
         scrappyMock.forceScrape("IGN");
         System.out.println(scrappyMock.toString());
         assertEquals(scrap.toString(),scrappyMock.toString());
@@ -115,6 +133,17 @@ public class WebScraperOrchestratorTest {
     @Test
     public void testRemoveFromCollection(){
         //TODO
+    }
+
+    @Test
+    public void testPerformAGRSForSingleGameMention(){
+        //TODO
+        scrappyMock.forceScrape(mock);
+        List<Article> articles = scrappyMock.getArticleCollection();
+        List<String> gameIDs = scrappyMock.performArticleGameReferenceSearch(articles.get(0));
+        String game = gameIDs.get(0);
+
+
     }
 
 }
