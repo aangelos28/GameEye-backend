@@ -6,7 +6,7 @@ import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.responses.WatchedGa
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.UserRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.WatchlistService;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

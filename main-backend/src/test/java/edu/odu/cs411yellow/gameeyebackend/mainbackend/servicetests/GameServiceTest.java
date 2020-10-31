@@ -9,8 +9,6 @@ import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.NewsWebsiteRe
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.GameService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.IgdbReplicatorService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.IgdbService;
-import org.bson.types.Binary;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;

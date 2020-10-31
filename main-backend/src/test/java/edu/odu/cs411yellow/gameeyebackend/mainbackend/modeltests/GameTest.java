@@ -1,7 +1,5 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.modeltests;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.*;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.ImageResource;
@@ -9,7 +7,6 @@ import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepositor
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ImageRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.NewsWebsiteRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.IgdbService;
-import org.elasticsearch.index.mapper.Mapper;
 import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
