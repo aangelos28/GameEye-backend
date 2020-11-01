@@ -31,7 +31,7 @@ public class MachineLearningService {
      */
     public List<Boolean> predictArticleImportance(final List<String> articleTitles) {
         return this.webClient.post()
-                .uri("/predict/importance")
+                .uri("/predict/article/importance")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(Mono.just(articleTitles), new ParameterizedTypeReference<>(){})
                 .retrieve()
