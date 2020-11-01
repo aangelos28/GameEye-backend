@@ -6,7 +6,6 @@ import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.elasticsearch.Elast
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ElasticGameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.GameService;
-import org.apache.http.HttpException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,7 +121,7 @@ public class GameController {
         public Image thumbnail;
         public String snippet;
         public Date publicationDate;
-        public int impactScore;
+        public boolean impactScore;
 
         public ArticlesResponse(Article article) {
             this.title = article.getTitle();
@@ -131,7 +130,7 @@ public class GameController {
             this.thumbnail = article.getThumbnail();
             this.snippet = article.getSnippet();
             this.publicationDate = article.getPublicationDate();
-            this.impactScore = article.getImpactScore();
+            this.impactScore = article.getImportant();
         }
     }
 

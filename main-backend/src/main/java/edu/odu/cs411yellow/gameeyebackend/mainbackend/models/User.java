@@ -19,12 +19,12 @@ public class User {
 
     private UserPlan plan;
 
-    private Preferences preferences;
+    private Settings settings;
 
     private List<WatchedGame> watchList;
 
     @PersistenceConstructor
-    public User(String id, UserStatus status, UserPlan plan, Preferences preferences, List<WatchedGame> watchList) throws Exception {
+    public User(String id, UserStatus status, UserPlan plan, Settings settings, List<WatchedGame> watchList) throws Exception {
         if (id.equals("")) {
             throw new Exception("User id must not be null.");
         }
@@ -32,7 +32,7 @@ public class User {
         this.id = id;
         this.status = status;
         this.plan = plan;
-        this.preferences = preferences;
+        this.settings = settings;
         this.watchList = watchList;
     }
 
@@ -40,7 +40,7 @@ public class User {
         this.id = "";
         this.status = UserStatus.active;
         this.plan = UserPlan.free;
-        this.preferences = new Preferences();
+        this.settings = new Settings();
         this.watchList = new ArrayList<>();
     }
 
@@ -68,12 +68,12 @@ public class User {
         this.plan = plan;
     }
 
-    public Preferences getPreferences() {
-        return this.preferences;
+    public Settings getPreferences() {
+        return this.settings;
     }
 
-    public void setPreferences(Preferences preferences) {
-        this.preferences = preferences;
+    public void setPreferences(Settings settings) {
+        this.settings = settings;
     }
 
     public List<WatchedGame> getWatchList() {

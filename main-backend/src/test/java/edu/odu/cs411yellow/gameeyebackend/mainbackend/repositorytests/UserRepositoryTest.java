@@ -36,22 +36,15 @@ public class UserRepositoryTest {
         UserStatus status = UserStatus.inactive;
         UserPlan plan = UserPlan.free;
 
-        // Declare preferences
-        boolean showArchivedResources = false;
-        boolean showImpactScores = false;
-        List<Boolean> impactScores = new ArrayList<>(Arrays.asList(true, true, true));
-
-
-        ContentPreferences contentPreferences = new ContentPreferences(showArchivedResources,
-                                                                       showImpactScores,
-                                                                       impactScores);
-
         boolean showArticleResources = true;
         boolean showImageResources = true;
-        NotificationPreferences notificationPreferences = new NotificationPreferences(showArticleResources,
-                                                                                      showImageResources);
+        boolean notifyOnlyIfImportant = true;
 
-        Preferences preferences = new Preferences(contentPreferences, notificationPreferences);
+        NotificationPreferences notificationPreferences = new NotificationPreferences(showArticleResources,
+                                                                                      showImageResources,
+                                                                                      notifyOnlyIfImportant);
+
+        Settings settings = new Settings(notificationPreferences);
 
         // Declare articles
         int articleCount = 1;
@@ -77,7 +70,7 @@ public class UserRepositoryTest {
         List<WatchedGame> watchList = new ArrayList<>(Arrays.asList(watchedGame));
 
         // Set testUser
-        testUser = new User(userId, status, plan, preferences, watchList);
+        testUser = new User(userId, status, plan, settings, watchList);
 
         // Write testUser to GameEyeTest
         users.insert(testUser);

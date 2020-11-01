@@ -1,32 +1,19 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models;
 
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.ContentPreferences;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.NotificationPreferences;
 import org.springframework.data.annotation.PersistenceConstructor;
 
 
-public class Preferences {
-    private ContentPreferences contentPreferences;
-
+public class Settings {
     private NotificationPreferences notificationPreferences;
 
     @PersistenceConstructor
-    public Preferences(ContentPreferences contentPreferences, NotificationPreferences notificationPreferences) {
-        this.contentPreferences = contentPreferences;
+    public Settings(NotificationPreferences notificationPreferences) {
         this.notificationPreferences = notificationPreferences;
     }
 
-    public Preferences() {
-        this.contentPreferences = new ContentPreferences();
+    public Settings() {
         this.notificationPreferences = new NotificationPreferences();
-    }
-
-    public ContentPreferences getContent() {
-        return this.contentPreferences;
-    }
-
-    public void setContent(ContentPreferences contentPreferences) {
-        this.contentPreferences = contentPreferences;
     }
 
     public NotificationPreferences getNotifications() {

@@ -75,11 +75,11 @@ public class GameTest {
                 " and ultimately...";
         Date publicationDate = new Date(120, 4, 21);
         Date articleLastUpdated = new Date(120, 8, 27);
-        int impactScore = 1;
+        boolean important = true;
 
         Article article = new Article(articleId, articleTitle, articleUrl, newsWebsite,
                 thumbnail, articleSnippet, publicationDate,
-                articleLastUpdated, impactScore);
+                articleLastUpdated, important);
 
         List<Article> articles = new ArrayList<>(Arrays.asList(article));
 

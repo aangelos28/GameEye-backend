@@ -46,7 +46,7 @@ public class GameRepositoryTest {
     Game insertedGame;
 
     @BeforeEach
-    public void insertGameIntoGameEyeTest() throws JsonProcessingException {
+    public void insertGameIntoGameEyeTest() {
         // Declare resource images
         String gameImageId = "5ea1c2b677dabd049ce92784";
         String imageTitle = "gameplay";
@@ -76,11 +76,11 @@ public class GameRepositoryTest {
                 " and ultimately...";
         Date publicationDate = new Date(120, 4, 21);
         Date articleLastUpdated = new Date(120, 8, 27);
-        int impactScore = 1;
+        boolean important = true;
 
         Article article = new Article(articleId, articleTitle, articleUrl, newsWebsite,
                 thumbnail, articleSnippet, publicationDate,
-                articleLastUpdated, impactScore);
+                articleLastUpdated, important);
 
         List<Article> articles = new ArrayList<>(Arrays.asList(article));
 

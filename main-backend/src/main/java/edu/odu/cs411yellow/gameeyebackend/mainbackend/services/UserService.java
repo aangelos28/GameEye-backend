@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Provides services for managing user profiles.
  */

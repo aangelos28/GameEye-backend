@@ -84,7 +84,7 @@ public class MockNewsScraper implements WebScraper{
         Image image = new Image(null, ".jpg",null);
 
         return new Article(null , title, url, site, image,
-                snippet, date, date, 0);
+                snippet, date, date, true);
 
     }
 

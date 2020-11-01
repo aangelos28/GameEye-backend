@@ -98,7 +98,7 @@ public class UniversalScraper implements WebScraper {
         Image image = new Image(null, ".jpg",null);
 
         return new Article(null, title, url, site, image,
-                snippet, publicationDate, publicationDate, 0);
+                snippet, publicationDate, publicationDate, true);
 
     }
 
