@@ -4,6 +4,7 @@ import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.elasticsearch.Elast
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ElasticGameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.ReferenceGameService;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,6 +26,7 @@ public class ReferenceGameServiceTest {
     @Autowired
     ElasticGameRepository gameRepository;
 
+    @Test
     public void testGetReferencedGame() {
         final String gameTitle = "Fallout 3";
         final String articleTitle = "There has been a resurgence in Fallout 3 " +
