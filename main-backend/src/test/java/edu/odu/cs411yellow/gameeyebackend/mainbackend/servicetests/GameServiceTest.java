@@ -7,7 +7,7 @@ import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepositor
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ImageRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.NewsWebsiteRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.GameService;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.IgdbReplicatorService;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.IgdbReplicationService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.IgdbService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,6 +26,7 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -36,7 +37,7 @@ public class GameServiceTest {
     private GameService gameService;
 
     @Autowired
-    private IgdbReplicatorService igdbReplicator;
+    private IgdbReplicationService igdbReplicator;
 
     @Autowired
     private IgdbService igdbService;
@@ -135,5 +136,35 @@ public class GameServiceTest {
         assertThat(gameService.getArticles(insertedGame.getId()), is(insertedGame.getResources().getArticles()));
 
         games.delete(insertedGame);
+    }
+
+    @Test
+    public void testTopGames() {
+        int minId = 1000;
+        int maxId = 1010;
+        int limit = 10;
+
+        List<Game> testGames = igdbService.retrieveGamesByRangeWithLimit(minId, maxId, limit);
+
+        // Set top n games
+        int totalTopGames = 5;
+        int watchers = 100;
+
+        for (int i = 0; i < totalTopGames + 1; i++) {
+            testGames.get(i).setWatchers((watchers * (totalTopGames - i)));
+        }
+
+        games.saveAll(testGames);
+
+        int maxResults = 5;
+        List<Game> foundGames = gameService.getTopGames(maxResults);
+
+        for (int i = 0; i < foundGames.size(); i++) {
+            assertThat(foundGames.get(i).getTitle(), equalTo(testGames.get(i).getTitle()));
+            assertThat(foundGames.get(i).getWatchers(), equalTo(testGames.get(i).getWatchers()));
+        }
+
+
+        games.deleteAll();
     }
 }

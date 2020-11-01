@@ -29,7 +29,19 @@ public class GameService {
         return games.findGameById(gameId).getResources().getArticles();
     }
 
-    public List<String> getTopGames(int numGames) {
-        return games.findTopByWatchers(numGames);
+    public List<Game> getTopGames(int maxResults) {
+        return games.findTopGames(maxResults) ;
+    }
+
+    public boolean existsById(String id) {
+        return games.existsById(id);
+    }
+
+    public void save(Game game) {
+        games.save(game);
+    }
+
+    public Game findByTitle(String title) {
+        return games.findByTitle(title);
     }
 }

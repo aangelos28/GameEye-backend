@@ -3,7 +3,7 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.servicetests;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.SourceUrls;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.IgdbReplicatorService;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.IgdbReplicationService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.IgdbService;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -22,9 +22,9 @@ import java.util.List;
 @SpringBootTest
 @ActiveProfiles("test")
 @TestPropertySource(locations="classpath:application-test.properties")
-public class IgdbReplicatorServiceTest {
+public class IgdbReplicationServiceTest {
     @Autowired
-    IgdbReplicatorService igdbReplicator;
+    IgdbReplicationService igdbReplicator;
 
     @Autowired
     IgdbService igdbService;

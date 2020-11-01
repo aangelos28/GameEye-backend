@@ -150,6 +150,10 @@ public class Game {
         return this.watchers;
     }
 
+    public void setWatchers(int watchers) {
+        this.watchers = watchers;
+    }
+
     public List<Article> findArticles(List<String> articleIds) {
         List<Article> foundArticles = new ArrayList<>();
 

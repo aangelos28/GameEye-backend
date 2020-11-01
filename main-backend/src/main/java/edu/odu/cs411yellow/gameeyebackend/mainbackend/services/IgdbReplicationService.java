@@ -15,22 +15,22 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class IgdbReplicatorService {
+public class IgdbReplicationService {
     IgdbService igdbService;
     GameRepository gameRepository;
     ElasticGameRepository elasticRepository;
 
-    Logger logger = LoggerFactory.getLogger(IgdbReplicatorService.class);
+    Logger logger = LoggerFactory.getLogger(IgdbReplicationService.class);
 
     @Autowired
-    public IgdbReplicatorService(IgdbService igdbService, GameRepository gameRepository,
-                                 ElasticGameRepository elasticRepository) {
+    public IgdbReplicationService(IgdbService igdbService, GameRepository gameRepository,
+                                  ElasticGameRepository elasticRepository) {
         this.igdbService = igdbService;
         this.gameRepository = gameRepository;
         this.elasticRepository = elasticRepository;
     }
 
-    public void replicateIgdbByRange(int minId, int maxId, int limit) {
+    public String replicateIgdbByRange(int minId, int maxId, int limit) {
         logger.info(String.format("Replicating potentially %1$s games; range: %2$s-%3$s; limit: %4$s.",
                                   (maxId - minId + 1), minId, maxId, limit));
         List<Game> newGames = igdbService.retrieveGamesByRangeWithLimit(minId, maxId, limit);
@@ -104,6 +104,9 @@ public class IgdbReplicatorService {
 
         logger.info("Finished replication. " + "Added " + newGameCount + " new games and " +
                     "updated " + updatedGameCount + ".");
+
+        return "Finished replication. " + "Added " + newGameCount + " new games and " +
+               "updated " + updatedGameCount + ".";
 
     }
 }

@@ -20,11 +20,13 @@ public interface GameRepository extends MongoRepository<Game, String>, GameRepos
 
     boolean existsByTitle(String title);
 
+    @Override
+    boolean existsById(String id);
+
+    @Override
     void deleteById(String id);
 
     void deleteByIgdbId(String id);
 
     void deleteByTitle(String title);
-
-    List<String> findTopByWatchers(int numGames);
 }
