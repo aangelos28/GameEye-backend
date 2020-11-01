@@ -25,14 +25,13 @@ public class MachineLearningServiceTest {
     MachineLearningService mlService;
 
     @Test
-    public void testPredictImpactScores() {
+    public void testPredictArticleImportance() {
         final List<String> articleTitles = new ArrayList<>();
         articleTitles.add("New Release Date for Assasin's Creed Valhalla");
         articleTitles.add("54 Things Breath of the Wild Fans Will Love About Age of Calamity");
         articleTitles.add("Gears of War Mobile Spin-Off Gears Pop! To Shut Down in 2021");
 
-        final List<Integer> impactScores = mlService.predictImpactScores(articleTitles);
-        assertThat(impactScores.size(), is(3));
-        assertThat(impactScores, contains(1, 0, 1));
+        final List<Boolean> impactScores = mlService.predictArticleImportance(articleTitles);
+        assertThat(impactScores, contains(true, false, true));
     }
 }

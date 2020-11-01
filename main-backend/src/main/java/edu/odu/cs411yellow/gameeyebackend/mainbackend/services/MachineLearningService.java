@@ -23,19 +23,19 @@ public class MachineLearningService {
     }
 
     /**
-     * Predicts the impact scores for a list of article titles.
+     * Predicts the importance for a list of article titles.
      * Queries the machine learning backend.
      *
      * @param articleTitles List of article titles to get predictions for.
      * @return List of impact scores.
      */
-    public List<Integer> predictImpactScores(final List<String> articleTitles) {
+    public List<Boolean> predictArticleImportance(final List<String> articleTitles) {
         return this.webClient.post()
-                .uri("/predict/impact-score")
+                .uri("/predict/importance")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(Mono.just(articleTitles), new ParameterizedTypeReference<>(){})
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<Integer>>() {})
+                .bodyToMono(new ParameterizedTypeReference<List<Boolean>>() {})
                 .block();
     }
 }
