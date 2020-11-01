@@ -12,6 +12,7 @@ import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.NewsWebsite;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
@@ -45,7 +46,10 @@ public class WebScraperOrchestrator{
     private UniversalScraper scrappy;
     private String[] scraperNames={"GameSpot","Eurogamer","PC Gamer", "IGN","GameEye Mock News"};
 
-    //private ElasticsearchOperations elasticSearch;
+    private ElasticsearchOperations elasticSearch;
+
+
+    @Qualifier("elasticsearchOperations")
     private ElasticGameRepositoryCustomImpl elastic;
 
     private GameRepository games;
@@ -56,10 +60,13 @@ public class WebScraperOrchestrator{
     //private PCGamerScraper pcGamerScraper;
 
     @Autowired
-    public WebScraperOrchestrator (UniversalScraper scrappy, MockNewsScraper mockNewsScraper, NewsWebsiteRepository newsWebsiteRepository){
+    public WebScraperOrchestrator (UniversalScraper scrappy, MockNewsScraper mockNewsScraper, ElasticGameRepositoryCustomImpl elastic,
+                                   NewsWebsiteRepository newsWebsiteRepository){
         this.scrapers = new ArrayList<WebScraper>();
         this.scrapedArticles = new ArrayList<Article>();
         this.mockNewsScraper = mockNewsScraper;
+
+        this.elastic = elastic;
 
 
         this.newsWebsiteRepository = newsWebsiteRepository;

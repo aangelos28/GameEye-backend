@@ -16,6 +16,7 @@ import org.junit.Before;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.test.context.ActiveProfiles;
@@ -33,14 +34,6 @@ public class WebScraperOrchestratorTest {
 
     @Autowired
     MockNewsScraper mock;
-    //@Autowired
-    //IGNScraper ign;
-    //@Autowired
-    //PCGamerScraper pc;
-    //@Autowired
-    //EuroGamerScraper euro;
-    //@Autowired
-    //GameSpotScraper gs;
 
     @Autowired
     UniversalScraper scrap;
@@ -52,13 +45,14 @@ public class WebScraperOrchestratorTest {
     @Autowired
     NewsWebsiteRepository newsWebsiteRepository;
 
-    /*@Autowired
-    ElasticsearchOperations elasticSearch;*/
+    @Autowired
+    @Qualifier("elasticsearchOperations")
+    ElasticsearchOperations elasticSearch;
 
     @Autowired
     private ElasticGameRepository elasticGames;
 
-    //@Autowired
+    @Autowired
     private ElasticGameRepositoryCustomImpl elastic;
 
     @Autowired
@@ -66,8 +60,8 @@ public class WebScraperOrchestratorTest {
 
     @BeforeEach
     public void init(){
-        scrappyMock = new WebScraperOrchestrator(scrap, mock, newsWebsiteRepository);
-        //scrappyMock = new WebScraperOrchestrator(scrap, mock, elastic, newsWebsiteRepository);
+        //scrappyMock = new WebScraperOrchestrator(scrap, mock, newsWebsiteRepository);
+        scrappyMock = new WebScraperOrchestrator(scrap, mock, elastic, newsWebsiteRepository);
     }
 
     @Test
@@ -140,8 +134,12 @@ public class WebScraperOrchestratorTest {
         //TODO
         scrappyMock.forceScrape(mock);
         List<Article> articles = scrappyMock.getArticleCollection();
-        List<String> gameIDs = scrappyMock.performArticleGameReferenceSearch(articles.get(0));
-        String game = gameIDs.get(0);
+        List<String> gameIDs = scrappyMock.performArticleGameReferenceSearch(articles.get(1));
+       //String game = gameIDs.get(0);
+        System.out.println(articles.get(1).getTitle());
+        for(String id:gameIDs){
+            System.out.println("Game ID(s): "+id);
+        }
 
 
     }
