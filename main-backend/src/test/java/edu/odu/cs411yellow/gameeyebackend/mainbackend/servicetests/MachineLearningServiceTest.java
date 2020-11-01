@@ -31,7 +31,7 @@ public class MachineLearningServiceTest {
         articleTitles.add("54 Things Breath of the Wild Fans Will Love About Age of Calamity");
         articleTitles.add("Gears of War Mobile Spin-Off Gears Pop! To Shut Down in 2021");
 
-        List<Integer> impactScores = mlService.predictImpactScores(articleTitles);
+        final List<Integer> impactScores = mlService.predictImpactScores(articleTitles);
         assertThat(impactScores.size(), is(3));
         assertThat(impactScores, contains(1, 0, 1));
     }
