@@ -62,7 +62,6 @@ public class ElasticGameRepositoryCustomImpl implements ElasticGameRepositoryCus
         for (var i: referencedGames) {
 
             String gameTitle = i.getContent().getTitle();
-
             int gameTitleLength = gameTitle.length();
             int matchSize;
 
@@ -71,6 +70,7 @@ public class ElasticGameRepositoryCustomImpl implements ElasticGameRepositoryCus
 
             //Assuming gameTitles are no less than 5 characters
             if((longestMatchSize < matchSize) && (matchSize > 5)) {
+                longestMatchSize = matchSize;   //set new longest match
                 matchingIDs.clear();
                 matchingIDs.add(i.getContent().getGameId());
             }
