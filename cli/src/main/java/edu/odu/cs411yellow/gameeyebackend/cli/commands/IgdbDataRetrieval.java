@@ -1,38 +1,50 @@
 package edu.odu.cs411yellow.gameeyebackend.cli.commands;
 
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.IgdbReplicationService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.google.gson.JsonObject;
+import org.springframework.http.MediaType;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
+import org.springframework.web.reactive.function.client.WebClient;
 
 /**
  * Contains CLI commands related to IGDB data retrieval.
  */
 @ShellComponent
 public class IgdbDataRetrieval {
-    private IgdbReplicationService service;
+    WebClient webClient;
 
-    @Autowired
-    public IgdbDataRetrieval(IgdbReplicationService service) {
-        this.service = service;
+    public IgdbDataRetrieval() {
+        this.webClient = WebClient.builder()
+                .baseUrl("http://localhost:8070/api")
+                .build();
     }
 
     /**
      * Replicates IGDB game data to GameEye database.
      *
-     * @param minId
-     * @param maxId
-     * @param limit
-     * @return User ID.
+     * @param minId lower IGDB game id.
+     * @param maxId higher IGDB game id.
+     * @param limit maximum number of games per API request.
      */
     @ShellMethod(value = "Replicate IGDB game data.", key = "replicate-igdb")
     public void replicateIgdb(@ShellOption("--min-id") int minId,
                               @ShellOption("--max-id") int maxId,
                               @ShellOption("--limit")  int limit) {
 
-        String result = service.replicateIgdbByRange(minId, maxId, limit);
+    JsonObject request = new JsonObject();
+    request.addProperty("minId", minId);
+    request.addProperty("maxId", maxId);
+    request.addProperty("limit", limit);
 
-        System.out.printf(result);
+    String response = this.webClient.post()
+            .uri("/private-admin/igdb/replicate")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(request.toString())
+            .retrieve()
+            .bodyToMono(String.class)
+            .block();
+
+        System.out.println(response);
     }
 }
