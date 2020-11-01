@@ -35,8 +35,10 @@ public class IgdbReplicationService {
                                   (maxId - minId + 1), minId, maxId, limit));
         List<Game> newGames = igdbService.retrieveGamesByRangeWithLimit(minId, maxId, limit);
 
-        List<Game> mongoGames = new ArrayList<>();
-        List<ElasticGame> elasticGames = new ArrayList<>();
+        int bufferSize = 500;
+
+        List<Game> mongoGameBuffer = new ArrayList<>(bufferSize);
+        List<ElasticGame> elasticGameBuffer = new ArrayList<>(bufferSize);
 
         int updatedGameCount = 0;
         int newGameCount = 0;
@@ -48,10 +50,9 @@ public class IgdbReplicationService {
                 if (gameRepository.existsByIgdbId(newGame.getIgdbId())) {
                     Game existingGame = gameRepository.findByIgdbId(newGame.getIgdbId());
 
-                    // Update logoUrls, platforms, titles, and genres
+                    // Update logoUrls, platforms, and genres
                     existingGame.setLogoUrl(newGame.getLogoUrl());
                     existingGame.setPlatforms(newGame.getPlatforms());
-                    existingGame.setTitle(newGame.getTitle());
                     existingGame.setGenres(newGame.getGenres());
 
                     // Update sourceUrls
@@ -74,39 +75,48 @@ public class IgdbReplicationService {
                     // Save new urls in existing
                     existingGame.setSourceUrls(existingSourceUrls);
 
-                    // Add updated existing game to mongoGames
+                    // Add updated existing game to mongoGameBuffer
                     existingGame.setLastUpdated(new Date());
-                    mongoGames.add(existingGame);
-
-                    // Add game to Elasticsearch array
-                    ElasticGame elasticGame = new ElasticGame(existingGame);
-                    elasticGames.add(elasticGame);
+                    mongoGameBuffer.add(existingGame);
 
                     updatedGameCount++;
                 }
                 else {
-                    // Add updated existing game to mongoGames
+                    // Add new game to mongoGameBuffer
                     newGame.setLastUpdated(new Date());
-                    mongoGames.add(newGame);
+                    mongoGameBuffer.add(newGame);
 
-                    // Add game to Elasticsearch array
-                    ElasticGame elasticGame = new ElasticGame(newGame);
-                    elasticGames.add(elasticGame);
+                    // Add new game to Elasticsearch array if it does not exist
+                    if(!elasticRepository.existsByTitle(newGame.getTitle())) {
+                        ElasticGame elasticGame = new ElasticGame(newGame);
+                        elasticGameBuffer.add(elasticGame);
+                    }
 
                     newGameCount++;
                 }
             }
+
+            // Bulk insert every bufferSize documents to mongo
+            if (mongoGameBuffer.size() % bufferSize == 0) {
+                gameRepository.saveAll(mongoGameBuffer);
+            }
+
+            // Bulk insert every bufferSize documents to elastic
+            if (elasticGameBuffer.size() % bufferSize == 0) {
+                elasticRepository.saveAll(elasticGameBuffer);
+            }
         }
 
-        // Save games to elastic and mongo
-        gameRepository.saveAll(mongoGames);
-        elasticRepository.saveAll(elasticGames);
+        // Save all remaining games to mongo and elastic
+        gameRepository.saveAll(mongoGameBuffer);
+        mongoGameBuffer.clear();
+        elasticRepository.saveAll(elasticGameBuffer);
+        elasticGameBuffer.clear();
 
-        logger.info("Finished replication. " + "Added " + newGameCount + " new games and " +
-                    "updated " + updatedGameCount + ".");
+        String status = "Finished replication. " + "Added " + newGameCount + " new games and " + "updated " + updatedGameCount + ".";
 
-        return "Finished replication. " + "Added " + newGameCount + " new games and " +
-               "updated " + updatedGameCount + ".";
+        logger.info(status);
 
+        return status;
     }
 }
