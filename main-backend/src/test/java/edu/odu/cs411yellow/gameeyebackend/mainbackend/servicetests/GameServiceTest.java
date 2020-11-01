@@ -57,7 +57,8 @@ public class GameServiceTest {
 
     @Test
     public void testGetLogoUrl() {
-        igdbReplicator.replicateIgdbByRange(100000, 100200, 250);
+        String result = igdbReplicator.replicateIgdbByRange(100000, 100200, 250);
+        System.out.println(result);
 
         String gameIgdbId1 = "100000";
         String gameIgdbId2 = "100083";

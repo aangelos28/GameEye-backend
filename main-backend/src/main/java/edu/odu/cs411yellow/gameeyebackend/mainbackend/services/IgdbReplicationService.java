@@ -87,7 +87,8 @@ public class IgdbReplicationService {
                     mongoGameBuffer.add(newGame);
 
                     // Add new game to Elasticsearch array if it does not exist
-                    if(!elasticRepository.existsByTitle(newGame.getTitle())) {
+                    String title = newGame.getTitle();
+                    if(!elasticRepository.existsByTitle(title)) {
                         ElasticGame elasticGame = new ElasticGame(newGame);
                         elasticGameBuffer.add(elasticGame);
                     }

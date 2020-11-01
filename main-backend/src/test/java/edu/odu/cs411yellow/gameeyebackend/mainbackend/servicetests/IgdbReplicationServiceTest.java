@@ -43,7 +43,8 @@ public class IgdbReplicationServiceTest {
         List<Game> preReplicationTestDbGames = new ArrayList<>();
 
         // Replicate new games to db.
-        igdbReplicator.replicateIgdbByRange(minId, maxId, limit);
+        String result = igdbReplicator.replicateIgdbByRange(minId, maxId, limit);
+        System.out.println(result);
 
         // Find new games from db.
         for (int igdbId = minId; igdbId < maxId-minId+2; igdbId++) {
@@ -90,7 +91,7 @@ public class IgdbReplicationServiceTest {
         List<Game> preReplicationTestDbGames = new ArrayList<>();
 
         // Replicate new games to db.
-        igdbReplicator.replicateIgdbByRange(minId, maxId, limit);
+        String status = igdbReplicator.replicateIgdbByRange(minId, maxId, limit);
 
         // Find new games from db.
         for (int igdbId = minId; igdbId < maxId-minId+2; igdbId++) {
