@@ -46,8 +46,9 @@ public class WebScraperOrchestrator{
     private List<String> articleTitles;
 
     private MockNewsScraper mockNewsScraper;
-    private UniversalScraper scrappy;
-    private String[] scraperNames={"GameSpot","Eurogamer","PC Gamer", "IGN","GameEye Mock News"};
+    private UniversalScraper scraper;
+    //private String[] scraperNames={"GameSpot","Eurogamer","PC Gamer", "IGN","GameEye Mock News"};
+    private String[] scraperNames={"GameSpot","Eurogamer","PC Gamer", "IGN"};
 
     private ElasticsearchOperations elasticSearch;
 
@@ -61,9 +62,9 @@ public class WebScraperOrchestrator{
 
 
     @Autowired
-    public WebScraperOrchestrator (UniversalScraper scrappy, MockNewsScraper mockNewsScraper,
+    public WebScraperOrchestrator (UniversalScraper scraper, MockNewsScraper mockNewsScraper,
                                    ReferenceGameService rgs, NewsWebsiteRepository newsWebsiteRepository){
-        this.scrapers = new ArrayList<WebScraper>();
+        //this.scrapers = new ArrayList<WebScraper>();
         this.scrapedArticles = new ArrayList<Article>();
         this.mockNewsScraper = mockNewsScraper;
 
@@ -73,7 +74,7 @@ public class WebScraperOrchestrator{
 
         this.newsWebsiteRepository = newsWebsiteRepository;
 
-        this.scrappy = scrappy;
+        this.scraper = scraper;
 
     }
 
@@ -83,15 +84,22 @@ public class WebScraperOrchestrator{
      */
     public void forceScrape(){
 
-        for(String scraper:scraperNames){
-            List<Article> articleList = scrappy.scrape(scraper);
+        for(String s:scraperNames){
+            List<Article> articleList = scraper.scrape(s);
             for (Article art:articleList) {
                 if(!checkArticleDuplicates(art) && !checkIrrelevantArticles(art))
                 {
                     scrapedArticles.add(art);
                     articleTitles.add(art.getTitle());
                 }
-
+            }
+        }
+        List<Article> mockNewsArticles = mockNewsScraper.scrape(mockNewsScraper.getScrapperName());
+        for (Article art:mockNewsArticles) {
+            if(!checkArticleDuplicates(art) && !checkIrrelevantArticles(art))
+            {
+                scrapedArticles.add(art);
+                articleTitles.add(art.getTitle());
             }
         }
 
@@ -106,7 +114,7 @@ public class WebScraperOrchestrator{
     public void forceScrape(String target){
 
         try{
-            List<Article> articleList = scrappy.scrape(target);
+            List<Article> articleList = scraper.scrape(target);
             for (Article art:articleList) {
                 if(!checkArticleDuplicates(art) && !checkIrrelevantArticles(art))
                     scrapedArticles.add(art);
@@ -172,11 +180,9 @@ public class WebScraperOrchestrator{
      * Performs an Elastic Search on article titles to find the games an article
      * refers to
      * @param a A scraped article
-     * @return Int ID for the game
+     * @return List<String>  List of IDs for games present in game article
      */
     public List<String> performArticleGameReferenceSearch(Article a){
-        //TODO
-        //Consult Chris
 
         //List<String> ids = elastic.referencedGames(a);
         List<String> ids = rgs.getReferencedGames(a);
@@ -202,8 +208,8 @@ public class WebScraperOrchestrator{
     /**
      * Removes an article from the collection of scraped articles
      */
-    public void removeFromCollection(){
-        //TODO
+    public void removeFromCollection(Article a){
+        scrapedArticles.remove(a);
     }
 
     /**

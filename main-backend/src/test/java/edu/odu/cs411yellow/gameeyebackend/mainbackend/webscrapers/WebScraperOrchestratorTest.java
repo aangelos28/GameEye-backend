@@ -16,8 +16,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.junit.Before;
-//import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -29,6 +30,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.Assert;
 
+import java.util.Date;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
@@ -37,16 +39,18 @@ import java.util.List;
 @TestPropertySource(locations = "classpath:application-test.properties")
 public class WebScraperOrchestratorTest {
 
+    private String[] scraperNames={"GameSpot","Eurogamer","PC Gamer", "IGN","GameEye Mock News"};
+
     @Autowired
     MockNewsScraper mock;
 
     @Autowired
-    UniversalScraper scrap;
+    UniversalScraper scraper;
 
     @Autowired
-    WebScraperOrchestrator scrappy;
+    WebScraperOrchestrator orchestrator;
     @Autowired
-    WebScraperOrchestrator scrappyMock;
+    WebScraperOrchestrator orchestratorMock;
     @Autowired
     NewsWebsiteRepository newsWebsiteRepository;
 
@@ -62,6 +66,8 @@ public class WebScraperOrchestratorTest {
     @Autowired
     private GameRepository games;
 
+    private Article testArticle;
+
     //@Value("http://411Yellow.cpi.cs.odu.edu")
     //@Value("${ml.server.host}")
     private String serverHost;
@@ -76,78 +82,109 @@ public class WebScraperOrchestratorTest {
 
     @BeforeEach
     public void init(){
-        scrappyMock = new WebScraperOrchestrator(scrap, mock, rgs, newsWebsiteRepository);
+        //scrappyMock = new WebScraperOrchestrator(scrap, mock, rgs, newsWebsiteRepository);
+        orchestratorMock = new WebScraperOrchestrator(scraper, mock, rgs, newsWebsiteRepository);
         //scrappyMock = new WebScraperOrchestrator(scrap, mock, elastic, rgs, newsWebsiteRepository);
         //scrappyMock = new WebScraperOrchestrator(scrap, mock, machine, rgs, newsWebsiteRepository);
     }
 
     @Test
     public void testForceScrape(){
-        //TODO
+        orchestratorMock.forceScrape();
+        String totalCollection="";
+
+        for(String s: scraperNames){
+            scraper.scrape(s);
+            totalCollection += scraper.toString();
+        }
+
+        assertEquals(totalCollection,orchestratorMock.toString());
     }
 
     @Test
     public void testForceScrapeMockNews(){
-        scrappyMock.forceScrape(mock);
-        System.out.println(scrappyMock.toString());
-        assertEquals(mock.toString(),scrappyMock.toString());
-        assertEquals(mock.getArticles(), scrappyMock.getArticleCollection());
+        orchestratorMock.forceScrape(mock);
+        System.out.println(orchestratorMock.toString());
+        assertEquals(mock.toString(),orchestratorMock.toString());
+        assertEquals(mock.getArticles(), orchestratorMock.getArticleCollection());
     }
 
     @Test
     public void testForceScrapeGameSpot(){
-        scrappyMock.forceScrape("GameSpot");
-        System.out.println(scrappyMock.toString());
-        assertEquals(scrap.toString(),scrappyMock.toString());
-        assertEquals(scrap.getArticles(), scrappyMock.getArticleCollection());
+        orchestratorMock.forceScrape("GameSpot");
+        System.out.println(orchestratorMock.toString());
+        assertEquals(scraper.toString(),orchestratorMock.toString());
+        assertEquals(scraper.getArticles(), orchestratorMock.getArticleCollection());
     }
 
     @Test
     public void testForceScrapeIGN(){
-        scrappyMock.forceScrape("IGN");
-        System.out.println(scrappyMock.toString());
-        assertEquals(scrap.toString(),scrappyMock.toString());
-        assertEquals(scrap.getArticles(), scrappyMock.getArticleCollection());
+        orchestratorMock.forceScrape("IGN");
+        System.out.println(orchestratorMock.toString());
+        assertEquals(scraper.toString(),orchestratorMock.toString());
+        assertEquals(scraper.getArticles(), orchestratorMock.getArticleCollection());
     }
 
     @Test
     public void testForceScrapePCGamer(){
-        scrappyMock.forceScrape("PC Gamer");
-        System.out.println(scrappyMock.toString());
-        assertEquals(scrap.toString(),scrappyMock.toString());
-        assertEquals(scrap.getArticles(), scrappyMock.getArticleCollection());
+        orchestratorMock.forceScrape("PC Gamer");
+        System.out.println(orchestratorMock.toString());
+        assertEquals(scraper.toString(),orchestratorMock.toString());
+        assertEquals(scraper.getArticles(), orchestratorMock.getArticleCollection());
     }
 
     @Test
     public void testForceScrapeEuroGamer(){
-        scrappyMock.forceScrape("Eurogamer");
-        System.out.println(scrappyMock.toString());
-        assertEquals(scrap.toString(),scrappyMock.toString());
-        assertEquals(scrap.getArticles(), scrappyMock.getArticleCollection());
+        orchestratorMock.forceScrape("Eurogamer");
+        System.out.println(orchestratorMock.toString());
+        assertEquals(scraper.toString(),orchestratorMock.toString());
+        assertEquals(scraper.getArticles(), orchestratorMock.getArticleCollection());
     }
 
     @Test
     public void testCheckArticleDuplicates(){
-        //TODO
+        mock.scrape(mock.getScrapperName());
+        List<Article> scrapedArticles=mock.getArticles();
+        Article dupe = new Article(scrapedArticles.get(1)); //"Cyberpunk 2077 delayed to 12/10/2077"
+
+        orchestratorMock.forceScrape(mock);
+        orchestratorMock.insertDataIntoDatabase();
+
+        Boolean duped = orchestratorMock.checkArticleDuplicates(dupe);
+
+        assertThat(duped,is(true));
 
     }
 
     @Test
     public void testCheckIrrelevantArticles(){
-        //TODO
+        //orchestratorMock.forceScrape(mock);
+        //List<Article> scrapedArticles= orchestratorMock.getArticleCollection();
+
+        mock.scrape(mock.getScrapperName());
+        List<Article> scrapedArticles=mock.getArticles();
+        Article irrelevant = scrapedArticles.get(3);    //"GameEye Launch"
+
+        //List<String> ids = orchestratorMock.performArticleGameReferenceSearch(irrelevant);
+        //String possibleGame = ids.get(0);
+        //orchestratorMock.forceScrape(mock);
+
+        boolean irr = orchestratorMock.checkIrrelevantArticles(irrelevant);
+
+        assertThat(irr,is(true));
+
     }
 
     @Test
     public void testInsertDataIntoDatabase(){
-        //TODO
         Game testGame = games.findGameByTitle("Cyberpunk 2077");
         Resources initResources = testGame.getResources();
         List<Article> initArticles = initResources.getArticles();
 
-        scrappyMock.forceScrape(mock);
-        System.out.println(scrappyMock.toString());
+        orchestratorMock.forceScrape(mock);
+        System.out.println(orchestratorMock.toString());
         //List<Article> testArts = scrappyMock.getArticleCollection();
-        scrappyMock.insertDataIntoDatabase();
+        orchestratorMock.insertDataIntoDatabase();
 
         Resources postResources = testGame.getResources();
         List<Article> postArticles = initResources.getArticles();
@@ -155,22 +192,30 @@ public class WebScraperOrchestratorTest {
         assertNotEquals(initResources,postResources);
         assertNotEquals(initArticles,postArticles);
 
+        assertEquals(initResources,postResources);
+        assertEquals(initArticles,postArticles);
+
         assertNotEquals(initArticles.size(),postArticles.size());
 
     }
 
     @Test
     public void testRemoveFromCollection(){
-        //TODO
+        orchestratorMock.forceScrape(mock);
+        List<Article> beforeRemoval = orchestratorMock.getArticleCollection();
+        orchestratorMock.removeFromCollection(beforeRemoval.get(0));
+        List<Article> afterRemoval = orchestratorMock.getArticleCollection();
 
+        assertNotEquals(beforeRemoval,afterRemoval);
+        assertNotEquals(beforeRemoval.size(),afterRemoval.size());
     }
 
     @Test
     public void testPerformAGRSForSingleGameMention(){
-        //TODO
-        scrappyMock.forceScrape(mock);
-        List<Article> articles = scrappyMock.getArticleCollection();
-        List<String> gameIDs = scrappyMock.performArticleGameReferenceSearch(articles.get(1));
+
+        orchestratorMock.forceScrape(mock);
+        List<Article> articles = orchestratorMock.getArticleCollection();
+        List<String> gameIDs = orchestratorMock.performArticleGameReferenceSearch(articles.get(1));
        //String game = gameIDs.get(0);
         System.out.println(articles.get(1).getTitle());
         for(String id:gameIDs){

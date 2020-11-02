@@ -84,6 +84,18 @@ public class Article {
         this.impactScore = 0;
     }
 
+    public Article(Article a){
+        this.id = a.getId();
+        this.title = a.getTitle();
+        this.url = a.getUrl();
+        this.newsWebsite = a.getNewsWebsite();
+        this.thumbnail = a.getThumbnail();
+        this.snippet = a.getSnippet();
+        this.publicationDate = a.getPublicationDate();
+        this.lastUpdated = a.getLastUpdated();
+        this.impactScore = a.getImpactScore();
+    }
+
     public String getId() {
         return this.id;
     }
