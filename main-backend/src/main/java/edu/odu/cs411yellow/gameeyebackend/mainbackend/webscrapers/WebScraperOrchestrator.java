@@ -61,7 +61,7 @@ public class WebScraperOrchestrator{
 
 
     @Autowired
-    public WebScraperOrchestrator (UniversalScraper scrappy, MockNewsScraper mockNewsScraper, MachineLearningService machine,
+    public WebScraperOrchestrator (UniversalScraper scrappy, MockNewsScraper mockNewsScraper,
                                    ReferenceGameService rgs, NewsWebsiteRepository newsWebsiteRepository){
         this.scrapers = new ArrayList<WebScraper>();
         this.scrapedArticles = new ArrayList<Article>();
@@ -69,7 +69,7 @@ public class WebScraperOrchestrator{
 
         //this.elastic = elastic;
         this.rgs = rgs;
-        this.machine = machine;
+        //this.machine = machine;
 
         this.newsWebsiteRepository = newsWebsiteRepository;
 
@@ -95,7 +95,7 @@ public class WebScraperOrchestrator{
             }
         }
 
-        insertDataIntoDatabase();
+        //insertDataIntoDatabase();
     }
 
     /**

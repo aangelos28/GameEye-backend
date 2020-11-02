@@ -1,5 +1,7 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.webscrapers;
 
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Resources;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ElasticGameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.elasticsearch.ElasticGame;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
@@ -60,17 +62,23 @@ public class WebScraperOrchestratorTest {
     @Autowired
     private GameRepository games;
 
-    private String serverHost = "http://411Yellow.cpi.cs.odu.edu";
-    private Integer serverPort = 7745;
+    //@Value("http://411Yellow.cpi.cs.odu.edu")
+    //@Value("${ml.server.host}")
+    private String serverHost;
 
-    @Autowired
-    private MachineLearningService machine = new MachineLearningService(serverHost,serverPort);
+    //@Value("7745")
+    //@Value("${ml.server.port}")
+    private Integer serverPort;
+
+    //@Autowired
+    //private MachineLearningService machine = new MachineLearningService(
+    // @Value("${ml.server.host}") serverHost, @Value("${ml.server.port}") serverPort);
 
     @BeforeEach
     public void init(){
-        //scrappyMock = new WebScraperOrchestrator(scrap, mock, newsWebsiteRepository);
+        scrappyMock = new WebScraperOrchestrator(scrap, mock, rgs, newsWebsiteRepository);
         //scrappyMock = new WebScraperOrchestrator(scrap, mock, elastic, rgs, newsWebsiteRepository);
-        scrappyMock = new WebScraperOrchestrator(scrap, mock, machine, rgs, newsWebsiteRepository);
+        //scrappyMock = new WebScraperOrchestrator(scrap, mock, machine, rgs, newsWebsiteRepository);
     }
 
     @Test
@@ -121,6 +129,7 @@ public class WebScraperOrchestratorTest {
     @Test
     public void testCheckArticleDuplicates(){
         //TODO
+
     }
 
     @Test
@@ -131,11 +140,29 @@ public class WebScraperOrchestratorTest {
     @Test
     public void testInsertDataIntoDatabase(){
         //TODO
+        Game testGame = games.findGameByTitle("Cyberpunk 2077");
+        Resources initResources = testGame.getResources();
+        List<Article> initArticles = initResources.getArticles();
+
+        scrappyMock.forceScrape(mock);
+        System.out.println(scrappyMock.toString());
+        //List<Article> testArts = scrappyMock.getArticleCollection();
+        scrappyMock.insertDataIntoDatabase();
+
+        Resources postResources = testGame.getResources();
+        List<Article> postArticles = initResources.getArticles();
+
+        assertNotEquals(initResources,postResources);
+        assertNotEquals(initArticles,postArticles);
+
+        assertNotEquals(initArticles.size(),postArticles.size());
+
     }
 
     @Test
     public void testRemoveFromCollection(){
         //TODO
+
     }
 
     @Test
