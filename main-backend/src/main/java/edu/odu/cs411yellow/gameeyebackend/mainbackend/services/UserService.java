@@ -75,7 +75,7 @@ public class UserService {
         users.save(user);
     }
 
-    public void AdjustSettings(final String firebaseID, Preferences preferences)
+    public void updateSettings(final String firebaseID, Preferences preferences)
     {
         final User user = this.users.findUserByFirebaseId(firebaseID);
         user.setPreferences(preferences);

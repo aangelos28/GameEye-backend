@@ -38,9 +38,9 @@ public class UserController {
 
     private static class SettingsRequest
     {
-        public Preferences preferences;
+        private Preferences preferences;
 
-        public Preferences getPreferences() {
+        private Preferences getPreferences() {
             return preferences;
         }
     }
@@ -80,7 +80,7 @@ public class UserController {
     }
 
     @PutMapping (path = "/private/settings/update", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> applySettings(@RequestBody SettingsRequest request)
+    public ResponseEntity<?> updateSettings(@RequestBody SettingsRequest request)
     {
 
 
@@ -88,7 +88,7 @@ public class UserController {
         final FirebaseToken fbToken = (FirebaseToken) auth.getPrincipal();
 
         try {
-            userService.AdjustSettings(fbToken.getUid(), request.getPreferences());
+            userService.updateSettings(fbToken.getUid(), request.getPreferences());
             return ResponseEntity.status(HttpStatus.ACCEPTED).body("Updated settings.");
         } catch (Exception ex) {
             ex.printStackTrace();
