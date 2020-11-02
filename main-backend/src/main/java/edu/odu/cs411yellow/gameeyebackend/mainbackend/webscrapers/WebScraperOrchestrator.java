@@ -10,6 +10,7 @@ import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.elasticsearch.Elast
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.NewsWebsite;
 
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.MachineLearningService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.ReferenceGameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -42,6 +43,7 @@ public class WebScraperOrchestrator{
 
     private List<WebScraper> scrapers;
     private List<Article> scrapedArticles;
+    private List<String> articleTitles;
 
     private MockNewsScraper mockNewsScraper;
     private UniversalScraper scrappy;
@@ -54,23 +56,20 @@ public class WebScraperOrchestrator{
     private ElasticGameRepositoryCustomImpl elastic;
 
     private ReferenceGameService rgs;
-
     private GameRepository games;
+    private MachineLearningService machine;
 
-    //private IGNScraper ignScraper;
-    //private GameSpotScraper gameSpotScraper;
-    //private EuroGamerScraper euroGamerScraper;
-    //private PCGamerScraper pcGamerScraper;
 
     @Autowired
-    public WebScraperOrchestrator (UniversalScraper scrappy, MockNewsScraper mockNewsScraper, ElasticGameRepositoryCustomImpl elastic,
+    public WebScraperOrchestrator (UniversalScraper scrappy, MockNewsScraper mockNewsScraper, MachineLearningService machine,
                                    ReferenceGameService rgs, NewsWebsiteRepository newsWebsiteRepository){
         this.scrapers = new ArrayList<WebScraper>();
         this.scrapedArticles = new ArrayList<Article>();
         this.mockNewsScraper = mockNewsScraper;
 
-        this.elastic = elastic;
+        //this.elastic = elastic;
         this.rgs = rgs;
+        this.machine = machine;
 
         this.newsWebsiteRepository = newsWebsiteRepository;
 
@@ -88,7 +87,11 @@ public class WebScraperOrchestrator{
             List<Article> articleList = scrappy.scrape(scraper);
             for (Article art:articleList) {
                 if(!checkArticleDuplicates(art) && !checkIrrelevantArticles(art))
+                {
                     scrapedArticles.add(art);
+                    articleTitles.add(art.getTitle());
+                }
+
             }
         }
 
@@ -181,6 +184,21 @@ public class WebScraperOrchestrator{
         return ids;
     }
 
+    public List<Boolean> getArticleImportance(){
+        return machine.predictArticleImportance(articleTitles);
+    }
+
+    public void setArticleImportance(Boolean important, Article a){
+        //TODO Update after data model change
+
+        int importance = 0;
+
+        if(important)
+            importance = 1;
+
+        a.setImpactScore(importance);
+    }
+
     /**
      * Removes an article from the collection of scraped articles
      */
@@ -193,6 +211,8 @@ public class WebScraperOrchestrator{
      * @return A List of articles
      */
     public List<Article> getArticleCollection(){ return scrapedArticles; }
+
+    public List<String> getArticleTitles(){ return articleTitles; }
 
     /**
      * Prints all collected articles in JSON

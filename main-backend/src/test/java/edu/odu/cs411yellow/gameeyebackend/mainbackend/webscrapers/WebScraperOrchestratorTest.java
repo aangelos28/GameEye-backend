@@ -7,6 +7,7 @@ import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.NewsWebsiteRe
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ElasticGameRepositoryCustomImpl;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.MachineLearningService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.ReferenceGameService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.test.context.ActiveProfiles;
@@ -49,23 +51,26 @@ public class WebScraperOrchestratorTest {
     @Autowired
     @Qualifier("elasticsearchOperations")
     ElasticsearchOperations elasticSearch;
-
     @Autowired
     private ElasticGameRepository elasticGames;
-
     @Autowired
     private ElasticGameRepositoryCustomImpl elastic;
-
     @Autowired
     private ReferenceGameService rgs;
-
     @Autowired
     private GameRepository games;
+
+    private String serverHost = "http://411Yellow.cpi.cs.odu.edu";
+    private Integer serverPort = 7745;
+
+    @Autowired
+    private MachineLearningService machine = new MachineLearningService(serverHost,serverPort);
 
     @BeforeEach
     public void init(){
         //scrappyMock = new WebScraperOrchestrator(scrap, mock, newsWebsiteRepository);
-        scrappyMock = new WebScraperOrchestrator(scrap, mock, elastic, rgs, newsWebsiteRepository);
+        //scrappyMock = new WebScraperOrchestrator(scrap, mock, elastic, rgs, newsWebsiteRepository);
+        scrappyMock = new WebScraperOrchestrator(scrap, mock, machine, rgs, newsWebsiteRepository);
     }
 
     @Test
