@@ -34,24 +34,24 @@ public class ReferenceGameService {
         int longestMatchSize = 0;
         List <String> matchingIDs = new ArrayList<>();
 
-        for (var i: referencedGames) {
+        for (var game: referencedGames) {
 
-            String gameTitle = i.getContent().getTitle();
+            String gameTitle = game.getContent().getTitle();
             int gameTitleLength = gameTitle.length();
             int matchSize;
 
             matchSize = commonStringSize(articleTitle.toCharArray(),gameTitle.toCharArray(),
                     articleTitleLength,gameTitleLength);
 
-            //Assuming gameTitles are no less than 5 characters
-            if((longestMatchSize < matchSize) && (matchSize > 5)) {
+            //Assuming gameTitles are no less than 3 characters
+            if((longestMatchSize < matchSize) && (matchSize > 3)) {
                 longestMatchSize = matchSize;   //set new longest match
                 matchingIDs.clear();
-                matchingIDs.add(i.getContent().getGameId());
+                matchingIDs.add(game.getContent().getGameId());
             }
 
             else if (longestMatchSize == matchSize){
-                matchingIDs.add(i.getContent().getGameId());
+                matchingIDs.add(game.getContent().getGameId());
             }
 
         }
