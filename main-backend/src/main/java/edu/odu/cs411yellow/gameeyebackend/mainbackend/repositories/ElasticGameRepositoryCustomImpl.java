@@ -10,7 +10,9 @@ import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class ElasticGameRepositoryCustomImpl implements ElasticGameRepositoryCustom {
 
     private final ElasticsearchOperations elasticSearch;

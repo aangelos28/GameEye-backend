@@ -10,6 +10,7 @@ import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.elasticsearch.Elast
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.NewsWebsite;
 
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.ReferenceGameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -52,6 +53,8 @@ public class WebScraperOrchestrator{
     @Qualifier("elasticsearchOperations")
     private ElasticGameRepositoryCustomImpl elastic;
 
+    private ReferenceGameService rgs;
+
     private GameRepository games;
 
     //private IGNScraper ignScraper;
@@ -61,13 +64,13 @@ public class WebScraperOrchestrator{
 
     @Autowired
     public WebScraperOrchestrator (UniversalScraper scrappy, MockNewsScraper mockNewsScraper, ElasticGameRepositoryCustomImpl elastic,
-                                   NewsWebsiteRepository newsWebsiteRepository){
+                                   ReferenceGameService rgs, NewsWebsiteRepository newsWebsiteRepository){
         this.scrapers = new ArrayList<WebScraper>();
         this.scrapedArticles = new ArrayList<Article>();
         this.mockNewsScraper = mockNewsScraper;
 
         this.elastic = elastic;
-
+        this.rgs = rgs;
 
         this.newsWebsiteRepository = newsWebsiteRepository;
 
@@ -172,7 +175,8 @@ public class WebScraperOrchestrator{
         //TODO
         //Consult Chris
 
-        List<String> ids = elastic.referencedGames(a);
+        //List<String> ids = elastic.referencedGames(a);
+        List<String> ids = rgs.getReferencedGames(a);
 
         return ids;
     }
