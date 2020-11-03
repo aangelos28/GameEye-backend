@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Provides services for managing user profiles.
  */
@@ -27,7 +29,7 @@ public class UserService {
      * @return User profile
      */
     public User getUser(final String userId) {
-        return users.findUserByFirebaseId(userId);
+        return users.findUserById(userId);
     }
 
     /**
@@ -37,7 +39,7 @@ public class UserService {
      * @return True if a user profile exists, false otherwise
      */
     public boolean checkUserExists(final String userId) {
-        return users.existsByFirebaseId(userId);
+        return users.existsById(userId);
     }
 
     /**
@@ -47,7 +49,7 @@ public class UserService {
      */
     public void createUser(final String userId) {
         User newUser = new User();
-        newUser.setFirebaseId(userId);
+        newUser.setId(userId);
         newUser.setStatus(UserStatus.active);
 
         users.save(newUser);
@@ -59,7 +61,7 @@ public class UserService {
      * @param userId Id of the user profile to delete
      */
     public void deleteUser(final String userId) {
-        users.deleteByFirebaseId(userId);
+        users.deleteById(userId);
     }
 
     /**
@@ -69,7 +71,7 @@ public class UserService {
      * @param userStatus User profile status to set
      */
     public void setUserStatus(final String userId, final UserStatus userStatus) {
-        User user = users.findUserByFirebaseId(userId);
+        User user = users.findUserById(userId);
         user.setStatus(userStatus);
 
         users.save(user);

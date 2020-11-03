@@ -21,7 +21,6 @@ import java.nio.charset.StandardCharsets;
 @SpringBootApplication
 @ComponentScan({"edu.odu.cs411yellow.gameeyebackend.cli", "edu.odu.cs411yellow.gameeyebackend.common"})
 public class CliApplication {
-
     /**
      * CLI entry point.
      *

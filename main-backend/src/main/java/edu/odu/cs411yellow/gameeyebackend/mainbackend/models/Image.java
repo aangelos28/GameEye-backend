@@ -5,6 +5,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.Objects;
+
 /**
  * Class representing a document in the "Images" collection.
  */
@@ -54,5 +56,17 @@ public class Image {
 
     public void setData(Binary data) {
         this.data = data;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o ) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Image that = (Image) o;
+
+        return Objects.equals(id, that.id)
+                && Objects.equals(type, that.type)
+                && Objects.equals(data, that.data)
+          ;
     }
 }

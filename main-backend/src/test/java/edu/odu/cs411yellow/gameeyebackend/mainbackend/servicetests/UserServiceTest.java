@@ -4,7 +4,6 @@ import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.UserStatus;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.UserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -37,7 +36,7 @@ public class UserServiceTest {
         // Get the user
         User user = userService.getUser(userId);
 
-        assertThat(user.getFirebaseId(), is(userId));
+        assertThat(user.getId(), is(userId));
 
         // Delete the user
         userService.deleteUser(userId);

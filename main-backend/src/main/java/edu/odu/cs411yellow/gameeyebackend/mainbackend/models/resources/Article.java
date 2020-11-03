@@ -53,13 +53,13 @@ public class Article {
     private Date lastUpdated;
 
     /**
-     * Impact score of the article, computed with machine learning.
+     * Denotes whether or not an article is important, computed with machine learning.
      */
-    private int impactScore;
+    private boolean isImportant;
 
     @PersistenceConstructor
     public Article(String id, String title, String url, NewsWebsite newsWebsite, Image thumbnail, String snippet,
-                   Date publicationDate, Date lastUpdated, int impactScore) {
+                   Date publicationDate, Date lastUpdated, boolean isImportant) {
 
         this.id = id;
         this.title = title;
@@ -69,7 +69,7 @@ public class Article {
         this.snippet = snippet;
         this.publicationDate = publicationDate;
         this.lastUpdated = lastUpdated;
-        this.impactScore = impactScore;
+        this.isImportant = isImportant;
     }
 
     public Article() {
@@ -81,7 +81,7 @@ public class Article {
         this.snippet = "";
         this.publicationDate = new Date();
         this.lastUpdated = new Date();
-        this.impactScore = 0;
+        this.isImportant = false;
     }
 
     public String getId() {
@@ -144,12 +144,12 @@ public class Article {
         this.lastUpdated = lastUpdated;
     }
 
-    public int getImpactScore() {
-        return this.impactScore;
+    public boolean getIsImportant() {
+        return this.isImportant;
     }
 
-    public void setImpactScore(int impactScore) {
-        this.impactScore = impactScore;
+    public void setIsImportant(boolean isImportant) {
+        this.isImportant = isImportant;
     }
 
     @Override
@@ -165,11 +165,11 @@ public class Article {
                 && Objects.equals(snippet, that.snippet)
                 && Objects.equals(publicationDate, that.publicationDate)
                 && Objects.equals(lastUpdated, that.lastUpdated)
-                && Objects.equals(impactScore, that.impactScore);
+                && Objects.equals(isImportant, that.isImportant);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, url, newsWebsite, thumbnail, snippet, impactScore);
+        return Objects.hash(id, url, newsWebsite, thumbnail, snippet, isImportant);
     }
 }

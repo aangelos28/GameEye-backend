@@ -9,14 +9,8 @@ public interface UserRepository extends MongoRepository<User, String> {
     @Override
     void deleteById(String id);
 
-    void deleteByFirebaseId(String firebaseId);
-
     @Override
     boolean existsById(String id);
 
-    boolean existsByFirebaseId(String firebaseId);
-
     User findUserById(String id);
-
-    User findUserByFirebaseId(String firebaseId);
 }
