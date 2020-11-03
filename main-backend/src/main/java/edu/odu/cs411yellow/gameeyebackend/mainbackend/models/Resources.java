@@ -40,6 +40,10 @@ public class Resources {
         this.articles = articles;
     }
 
+    public void addArticle(Article article) {
+        articles.add(article);
+    }
+
     public Article findArticle(String id) {
         Article foundArticle = new Article();
 

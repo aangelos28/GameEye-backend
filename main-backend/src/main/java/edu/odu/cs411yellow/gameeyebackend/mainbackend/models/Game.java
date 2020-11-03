@@ -160,6 +160,14 @@ public class Game {
         return foundArticles;
     }
 
+    public void addArticlesToResources(List<Article> articles) {
+        resources.setArticles(articles);
+    }
+
+    public void addArticleResources(Article article) {
+        resources.addArticle(article);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o ) return true;
