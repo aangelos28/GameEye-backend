@@ -40,22 +40,26 @@ public class UserRepositoryTest {
         boolean showImageResources = true;
         boolean notifyOnlyIfImportant = true;
 
-        NotificationPreferences notificationPreferences = new NotificationPreferences(showArticleResources,
+        NotificationSettings notificationSettings = new NotificationSettings(showArticleResources,
                                                                                       showImageResources,
                                                                                       notifyOnlyIfImportant);
 
-        Settings settings = new Settings(notificationPreferences);
+        Settings settings = new Settings(notificationSettings);
 
         // Declare articles
         int articleCount = 1;
         String articleId = "5ea1c2e777dabd049ce92788";
-        List<String> articleIds = new ArrayList<>(Arrays.asList(articleId));
+        List<String> articleIds = new ArrayList<>();
+        articleIds.add(articleId);
+
         ArticleNotifications articleNotifications = new ArticleNotifications(articleCount, articleIds);
 
         // Declare images
         int imageCount = 1;
         String imageId = "5ea108ea34019c1d1c818c02";
-        List<String> imageIds = new ArrayList<>(Arrays.asList(imageId));
+        List<String> imageIds = new ArrayList<>();
+        imageIds.add(imageId);
+
         ImageNotifications imageNotifications = new ImageNotifications(imageCount, imageIds);
 
         // Declare notificationCategories
@@ -67,7 +71,8 @@ public class UserRepositoryTest {
         WatchedGame watchedGame = new WatchedGame(watchedGameId, notificationCount, resourceNotifications);
 
         // Declare watchList
-        List<WatchedGame> watchList = new ArrayList<>(Arrays.asList(watchedGame));
+        List<WatchedGame> watchList = new ArrayList<>();
+        watchList.add(watchedGame);
 
         // Set testUser
         testUser = new User(userId, status, plan, settings, watchList);

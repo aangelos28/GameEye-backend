@@ -98,7 +98,7 @@ public class UniversalScraper implements WebScraper {
         Image image = new Image(null, ".jpg",null);
 
         return new Article(null, title, url, site, image,
-                snippet, publicationDate, publicationDate, true);
+                snippet, publicationDate, publicationDate, false);
 
     }
 
@@ -139,7 +139,7 @@ public class UniversalScraper implements WebScraper {
             try {
                 String temp;
                 temp = obj.writerWithDefaultPrettyPrinter().writeValueAsString(a);
-                articlesStr = articlesStr + "\n" + temp;
+                articlesStr = String.format("%1$s\n%2$s", articlesStr, temp);
 
             } catch (IOException e) {
                 e.printStackTrace();

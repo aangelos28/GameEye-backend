@@ -18,7 +18,7 @@ import java.util.Objects;
 @Document("games")
 public class Game {
     @Id
-    private final String id;
+    private String id;
 
     private String igdbId;
 
@@ -72,6 +72,10 @@ public class Game {
 
     public String getId() {
         return this.id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getIgdbId() {

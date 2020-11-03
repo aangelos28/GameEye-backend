@@ -5,6 +5,7 @@ import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.SourceUrls;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.elasticsearch.ElasticGame;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ElasticGameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,11 +85,11 @@ public class IgdbReplicationService {
                 else {
                     // Add new game to mongoGameBuffer
                     newGame.setLastUpdated(new Date());
+                    newGame.setId(ObjectId.get().toString());
                     mongoGameBuffer.add(newGame);
 
                     // Add new game to Elasticsearch array if it does not exist
-                    String title = newGame.getTitle();
-                    if(!elasticRepository.existsByTitle(title)) {
+                    if (!(elasticRepository.existsByTitle(newGame.getTitle()))) {
                         ElasticGame elasticGame = new ElasticGame(newGame);
                         elasticGameBuffer.add(elasticGame);
                     }
@@ -98,13 +99,15 @@ public class IgdbReplicationService {
             }
 
             // Bulk insert every bufferSize documents to mongo
-            if (mongoGameBuffer.size() % bufferSize == 0) {
+            if ((newGameCount + updatedGameCount) % bufferSize == 0) {
                 gameRepository.saveAll(mongoGameBuffer);
+                mongoGameBuffer.clear();
             }
 
             // Bulk insert every bufferSize documents to elastic
-            if (elasticGameBuffer.size() % bufferSize == 0) {
+            if ((newGameCount + updatedGameCount)  % bufferSize == 0) {
                 elasticRepository.saveAll(elasticGameBuffer);
+                elasticGameBuffer.clear();
             }
         }
 
@@ -114,7 +117,8 @@ public class IgdbReplicationService {
         elasticRepository.saveAll(elasticGameBuffer);
         elasticGameBuffer.clear();
 
-        String status = "Finished replication. " + "Added " + newGameCount + " new games and " + "updated " + updatedGameCount + ".";
+        String status = String.format("Finished replication. Added %1$s new games and updated %2$s existing games.",
+                                       newGameCount, updatedGameCount);
 
         logger.info(status);
 

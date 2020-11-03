@@ -1,27 +1,27 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models;
 
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.NotificationPreferences;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.NotificationSettings;
 import org.springframework.data.annotation.PersistenceConstructor;
 
 
 public class Settings {
-    private NotificationPreferences notificationPreferences;
+    private NotificationSettings notificationSettings;
 
     @PersistenceConstructor
-    public Settings(NotificationPreferences notificationPreferences) {
-        this.notificationPreferences = notificationPreferences;
+    public Settings(NotificationSettings notificationSettings) {
+        this.notificationSettings = notificationSettings;
     }
 
     public Settings() {
-        this.notificationPreferences = new NotificationPreferences();
+        this.notificationSettings = new NotificationSettings();
     }
 
-    public NotificationPreferences getNotifications() {
-        return this.notificationPreferences;
+    public NotificationSettings getNotifications() {
+        return this.notificationSettings;
     }
 
-    public void setNotifications(NotificationPreferences notificationPreferences) {
-        this.notificationPreferences = notificationPreferences;
+    public void setNotifications(NotificationSettings notificationSettings) {
+        this.notificationSettings = notificationSettings;
     }
 
 }

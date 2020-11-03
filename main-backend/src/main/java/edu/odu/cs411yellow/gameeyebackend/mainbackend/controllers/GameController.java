@@ -107,7 +107,7 @@ public class GameController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Game with specified id not found.");
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(gameService.getLogoUrl(request.id));
+        return ResponseEntity.ok(gameService.getLogoUrl(request.id));
     }
 
     public static class ArticlesRequest {
@@ -130,7 +130,7 @@ public class GameController {
             this.thumbnail = article.getThumbnail();
             this.snippet = article.getSnippet();
             this.publicationDate = article.getPublicationDate();
-            this.impactScore = article.getImportant();
+            this.impactScore = article.getIsImportant();
         }
     }
 
@@ -153,7 +153,7 @@ public class GameController {
             articles.add(articleResponse);
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(articles);
+        return ResponseEntity.ok(articles);
     }
 
     public static class TopGamesRequest {
@@ -186,7 +186,7 @@ public class GameController {
                 gameResponses.add(new TopGameResponse(game));
             }
 
-            return ResponseEntity.ok().body(gameResponses);
+            return ResponseEntity.ok(gameResponses);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Check request syntax or the games collection is empty.");

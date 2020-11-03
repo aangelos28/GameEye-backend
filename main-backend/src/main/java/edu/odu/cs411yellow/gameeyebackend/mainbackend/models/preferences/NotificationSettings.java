@@ -5,20 +5,20 @@ import org.springframework.data.annotation.PersistenceConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NotificationPreferences {
+public class NotificationSettings {
 
     private boolean showArticleResources;
     private boolean showImageResources;
     private boolean notifyOnlyIfImportant;
 
     @PersistenceConstructor
-    public NotificationPreferences(boolean showArticleResources, boolean showImageResources, boolean notifyOnlyIfImportant) {
+    public NotificationSettings(boolean showArticleResources, boolean showImageResources, boolean notifyOnlyIfImportant) {
         this.showArticleResources = showArticleResources;
         this.showImageResources = showImageResources;
         this.notifyOnlyIfImportant = notifyOnlyIfImportant;
     }
 
-    public NotificationPreferences() {
+    public NotificationSettings() {
         this.showArticleResources = true;
         this.showImageResources = true;
         this.notifyOnlyIfImportant = true;

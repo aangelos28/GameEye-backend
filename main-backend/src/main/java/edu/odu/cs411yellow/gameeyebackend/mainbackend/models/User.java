@@ -68,11 +68,11 @@ public class User {
         this.plan = plan;
     }
 
-    public Settings getPreferences() {
+    public Settings getSettings() {
         return this.settings;
     }
 
-    public void setPreferences(Settings settings) {
+    public void setSettings(Settings settings) {
         this.settings = settings;
     }
 

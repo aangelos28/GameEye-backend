@@ -55,11 +55,11 @@ public class Article {
     /**
      * Denotes whether or not an article is important, computed with machine learning.
      */
-    private boolean important;
+    private boolean isImportant;
 
     @PersistenceConstructor
     public Article(String id, String title, String url, NewsWebsite newsWebsite, Image thumbnail, String snippet,
-                   Date publicationDate, Date lastUpdated, boolean important) {
+                   Date publicationDate, Date lastUpdated, boolean isImportant) {
 
         this.id = id;
         this.title = title;
@@ -69,7 +69,7 @@ public class Article {
         this.snippet = snippet;
         this.publicationDate = publicationDate;
         this.lastUpdated = lastUpdated;
-        this.important = important;
+        this.isImportant = isImportant;
     }
 
     public Article() {
@@ -81,7 +81,7 @@ public class Article {
         this.snippet = "";
         this.publicationDate = new Date();
         this.lastUpdated = new Date();
-        this.important = false;
+        this.isImportant = false;
     }
 
     public String getId() {
@@ -144,12 +144,12 @@ public class Article {
         this.lastUpdated = lastUpdated;
     }
 
-    public boolean getImportant() {
-        return this.important;
+    public boolean getIsImportant() {
+        return this.isImportant;
     }
 
-    public void setImportant(boolean important) {
-        this.important = important;
+    public void setIsImportant(boolean isImportant) {
+        this.isImportant = isImportant;
     }
 
     @Override
@@ -165,11 +165,11 @@ public class Article {
                 && Objects.equals(snippet, that.snippet)
                 && Objects.equals(publicationDate, that.publicationDate)
                 && Objects.equals(lastUpdated, that.lastUpdated)
-                && Objects.equals(important, that.important);
+                && Objects.equals(isImportant, that.isImportant);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, url, newsWebsite, thumbnail, snippet, important);
+        return Objects.hash(id, url, newsWebsite, thumbnail, snippet, isImportant);
     }
 }

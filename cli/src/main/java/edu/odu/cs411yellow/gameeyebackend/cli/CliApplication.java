@@ -18,8 +18,8 @@ import java.nio.charset.StandardCharsets;
 /**
  * GameEye CLI Spring application class.
  */
-@SpringBootApplication()
-@ComponentScan(value = {"edu.odu.cs411yellow.gameeyebackend.cli", "edu.odu.cs411yellow.gameeyebackend.common"})
+@SpringBootApplication
+@ComponentScan({"edu.odu.cs411yellow.gameeyebackend.cli", "edu.odu.cs411yellow.gameeyebackend.common"})
 public class CliApplication {
     /**
      * CLI entry point.

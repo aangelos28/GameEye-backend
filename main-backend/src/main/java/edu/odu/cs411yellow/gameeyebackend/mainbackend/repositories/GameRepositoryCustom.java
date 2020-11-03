@@ -13,5 +13,4 @@ public interface GameRepositoryCustom {
     void incrementWatchers(String gameId);
     void decrementWatchers(String gameId);
     List<Game> findTopGames(int maxResults);
-
 }
