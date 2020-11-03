@@ -87,39 +87,6 @@ public class IgdbService {
         return gameResponses;
     }
 
-    public List<GameResponse> getGameResponsesWithMultipleRequests(int minId, int maxId, int limit) {
-        List<GameResponse> games = new ArrayList<>();
-        int remainder = maxId - minId + 1;
-        int currentMaxId = maxId;
-        int currentMinId = minId;
-
-        while (remainder > 0) {
-            List<GameResponse> gameResponses;
-
-            if (remainder > limit) {
-                currentMaxId = currentMinId + limit;
-                remainder -= limit;
-
-                gameResponses = getGameResponsesWithSingleRequest(currentMinId, currentMaxId, limit);
-
-                logger.info("Retrieved games in ID range " + currentMinId + "-" + currentMaxId + ".");
-
-                currentMinId = currentMaxId + 1;
-            } else {
-                currentMaxId = maxId;
-                gameResponses = getGameResponsesWithSingleRequest(currentMinId, currentMaxId, limit);
-
-                logger.info("Retrieved games in ID range " + currentMinId + "-" + currentMaxId + ".");
-
-                remainder = (remainder - currentMaxId - currentMinId + 1);
-            }
-
-            games.addAll(gameResponses);
-        }
-
-        return games;
-    }
-
     public List<CoverResponse> getCoverResponsesWithSingleRequest(int minId, int maxId, int limit) {
         int inclusiveMinId = minId - 1;
         int inclusiveMaxId = maxId + 1;
@@ -138,39 +105,6 @@ public class IgdbService {
                 .block();
 
         return coverResponses;
-    }
-
-    public List<CoverResponse> getCoverResponsesWithMultipleRequests(int minId, int maxId, int limit) {
-        List<CoverResponse> covers = new ArrayList<>();
-        int remainder = maxId - minId + 1;
-        int currentMaxId = maxId;
-        int currentMinId = minId;
-
-        while (remainder > 0) {
-            List<CoverResponse> coverResponses;
-
-            if (remainder > limit) {
-                currentMaxId = currentMinId + limit;
-                remainder -= limit;
-
-                coverResponses = getCoverResponsesWithSingleRequest(currentMinId, currentMaxId, limit);
-
-                logger.info("Retrieved covers for games in ID range " + currentMinId + "-" + currentMaxId + ".");
-
-                currentMinId = currentMaxId + 1;
-            } else {
-                currentMaxId = maxId;
-                coverResponses = getCoverResponsesWithSingleRequest(currentMinId, currentMaxId, limit);
-
-                logger.info("Retrieved covers for games in ID range " + currentMinId + "-" + currentMaxId + ".");
-
-                remainder = (remainder - currentMaxId - currentMinId + 1);
-            }
-
-            covers.addAll(coverResponses);
-        }
-
-        return covers;
     }
 
     public List<Game> convertGameResponsesToGames(List<GameResponse> gameResponses) {
@@ -195,11 +129,12 @@ public class IgdbService {
     }
 
     public List<Game> retrieveGamesByRangeWithLimit(int minId, int maxId, int limit) {
-        List<GameResponse> gameResponses = getGameResponsesWithMultipleRequests(minId, maxId, limit);
-        List<CoverResponse> coverResponses = getCoverResponsesWithMultipleRequests(minId, maxId, limit);
+        List<GameResponse> gameResponses = getGameResponsesWithSingleRequest(minId, maxId, limit);
+        List<CoverResponse> coverResponses = getCoverResponsesWithSingleRequest(minId, maxId, limit);
 
         List<Game> games = convertGameResponsesToGames(gameResponses);
 
+        // Add logos to games
         for (Game game: games) {
             for (CoverResponse cover: coverResponses) {
                 if (game.getIgdbId().equals(cover.gameId)) {

@@ -3,9 +3,11 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.services;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -38,6 +40,12 @@ public class GameService {
     }
 
     public void save(Game game) {
+        game.setLastUpdated(new Date());
+
+        if (game.getId().equals("")) {
+            game.setId(ObjectId.get().toString());
+        }
+
         games.save(game);
     }
 
