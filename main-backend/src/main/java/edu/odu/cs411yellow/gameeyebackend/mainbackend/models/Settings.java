@@ -1,6 +1,6 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models;
 
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.NotificationSettings;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.settings.NotificationSettings;
 import org.springframework.data.annotation.PersistenceConstructor;
 
 
