@@ -215,11 +215,12 @@ public class WebScraperOrchestratorTest {
 
         orchestratorMock.forceScrape(mock);
         List<Article> articles = orchestratorMock.getArticleCollection();
-        List<String> gameIDs = orchestratorMock.performArticleGameReferenceSearch(articles.get(1));
+        List<String> gameIDs = orchestratorMock.performArticleGameReferenceSearch(articles.get(0));
        //String game = gameIDs.get(0);
-        System.out.println(articles.get(1).getTitle());
+        System.out.println(articles.get(0).getTitle());
         for(String id:gameIDs){
             System.out.println("Game ID(s): "+id);
+            System.out.println("Game: "+games.findGameByTitle(id));
         }
 
 

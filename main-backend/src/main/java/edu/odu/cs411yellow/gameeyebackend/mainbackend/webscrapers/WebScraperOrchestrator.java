@@ -1,6 +1,7 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.webscrapers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.NewsWebsiteRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ElasticGameRepository;
@@ -124,7 +125,7 @@ public class WebScraperOrchestrator{
         }
 
 
-        insertDataIntoDatabase();
+        //insertDataIntoDatabase();
     }
 
     public void forceScrape(WebScraper target){
@@ -137,7 +138,7 @@ public class WebScraperOrchestrator{
             }
 
 
-        insertDataIntoDatabase();
+        //insertDataIntoDatabase();
     }
 
     /**
@@ -173,7 +174,14 @@ public class WebScraperOrchestrator{
      * Inserts collected, clean articles into the database
      */
     public void insertDataIntoDatabase(){
-        //TODO
+        for(Article a:scrapedArticles){
+           List<String> ids = performArticleGameReferenceSearch(a);
+           for(String title: ids){
+               Game gameToInsertInto = games.findGameById(title);
+               gameToInsertInto.addArticleResources(a);
+           }
+
+        }
     }
 
     /**
