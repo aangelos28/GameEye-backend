@@ -33,7 +33,7 @@ public class ReferenceGameService {
         int articleTitleLength = articleTitle.length();
         int longestMatchSize = 0;
         List <String> matchingIDs = new ArrayList<>();
-        String exactMatch;
+        String exactMatch = "";
 
         for (var game: referencedGames) {
 
@@ -45,7 +45,7 @@ public class ReferenceGameService {
                     articleTitleLength,gameTitleLength);
 
             //Case exact match is found
-            if(articleTitle.indexOf(gameTitle) > -1){
+            if(articleTitle.contains(gameTitle)){
                 exactMatch = game.getContent().getGameId();
             }
 
@@ -62,7 +62,9 @@ public class ReferenceGameService {
             }
         }
 
-        matchingIDs.add(exactMatch);
+        if(!exactMatch.contentEquals("")){
+            matchingIDs.add(exactMatch);
+        }
 
         return matchingIDs;
     }
