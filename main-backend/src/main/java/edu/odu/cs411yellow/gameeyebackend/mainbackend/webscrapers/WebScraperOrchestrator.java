@@ -156,8 +156,18 @@ public class WebScraperOrchestrator{
      * @return Boolean
      */
     public Boolean checkArticleDuplicates(Article a){
-        //TODO
-        return false;
+        Boolean dupe = false;
+        List<String> possibleGameIDS = performArticleGameReferenceSearch(a);
+        for(String title: possibleGameIDS){
+            Game gameToCheck = games.findGameById(title);
+            List<Article> storedGameArticles = gameToCheck.findArticles(possibleGameIDS);
+            for(Article storedArticle:storedGameArticles){
+                if(a.equals(storedArticle)){
+                    dupe=true;
+                }
+            }
+        }
+        return dupe;
     }
 
     /**
@@ -166,8 +176,13 @@ public class WebScraperOrchestrator{
      * @return Boolean
      */
     public Boolean checkIrrelevantArticles(Article a){
-        //TODO
-        return false;
+        List<String> possibleGameIDS = performArticleGameReferenceSearch(a);
+        if(possibleGameIDS.size()>0)
+        {
+            return false;
+        }
+
+        return true;
     }
 
     /**
