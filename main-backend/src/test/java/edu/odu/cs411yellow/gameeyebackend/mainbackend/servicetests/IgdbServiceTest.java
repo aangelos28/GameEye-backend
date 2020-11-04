@@ -1,7 +1,5 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.servicetests;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import static edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel.GameResponse;
 import static edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel.CompanyResponse;
 import static org.hamcrest.MatcherAssert.assertThat;

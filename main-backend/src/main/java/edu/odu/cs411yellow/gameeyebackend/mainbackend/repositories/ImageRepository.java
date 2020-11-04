@@ -6,10 +6,12 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ImageRepository extends MongoRepository<Image, String> {
+    @Override
     boolean existsById(String id);
 
     Image findImageById(String id);
 
+    @Override
     void deleteById(String id);
 
 }
