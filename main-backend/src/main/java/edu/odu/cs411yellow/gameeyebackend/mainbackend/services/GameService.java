@@ -16,27 +16,27 @@ import java.util.List;
 @Service
 public class GameService {
 
-    GameRepository games;
+    private GameRepository gameRepository;
 
     @Autowired
-    GameService(GameRepository games) {
-        this.games = games;
+    GameService(GameRepository gameRepository) {
+        this.gameRepository = gameRepository;
     }
 
     public String getLogoUrl(String gameId) {
-        return games.findGameById(gameId).getLogoUrl();
+        return gameRepository.findGameById(gameId).getLogoUrl();
     }
 
     public List<Article> getArticles(String gameId) {
-        return games.findGameById(gameId).getResources().getArticles();
+        return gameRepository.findGameById(gameId).getResources().getArticles();
     }
 
     public List<Game> getTopGames(int maxResults) {
-        return games.findTopGames(maxResults) ;
+        return gameRepository.findTopGames(maxResults) ;
     }
 
     public boolean existsById(String id) {
-        return games.existsById(id);
+        return gameRepository.existsById(id);
     }
 
     public void save(Game game) {
@@ -46,10 +46,26 @@ public class GameService {
             game.setId(ObjectId.get().toString());
         }
 
-        games.save(game);
+        gameRepository.save(game);
+    }
+
+    public void saveAll(List<Game> games) {
+        for (Game game: games) {
+            game.setLastUpdated(new Date());
+        }
+
+        gameRepository.saveAll(games);
     }
 
     public Game findByTitle(String title) {
-        return games.findByTitle(title);
+        return gameRepository.findByTitle(title);
+    }
+
+    public boolean existsByIgdbId(String igdbId) {
+        return gameRepository.existsByIgdbId(igdbId);
+    }
+
+    public Game findByIgdbId(String igdbId) {
+        return gameRepository.findByIgdbId(igdbId);
     }
 }

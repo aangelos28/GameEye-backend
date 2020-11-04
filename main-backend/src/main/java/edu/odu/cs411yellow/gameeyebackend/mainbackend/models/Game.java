@@ -1,16 +1,13 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.ImageResource;
+import static edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel.GameResponse;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Class representing a document in the "Games" database collection.
@@ -68,6 +65,22 @@ public class Game {
         this.sourceUrls = new SourceUrls();
         this.resources = new Resources();
         this.watchers = 0;
+    }
+
+    public Game(GameResponse game) {
+        this.id = "";
+        this.igdbId = game.igdbId;
+        this.title = game.title;
+        this.platforms = game.getPlatforms();
+        this.status = game.getStatus();
+        String logoUrl = "";
+
+        // Convert UNIX epoch timestamp from IGDB to year, month, day format
+        this.lastUpdated = new Date((long)game.lastUpdatedInSeconds * 1000);
+        this.genres = game.getGenres();
+        this.sourceUrls = game.getSourceUrls();
+        this.resources = new Resources();
+        int watchers = 0;
     }
 
     public String getId() {
