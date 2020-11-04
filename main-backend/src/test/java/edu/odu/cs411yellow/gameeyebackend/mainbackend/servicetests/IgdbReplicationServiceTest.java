@@ -24,7 +24,7 @@ import java.util.List;
 @TestPropertySource(locations="classpath:application-test.properties")
 public class IgdbReplicationServiceTest {
     @Autowired
-    IgdbReplicationService igdbReplicator;
+    IgdbReplicationService igdbReplicationService;
 
     @Autowired
     IgdbService igdbService;
@@ -43,8 +43,7 @@ public class IgdbReplicationServiceTest {
         List<Game> preReplicationTestDbGames = new ArrayList<>();
 
         // Replicate new games to db.
-        String result = igdbReplicator.replicateGamesByRange(minId, maxId, limit);
-        System.out.println(result);
+        String result = igdbReplicationService.replicateGamesByRange(minId, maxId, limit);
 
         // Find new games from db.
         for (int igdbId = minId; igdbId < maxId-minId+2; igdbId++) {
@@ -91,7 +90,7 @@ public class IgdbReplicationServiceTest {
         List<Game> preReplicationTestDbGames = new ArrayList<>();
 
         // Replicate new games to db.
-        String status = igdbReplicator.replicateGamesByRange(minId, maxId, limit);
+        String status = igdbReplicationService.replicateGamesByRange(minId, maxId, limit);
 
         // Find new games from db.
         for (int igdbId = minId; igdbId < maxId-minId+2; igdbId++) {
@@ -100,7 +99,7 @@ public class IgdbReplicationServiceTest {
 
         // Test for updating existing games. Ensure only required fields are overwritten.
         List<Game> postReplicationTestDbGames = new ArrayList<>();
-        igdbReplicator.replicateGamesByRange(minId, maxId, limit);
+        igdbReplicationService.replicateGamesByRange(minId, maxId, limit);
 
         // Find updated games in db.
         for (int igdbId = minId; igdbId < maxId-minId+2; igdbId++) {

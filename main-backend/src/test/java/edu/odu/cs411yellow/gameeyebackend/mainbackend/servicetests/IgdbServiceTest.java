@@ -5,6 +5,8 @@ import static edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel.Co
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.SourceUrls;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
@@ -73,7 +75,7 @@ public class IgdbServiceTest {
         int maxId = 100;
         int limit = 100;
 
-        List<GameResponse> responses = igdbService.getGameResponsesWithMultipleRequests(minId, maxId, limit);
+        List<GameResponse> responses = igdbService.getGameResponsesWithSingleRequest(minId, maxId, limit);
         List<Game> games = igdbService.convertGameResponsesToGames(responses);
 
         for (int gameIndex = 0; gameIndex < games.size(); gameIndex++) {
@@ -117,5 +119,19 @@ public class IgdbServiceTest {
             SourceUrls gameUrls = games.get(gameIndex).getSourceUrls();
             assert(responseUrls.equals(gameUrls));
         }
+    }
+
+    @Test
+    public void testFindMaxId() throws InterruptedException, JsonProcessingException {
+        int requestLimitPerSecond = 4;
+        int nullResponseThreshold = 20;
+        int numDaysToBacktrack = 1;
+        int maxId = igdbService.findMaxGameId(requestLimitPerSecond, nullResponseThreshold, numDaysToBacktrack);
+
+        Game maxIdGame = new Game(igdbService.getGameResponseById(maxId));
+        assertThat(maxIdGame.getIgdbId(), is(not("")));
+
+        ObjectMapper mapper = new ObjectMapper();
+        System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(maxIdGame));
     }
 }
