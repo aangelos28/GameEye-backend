@@ -185,4 +185,5 @@ public class ElasticGameRepositoryTest {
         games.deleteByTitle(game2Title);
         games.deleteByTitle(game3Title);
     }
+
 }
