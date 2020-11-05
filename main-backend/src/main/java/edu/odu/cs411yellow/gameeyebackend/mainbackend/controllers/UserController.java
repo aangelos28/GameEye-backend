@@ -1,6 +1,7 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.controllers;
 
 import com.google.firebase.auth.FirebaseToken;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.GameService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,19 +14,23 @@ import org.springframework.security.core.Authentication;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+
 /**
  * REST API for interacting with user profiles.
  */
 @RestController
 public class UserController {
-
     private final UserService userService;
+
+    private final GameService gameService;
 
     Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, GameService gameService) {
         this.userService = userService;
+        this.gameService = gameService;
     }
 
     /**
@@ -127,5 +132,37 @@ public class UserController {
         logger.info(String.format("ADMIN: Deleted user profile with firebase id %s", userId));
 
         return ResponseEntity.ok("User profile deleted.");
+    }
+
+    public static class ArticleNotificationsRequest {
+        public String gameId;
+        public List<String> articleIds;
+
+        public ArticleNotificationsRequest(String gameId, List<String> articleIds) {
+            this.gameId = gameId;
+            this.articleIds = articleIds;
+        }
+    }
+
+    /**
+     * Removes articles for a watched game from a user's notifications.
+     */
+    @PutMapping(path = "/private/user/notifications/articles/remove/")
+    public ResponseEntity<?> removeUserArticleNotifications(@RequestBody ArticleNotificationsRequest request) {
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final FirebaseToken fbToken = (FirebaseToken) auth.getPrincipal();
+        final String userId = fbToken.getUid();
+
+        if (!userService.checkUserExists(userId)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        if (!gameService.existsById(request.gameId)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        userService.removeUserArticleNotifications(userId, request.gameId, request.articleIds);
+
+        return ResponseEntity.ok("Article notifications removed.");
     }
 }

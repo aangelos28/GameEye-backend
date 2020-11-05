@@ -32,7 +32,6 @@ import static edu.odu.cs411yellow.gameeyebackend.mainbackend.controllers.GameCon
 import static edu.odu.cs411yellow.gameeyebackend.mainbackend.controllers.GameController.ArticlesRequest;
 import static edu.odu.cs411yellow.gameeyebackend.mainbackend.controllers.GameController.GameTitleAutocompletionRequest;
 import static edu.odu.cs411yellow.gameeyebackend.mainbackend.controllers.GameController.TopGamesRequest;
-import static org.hamcrest.CoreMatchers.is;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

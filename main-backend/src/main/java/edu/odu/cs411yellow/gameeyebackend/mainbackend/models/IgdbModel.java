@@ -3,8 +3,6 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.models;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 public class IgdbModel {
