@@ -1,10 +1,9 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.servicetests;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.SourceUrls;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.IgdbReplicatorService;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.IgdbReplicationService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.IgdbService;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -23,9 +22,9 @@ import java.util.List;
 @SpringBootTest
 @ActiveProfiles("test")
 @TestPropertySource(locations="classpath:application-test.properties")
-public class IgdbReplicatorServiceTest {
+public class IgdbReplicationServiceTest {
     @Autowired
-    IgdbReplicatorService igdbReplicator;
+    IgdbReplicationService igdbReplicator;
 
     @Autowired
     IgdbService igdbService;
@@ -34,7 +33,7 @@ public class IgdbReplicatorServiceTest {
     GameRepository gameRepository;
 
     @Test
-    public void testReplicateIgdbByRangeForNewGames() throws JsonProcessingException {
+    public void testReplicateIgdbByRangeForNewGames() {
         // Test for adding new games
         int minId = 1;
         int maxId = 10;
@@ -44,7 +43,8 @@ public class IgdbReplicatorServiceTest {
         List<Game> preReplicationTestDbGames = new ArrayList<>();
 
         // Replicate new games to db.
-        igdbReplicator.replicateIgdbByRange(minId, maxId, limit);
+        String result = igdbReplicator.replicateIgdbByRange(minId, maxId, limit);
+        System.out.println(result);
 
         // Find new games from db.
         for (int igdbId = minId; igdbId < maxId-minId+2; igdbId++) {
@@ -81,7 +81,7 @@ public class IgdbReplicatorServiceTest {
     }
 
     @Test
-    public void testReplicateIgdbByRangeForUpdatingExistingGames() throws JsonProcessingException {
+    public void testReplicateIgdbByRangeForUpdatingExistingGames() {
         // Test for adding new games
         int minId = 1;
         int maxId = 10;
@@ -91,7 +91,7 @@ public class IgdbReplicatorServiceTest {
         List<Game> preReplicationTestDbGames = new ArrayList<>();
 
         // Replicate new games to db.
-        igdbReplicator.replicateIgdbByRange(minId, maxId, limit);
+        String status = igdbReplicator.replicateIgdbByRange(minId, maxId, limit);
 
         // Find new games from db.
         for (int igdbId = minId; igdbId < maxId-minId+2; igdbId++) {

@@ -30,40 +30,36 @@ public class UserRepositoryTest {
     User testUser;
 
     @BeforeEach
-    public void insertTestUserIntoGameEyeTest() {
+    public void insertTestUserIntoGameEyeTest() throws Exception {
 
         String userId = "5e98dc5da3464d35b824d052";
-        String firebaseId = "123456789";
         UserStatus status = UserStatus.inactive;
         UserPlan plan = UserPlan.free;
 
-        // Declare preferences
-        boolean showArchivedResources = false;
-        boolean showImpactScores = false;
-        List<Boolean> impactScores = new ArrayList<>(Arrays.asList(true, true, true));
-
-
-        ContentPreferences contentPreferences = new ContentPreferences(showArchivedResources,
-                                                                       showImpactScores,
-                                                                       impactScores);
-
         boolean showArticleResources = true;
         boolean showImageResources = true;
-        NotificationPreferences notificationPreferences = new NotificationPreferences(showArticleResources,
-                                                                                      showImageResources);
+        boolean notifyOnlyIfImportant = true;
 
-        Preferences preferences = new Preferences(contentPreferences, notificationPreferences);
+        NotificationSettings notificationSettings = new NotificationSettings(showArticleResources,
+                                                                                      showImageResources,
+                                                                                      notifyOnlyIfImportant);
+
+        Settings settings = new Settings(notificationSettings);
 
         // Declare articles
         int articleCount = 1;
         String articleId = "5ea1c2e777dabd049ce92788";
-        List<String> articleIds = new ArrayList<>(Arrays.asList(articleId));
+        List<String> articleIds = new ArrayList<>();
+        articleIds.add(articleId);
+
         ArticleNotifications articleNotifications = new ArticleNotifications(articleCount, articleIds);
 
         // Declare images
         int imageCount = 1;
         String imageId = "5ea108ea34019c1d1c818c02";
-        List<String> imageIds = new ArrayList<>(Arrays.asList(imageId));
+        List<String> imageIds = new ArrayList<>();
+        imageIds.add(imageId);
+
         ImageNotifications imageNotifications = new ImageNotifications(imageCount, imageIds);
 
         // Declare notificationCategories
@@ -75,10 +71,11 @@ public class UserRepositoryTest {
         WatchedGame watchedGame = new WatchedGame(watchedGameId, notificationCount, resourceNotifications);
 
         // Declare watchList
-        List<WatchedGame> watchList = new ArrayList<>(Arrays.asList(watchedGame));
+        List<WatchedGame> watchList = new ArrayList<>();
+        watchList.add(watchedGame);
 
         // Set testUser
-        testUser = new User(userId, firebaseId, status, plan, preferences, watchList);
+        testUser = new User(userId, status, plan, settings, watchList);
 
         // Write testUser to GameEyeTest
         users.insert(testUser);
@@ -100,11 +97,11 @@ public class UserRepositoryTest {
     }
 
     @Test
-    public void findUserByFirebaseId() {
-        String foundUserFirebaseId = testUser.getFirebaseId();
-        User foundUser = users.findUserByFirebaseId(foundUserFirebaseId);
+    public void testFindUserById() {
+        String id = testUser.getId();
+        User foundUser = users.findUserById(id);
 
-        assert(foundUser.getFirebaseId().equals(testUser.getFirebaseId()));
+        assert(foundUser.getId().equals(testUser.getId()));
     }
 
     @Test

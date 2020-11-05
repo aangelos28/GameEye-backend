@@ -84,7 +84,7 @@ public class MockNewsScraper implements WebScraper{
         Image image = new Image(null, ".jpg",null);
 
         return new Article(null , title, url, site, image,
-                snippet, date, date, 0);
+                snippet, date, date, false);
 
     }
 
@@ -133,7 +133,7 @@ public class MockNewsScraper implements WebScraper{
             try {
                 String temp;
                 temp = obj.writerWithDefaultPrettyPrinter().writeValueAsString(a);
-                articlesStr = articlesStr + "\n" + temp;
+                articlesStr = String.format("%1$s\n%2$s", articlesStr, temp);
 
             } catch (IOException e) {
                 e.printStackTrace();

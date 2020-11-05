@@ -36,11 +36,11 @@ public class WatchlistService {
     /**
      * Get the watchlist of a user.
      *
-     * @param firebaseId The firebase id of the user.
+     * @param id The firebase id of the user.
      * @return List of watched games.
      */
-    public List<WatchedGameResponse> getWatchlistGames(final String firebaseId) {
-        final User user = users.findUserByFirebaseId(firebaseId);
+    public List<WatchedGameResponse> getWatchlistGames(final String id) {
+        final User user = users.findUserById(id);
 
         List<WatchedGame> watchedGames = user.getWatchList();
         List<WatchedGameResponse> watchedGameResponses = new ArrayList<>(watchedGames.size());
@@ -61,11 +61,11 @@ public class WatchlistService {
     /**
      * Get the watchlist of a user. Returns a short result.
      *
-     * @param firebaseId The firebase id of the user.
+     * @param id The firebase id of the user.
      * @return List of watched games.
      */
-    public List<WatchedGameShortResponse> getWatchlistGamesShort(final String firebaseId) {
-        final User user = users.findUserByFirebaseId(firebaseId);
+    public List<WatchedGameShortResponse> getWatchlistGamesShort(final String id) {
+        final User user = users.findUserById(id);
 
         List<WatchedGame> watchedGames = user.getWatchList();
         List<WatchedGameShortResponse> watchedGameResponses = new ArrayList<>(watchedGames.size());
@@ -86,12 +86,12 @@ public class WatchlistService {
     /**
      * Gets the watchlist entry with index i.
      *
-     * @param firebaseId The firebase id of the user.
+     * @param id The firebase id of the user.
      * @param index      Watchlist entry index
      * @return Watched game undex index i
      */
-    public WatchedGameResponse getWatchlistGame(final String firebaseId, final int index) {
-        final User user = users.findUserByFirebaseId(firebaseId);
+    public WatchedGameResponse getWatchlistGame(final String id, final int index) {
+        final User user = users.findUserById(id);
 
         final WatchedGame watchedGame = user.getWatchList().get(index);
         final Game game = games.findGameById(watchedGame.getGameId());
@@ -106,12 +106,12 @@ public class WatchlistService {
     /**
      * Gets the watchlist entry with index i.
      *
-     * @param firebaseId The firebase id of the user.
+     * @param id The firebase id of the user.
      * @param index      Watchlist entry index
      * @return Watched game undex index i
      */
-    public WatchedGameShortResponse getWatchlistGameShort(final String firebaseId, final int index) {
-        final User user = users.findUserByFirebaseId(firebaseId);
+    public WatchedGameShortResponse getWatchlistGameShort(final String id, final int index) {
+        final User user = users.findUserById(id);
 
         final WatchedGame watchedGame = user.getWatchList().get(index);
         final String gameId = watchedGame.getGameId();
@@ -127,11 +127,11 @@ public class WatchlistService {
     /**
      * Add a game to a user's watchlist.
      *
-     * @param firebaseId The firebase id of the user.
+     * @param id The firebase id of the user.
      * @param gameId     Id of the game to add.
      */
-    public void addWatchlistGame(final String firebaseId, final String gameId) throws Exception {
-        final User user = this.users.findUserByFirebaseId(firebaseId);
+    public void addWatchlistGame(final String id, final String gameId) throws Exception {
+        final User user = this.users.findUserById(id);
         final Game game = this.games.findGameById(gameId);
 
         if (game == null) {
@@ -155,11 +155,11 @@ public class WatchlistService {
     /**
      * Delete a game from a user's watchlist.
      *
-     * @param firebaseUserId The firebase id of the user.
+     * @param id The firebase id of the user.
      * @param gameIndex      Index of the game in the watchlist to delete.
      */
-    public void deleteWatchlistGameByIndex(final String firebaseUserId, final int gameIndex) throws Exception {
-        final User user = this.users.findUserByFirebaseId(firebaseUserId);
+    public void deleteWatchlistGameByIndex(final String id, final int gameIndex) throws Exception {
+        final User user = this.users.findUserById(id);
 
         // Disallow negative game indices
         if (gameIndex < 0) {
@@ -185,11 +185,11 @@ public class WatchlistService {
     /**
      * Delete a game from a user's watchlist.
      *
-     * @param firebaseUserId The firebase id of the user.
+     * @param id The firebase id of the user.
      * @param gameId         Id of the game to remove.
      */
-    public void deleteWatchlistGameById(final String firebaseUserId, final String gameId) throws Exception {
-        final User user = this.users.findUserByFirebaseId(firebaseUserId);
+    public void deleteWatchlistGameById(final String id, final String gameId) throws Exception {
+        final User user = this.users.findUserById(id);
 
         final List<WatchedGame> watchlist = user.getWatchList();
         boolean removed = watchlist.removeIf(watchedGame -> watchedGame.getGameId().equals(gameId));
