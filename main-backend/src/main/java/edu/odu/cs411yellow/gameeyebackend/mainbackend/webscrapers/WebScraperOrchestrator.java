@@ -2,6 +2,7 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.webscrapers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Resources;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.NewsWebsiteRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ElasticGameRepository;
@@ -55,7 +56,7 @@ public class WebScraperOrchestrator{
 
 
     @Qualifier("elasticsearchOperations")
-    private ElasticGameRepositoryCustomImpl elastic;
+    private ElasticGameRepository elastic;
 
     private ReferenceGameService rgs;
     private GameRepository games;
@@ -63,19 +64,21 @@ public class WebScraperOrchestrator{
 
 
     @Autowired
-    public WebScraperOrchestrator (UniversalScraper scraper, MockNewsScraper mockNewsScraper,
-                                   ReferenceGameService rgs, NewsWebsiteRepository newsWebsiteRepository){
+    public WebScraperOrchestrator (UniversalScraper scraper, MockNewsScraper mockNewsScraper, ElasticGameRepository elastic,
+                                   ReferenceGameService rgs, NewsWebsiteRepository newsWebsiteRepository, GameRepository games){
         //this.scrapers = new ArrayList<WebScraper>();
         this.scrapedArticles = new ArrayList<Article>();
         this.mockNewsScraper = mockNewsScraper;
 
-        //this.elastic = elastic;
+        this.elastic = elastic;
         this.rgs = rgs;
         //this.machine = machine;
 
         this.newsWebsiteRepository = newsWebsiteRepository;
 
         this.scraper = scraper;
+
+        this.games=games;
 
     }
 
@@ -88,7 +91,7 @@ public class WebScraperOrchestrator{
         for(String s:scraperNames){
             List<Article> articleList = scraper.scrape(s);
             for (Article art:articleList) {
-                if(!checkArticleDuplicates(art) && !checkIrrelevantArticles(art))
+                if(!checkIrrelevantArticles(art) && !checkArticleDuplicates(art))
                 {
                     scrapedArticles.add(art);
                     articleTitles.add(art.getTitle());
@@ -96,8 +99,9 @@ public class WebScraperOrchestrator{
             }
         }
         List<Article> mockNewsArticles = mockNewsScraper.scrape(mockNewsScraper.getScrapperName());
+
         for (Article art:mockNewsArticles) {
-            if(!checkArticleDuplicates(art) && !checkIrrelevantArticles(art))
+            if(!checkIrrelevantArticles(art) && !checkArticleDuplicates(art))
             {
                 scrapedArticles.add(art);
                 articleTitles.add(art.getTitle());
@@ -117,7 +121,7 @@ public class WebScraperOrchestrator{
         try{
             List<Article> articleList = scraper.scrape(target);
             for (Article art:articleList) {
-                if(!checkArticleDuplicates(art) && !checkIrrelevantArticles(art))
+                if(!checkIrrelevantArticles(art) && !checkArticleDuplicates(art))
                     scrapedArticles.add(art);
             }
         }catch (NullPointerException e){
@@ -133,7 +137,7 @@ public class WebScraperOrchestrator{
 
             List<Article> articleList = mockNewsScraper.scrape("GameEye Mock News");
             for (Article art:articleList) {
-                if(!checkArticleDuplicates(art) && !checkIrrelevantArticles(art))
+                if(!checkIrrelevantArticles(art) && !checkArticleDuplicates(art))
                     scrapedArticles.add(art);
             }
 
@@ -158,15 +162,22 @@ public class WebScraperOrchestrator{
     public Boolean checkArticleDuplicates(Article a){
         Boolean dupe = false;
         List<String> possibleGameIDS = performArticleGameReferenceSearch(a);
-        for(String title: possibleGameIDS){
-            Game gameToCheck = games.findGameById(title);
-            List<Article> storedGameArticles = gameToCheck.findArticles(possibleGameIDS);
+        for(String id: possibleGameIDS){
+            //Game gameToCheck = games.findGameById(id);
+            ElasticGame gameToCheck = elastic.findByGameId(id);
+            String title = gameToCheck.getTitle();
+            Game gameInDB = games.findByTitle(title);
+
+            Resources gameResources = gameInDB.getResources();
+            List<Article> storedGameArticles = gameResources.getArticles();
+
             for(Article storedArticle:storedGameArticles){
                 if(a.equals(storedArticle)){
                     dupe=true;
                 }
             }
         }
+
         return dupe;
     }
 
@@ -190,10 +201,14 @@ public class WebScraperOrchestrator{
      */
     public void insertDataIntoDatabase(){
         for(Article a:scrapedArticles){
-           List<String> ids = performArticleGameReferenceSearch(a);
-           for(String title: ids){
-               Game gameToInsertInto = games.findGameById(title);
-               gameToInsertInto.addArticleResources(a);
+           List<String> gameIds = performArticleGameReferenceSearch(a);
+
+           for(String id: gameIds){
+               ElasticGame gameInElasticRepo = elastic.findByGameId(id);
+               String title = gameInElasticRepo.getTitle();
+               Game gameInDB = games.findByTitle(title);
+
+               gameInDB.addArticleResources(a);
            }
 
         }

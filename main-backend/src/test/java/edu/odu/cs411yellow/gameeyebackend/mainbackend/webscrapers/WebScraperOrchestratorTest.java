@@ -83,7 +83,7 @@ public class WebScraperOrchestratorTest {
     @BeforeEach
     public void init(){
         //scrappyMock = new WebScraperOrchestrator(scrap, mock, rgs, newsWebsiteRepository);
-        orchestratorMock = new WebScraperOrchestrator(scraper, mock, rgs, newsWebsiteRepository);
+        orchestratorMock = new WebScraperOrchestrator(scraper, mock, elasticGames, rgs, newsWebsiteRepository,games);
         //scrappyMock = new WebScraperOrchestrator(scrap, mock, elastic, rgs, newsWebsiteRepository);
         //scrappyMock = new WebScraperOrchestrator(scrap, mock, machine, rgs, newsWebsiteRepository);
     }
