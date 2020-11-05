@@ -24,4 +24,8 @@ public class ElasticGameService {
         return elasticGames.existsByTitle(title);
     }
 
+    public void updateTitle(ElasticGame game) {
+        elasticGames.deleteById(game.getGameId());
+        elasticGames.save(game);
+    }
 }
