@@ -36,7 +36,7 @@ import java.util.List;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles("test")
-@TestPropertySource(locations = "classpath:application-test.properties")
+//@TestPropertySource(locations = "classpath:application-test.properties")
 public class WebScraperOrchestratorTest {
 
     private String[] scraperNames={"GameSpot","Eurogamer","PC Gamer", "IGN","GameEye Mock News"};
@@ -148,7 +148,7 @@ public class WebScraperOrchestratorTest {
         Article dupe = new Article(scrapedArticles.get(1)); //"Cyberpunk 2077 delayed to 12/10/2077"
 
         orchestratorMock.forceScrape(mock);
-        orchestratorMock.insertDataIntoDatabase();
+        orchestratorMock.insertArticlesIntoDatabase();
 
         Boolean duped = orchestratorMock.checkArticleDuplicates(dupe);
 
@@ -184,7 +184,7 @@ public class WebScraperOrchestratorTest {
         orchestratorMock.forceScrape(mock);
         System.out.println(orchestratorMock.toString());
         //List<Article> testArts = scrappyMock.getArticleCollection();
-        orchestratorMock.insertDataIntoDatabase();
+        orchestratorMock.insertArticlesIntoDatabase();
 
         Resources postResources = testGame.getResources();
         List<Article> postArticles = initResources.getArticles();

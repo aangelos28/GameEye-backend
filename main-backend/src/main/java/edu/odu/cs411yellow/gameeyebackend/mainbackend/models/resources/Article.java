@@ -93,7 +93,7 @@ public class Article {
         this.snippet = a.getSnippet();
         this.publicationDate = a.getPublicationDate();
         this.lastUpdated = a.getLastUpdated();
-        this.impactScore = a.getImpactScore();
+        this.isImportant = a.getIsImportant();
     }
 
     public String getId() {

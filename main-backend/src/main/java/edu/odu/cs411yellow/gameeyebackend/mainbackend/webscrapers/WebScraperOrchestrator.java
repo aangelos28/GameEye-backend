@@ -163,13 +163,28 @@ public class WebScraperOrchestrator{
         Boolean dupe = false;
         List<String> possibleGameIDS = performArticleGameReferenceSearch(a);
         for(String id: possibleGameIDS){
+
             //Game gameToCheck = games.findGameById(id);
             ElasticGame gameToCheck = elastic.findByGameId(id);
             String title = gameToCheck.getTitle();
-            Game gameInDB = games.findByTitle(title);
+            Game gameInDB;
 
-            Resources gameResources = gameInDB.getResources();
-            List<Article> storedGameArticles = gameResources.getArticles();
+            if (!games.existsByTitle(title)) {
+                addGameToDB(gameToCheck);
+            }
+
+            gameInDB = games.findByTitle(title);
+
+            Resources gameResources;
+            List<Article> storedGameArticles = new ArrayList<>();
+
+            try{
+                gameResources = gameInDB.getResources();
+                storedGameArticles = gameResources.getArticles();
+            }catch (NullPointerException e){
+                e.printStackTrace();
+            }
+
 
             for(Article storedArticle:storedGameArticles){
                 if(a.equals(storedArticle)){
@@ -199,7 +214,7 @@ public class WebScraperOrchestrator{
     /**
      * Inserts collected, clean articles into the database
      */
-    public void insertDataIntoDatabase(){
+    public void insertArticlesIntoDatabase(){
         for(Article a:scrapedArticles){
            List<String> gameIds = performArticleGameReferenceSearch(a);
 
@@ -233,14 +248,23 @@ public class WebScraperOrchestrator{
     }
 
     public void setArticleImportance(Boolean important, Article a){
-        //TODO Update after data model change
 
-        int importance = 0;
+           a.setIsImportant(important);
 
-        if(important)
-            importance = 1;
+    }
 
-        a.setImpactScore(importance);
+    /**
+     * Adds a game to the GameEye database
+     * @param game  game to be added
+     */
+    public void addGameToDB(ElasticGame game){
+        String title = game.getTitle();
+        String mongoID = game.getGameId();
+        String elasticID = game.getId();
+
+        Game newGame = new Game();
+
+        //games.save(newGame);
     }
 
     /**
