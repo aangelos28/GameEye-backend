@@ -1,7 +1,7 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models.responses;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.WatchedGame;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.ResourceNotifications;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.settings.ResourceNotifications;
 
 /**
  * Response for watchlist game entries.

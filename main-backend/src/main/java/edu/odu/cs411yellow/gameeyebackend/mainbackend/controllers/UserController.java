@@ -1,7 +1,8 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.controllers;
 
 import com.google.firebase.auth.FirebaseToken;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Preferences;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Settings;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.settings.NotificationSettings;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,18 +33,25 @@ public class UserController {
     /**
      * Request body for admin endpoints.
      */
-    private static class UserRequest {
+    public static class UserRequest {
         public String userId;
     }
 
-    private static class SettingsRequest
-    {
-        private Preferences preferences;
+    public static class SettingsRequest {
 
-        private Preferences getPreferences() {
-            return preferences;
+        public boolean showArticles;
+        public boolean showImages;
+        public boolean notifyOnlyIfImportant;
+
+       public SettingsRequest(boolean showArticles, boolean showImages, boolean notifyOnlyIfImportant) {
+            this.showArticles = showArticles;
+            this.showImages = showImages;
+            this.notifyOnlyIfImportant = notifyOnlyIfImportant;
+
         }
     }
+
+
     /**
      * Checks if a user profile exists.
      * @return True if the user profile exists, false otherwise
@@ -80,16 +88,18 @@ public class UserController {
     }
 
     @PutMapping (path = "/private/settings/update", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateSettings(@RequestBody SettingsRequest request)
-    {
+    public ResponseEntity<?> updateSettings(@RequestBody SettingsRequest request) {
 
 
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         final FirebaseToken fbToken = (FirebaseToken) auth.getPrincipal();
 
         try {
-            userService.updateSettings(fbToken.getUid(), request.getPreferences());
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Updated settings.");
+            NotificationSettings notificationSettings = new NotificationSettings(request.showArticles, request.showImages, request.notifyOnlyIfImportant);
+
+            Settings settings = new Settings(notificationSettings);
+            userService.updateSettings(fbToken.getUid(), settings);
+            return ResponseEntity.status(HttpStatus.OK).body("Updated settings.");
         } catch (Exception ex) {
             ex.printStackTrace();
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to update settings.");
