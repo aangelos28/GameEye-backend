@@ -1,7 +1,9 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.webscrapers;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Image;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Resources;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.ImageResource;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ElasticGameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.elasticsearch.ElasticGame;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
@@ -11,6 +13,7 @@ import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.MachineLearningService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.ReferenceGameService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,13 +33,15 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.Assert;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles("test")
-//@TestPropertySource(locations = "classpath:application-test.properties")
+@TestPropertySource(locations = "classpath:application-test.properties")
 public class WebScraperOrchestratorTest {
 
     private String[] scraperNames={"GameSpot","Eurogamer","PC Gamer", "IGN","GameEye Mock News"};
@@ -66,7 +71,10 @@ public class WebScraperOrchestratorTest {
     @Autowired
     private GameRepository games;
 
-    private Article testArticle;
+    private Game mockgame1;
+    private Game mockgame2;
+    private Game mockgame3;
+    private Game mockgame4;
 
     //@Value("http://411Yellow.cpi.cs.odu.edu")
     //@Value("${ml.server.host}")
@@ -82,10 +90,50 @@ public class WebScraperOrchestratorTest {
 
     @BeforeEach
     public void init(){
-        //scrappyMock = new WebScraperOrchestrator(scrap, mock, rgs, newsWebsiteRepository);
         orchestratorMock = new WebScraperOrchestrator(scraper, mock, elasticGames, rgs, newsWebsiteRepository,games);
-        //scrappyMock = new WebScraperOrchestrator(scrap, mock, elastic, rgs, newsWebsiteRepository);
         //scrappyMock = new WebScraperOrchestrator(scrap, mock, machine, rgs, newsWebsiteRepository);
+
+        Resources mock1Resources= new Resources();
+        mockgame1 = new Game();
+        mockgame1.setTitle("Halo Infinite");
+        mockgame1.setResources(mock1Resources);
+
+        Resources mock2Resources= new Resources();
+        mockgame2 = new Game();
+        mockgame2.setTitle("Cyberpunk 2077");
+        mockgame2.setResources(mock2Resources);
+
+
+        Resources mock3Resources= new Resources();
+        mockgame3 = new Game();
+        mockgame3.setTitle("Doom Eternal");
+        mockgame3.setResources(mock3Resources);
+
+        mockgame4 = new Game();
+        mockgame4.setTitle("Destiny 2");
+        String articleTitle = "Destiny 2: Beyond Light adds ice";
+        Article mock4Article = new Article();
+        mock4Article.setTitle(articleTitle);
+        //List<Article> mock4Articles = new ArrayList<>(Arrays.asList(mock4Article));
+        //List<ImageResource> mock4Images = new ArrayList<>();
+
+        mockgame4.addArticleResources(mock4Article);
+        //Resources mock4Resources = new Resources(mock4Images,mock4Articles);
+        //mockgame4.setResources(mock4Resources);
+
+        games.save(mockgame1);
+        games.save(mockgame2);
+        games.save(mockgame3);
+        games.save(mockgame4);
+
+    }
+
+    @AfterEach
+    public void deleteTestGames(){
+        games.deleteByTitle(mockgame1.getTitle());
+        games.deleteByTitle(mockgame2.getTitle());
+        games.deleteByTitle(mockgame3.getTitle());
+        games.deleteByTitle(mockgame4.getTitle());
     }
 
     @Test

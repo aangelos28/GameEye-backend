@@ -169,9 +169,9 @@ public class WebScraperOrchestrator{
             String title = gameToCheck.getTitle();
             Game gameInDB;
 
-            if (!games.existsByTitle(title)) {
+            /*if (!games.existsByTitle(title)) {
                 addGameToDB(gameToCheck);
-            }
+            }*/
 
             gameInDB = games.findByTitle(title);
 
