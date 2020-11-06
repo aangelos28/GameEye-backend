@@ -9,7 +9,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.SourceUrls;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.IgdbService;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -30,9 +29,6 @@ public class IgdbServiceTest {
 
     @Autowired
     IgdbService igdbService;
-
-    @Autowired
-    GameRepository gameRepository;
 
     @Test
     public void testGetCompanies() {
@@ -101,7 +97,7 @@ public class IgdbServiceTest {
             // Check lastUpdated
             long responseLastUpdatedInSeconds = responses.get(gameIndex).lastUpdatedInSeconds;
             // Convert UNIX epoch timestamp from IGDB to year, month, day format
-            Date responseLastUpdated = new java.util.Date((long)responseLastUpdatedInSeconds*1000);
+            Date responseLastUpdated = new java.util.Date(responseLastUpdatedInSeconds*1000);
             Date gameLastUpdated = games.get(gameIndex).getLastUpdated();
             assert(responseLastUpdated.equals(gameLastUpdated));
 

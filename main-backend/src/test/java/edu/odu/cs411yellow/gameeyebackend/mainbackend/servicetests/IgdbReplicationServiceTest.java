@@ -2,6 +2,7 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.servicetests;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.SourceUrls;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ElasticGameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.IgdbReplicationService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.IgdbService;
@@ -31,6 +32,9 @@ public class IgdbReplicationServiceTest {
 
     @Autowired
     GameRepository gameRepository;
+
+    @Autowired
+    ElasticGameRepository elasticRepository;
 
     @Test
     public void testReplicateIgdbByRangeForNewGames() {
@@ -73,7 +77,15 @@ public class IgdbReplicationServiceTest {
             assertThat(igdbSourceUrls, equalTo(preRepSourceUrls));
         }
 
-        // Delete new games written to db.
+        // Delete new games from elastic.
+        for (int currentId = minId; currentId < maxId + 1; currentId++) {
+            if (gameRepository.existsByIgdbId(String.valueOf(currentId))) {
+                String gameId = gameRepository.findByIgdbId(String.valueOf(currentId)).getId();
+                elasticRepository.deleteByGameId(gameId);
+            }
+        }
+
+        // Delete new games from mongo db.
         for (int igdbId = minId; igdbId < maxId-minId+2; igdbId++) {
             gameRepository.deleteByIgdbId(String.valueOf(igdbId));
         }
@@ -135,6 +147,14 @@ public class IgdbReplicationServiceTest {
             }
             if (!preRepSourceUrls.getTwitterUrl().equals("")) {
                 assertThat(postRepSourceUrls.getTwitterUrl(), notNullValue());
+            }
+        }
+
+        // Delete new games from elastic.
+        for (int currentId = minId; currentId < maxId + 1; currentId++) {
+            if (gameRepository.existsByIgdbId(String.valueOf(currentId))) {
+                String gameId = gameRepository.findByIgdbId(String.valueOf(currentId)).getId();
+                elasticRepository.deleteByGameId(gameId);
             }
         }
 

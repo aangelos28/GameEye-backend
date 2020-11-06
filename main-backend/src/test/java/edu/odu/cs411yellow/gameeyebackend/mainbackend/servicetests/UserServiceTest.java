@@ -7,6 +7,7 @@ import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Settings;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.UserStatus;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.WatchedGame;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.settings.ArticleNotifications;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.GameService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.IgdbService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.settings.NotificationSettings;
@@ -49,6 +50,9 @@ public class UserServiceTest {
 
     @Autowired
     GameService gameService;
+
+    @Autowired
+    GameRepository gameRepository;
 
     @Test
     public void createUserTest() {
@@ -132,8 +136,9 @@ public class UserServiceTest {
             }
         }
 
-        // Delete the user
+        // Delete the user and game
         userService.deleteUser(userId);
+        gameRepository.delete(game1);
     }
 
     @Test
