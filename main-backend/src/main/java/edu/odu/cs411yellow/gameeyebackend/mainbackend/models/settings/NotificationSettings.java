@@ -4,23 +4,23 @@ import org.springframework.data.annotation.PersistenceConstructor;
 
 public class NotificationSettings {
     private boolean receiveNotifications;
-    private boolean showArticleResources;
+    private boolean receiveArticleNotifications;
     private boolean notifyOnlyIfImportant;
 
     @PersistenceConstructor
-    public NotificationSettings(boolean receiveNotifications, boolean showArticleResources, boolean notifyOnlyIfImportant) {
+    public NotificationSettings(boolean receiveNotifications, boolean receiveArticleNotifications, boolean notifyOnlyIfImportant) {
         this.receiveNotifications = receiveNotifications;
-        this.showArticleResources = showArticleResources;
+        this.receiveArticleNotifications = receiveArticleNotifications;
         this.notifyOnlyIfImportant = notifyOnlyIfImportant;
     }
 
     public NotificationSettings() {
         this.receiveNotifications = true;
-        this.showArticleResources = true;
+        this.receiveArticleNotifications = true;
         this.notifyOnlyIfImportant = true;
     }
 
-    public boolean isReceiveNotifications() {
+    public boolean getReceiveNotifications() {
         return receiveNotifications;
     }
 
@@ -28,12 +28,12 @@ public class NotificationSettings {
         this.receiveNotifications = receiveNotifications;
     }
 
-    public boolean getShowArticleResources() {
-        return this.showArticleResources;
+    public boolean getReceiveArticleNotifications() {
+        return this.receiveArticleNotifications;
     }
 
-    public void setShowArticleResources(boolean showArticleResources) {
-        this.showArticleResources = showArticleResources;
+    public void setReceiveArticleNotifications(boolean receiveArticleNotifications) {
+        this.receiveArticleNotifications = receiveArticleNotifications;
     }
 
     public boolean getNotifyOnlyIfImportant() {
