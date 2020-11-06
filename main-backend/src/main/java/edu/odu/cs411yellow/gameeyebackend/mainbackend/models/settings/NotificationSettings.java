@@ -3,38 +3,37 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.models.settings;
 import org.springframework.data.annotation.PersistenceConstructor;
 
 public class NotificationSettings {
-
-    private boolean showArticleResources;
-    private boolean showImageResources;
+    private boolean receiveNotifications;
+    private boolean receiveArticleNotifications;
     private boolean notifyOnlyIfImportant;
 
     @PersistenceConstructor
-    public NotificationSettings(boolean showArticleResources, boolean showImageResources, boolean notifyOnlyIfImportant) {
-        this.showArticleResources = showArticleResources;
-        this.showImageResources = showImageResources;
+    public NotificationSettings(boolean receiveNotifications, boolean receiveArticleNotifications, boolean notifyOnlyIfImportant) {
+        this.receiveNotifications = receiveNotifications;
+        this.receiveArticleNotifications = receiveArticleNotifications;
         this.notifyOnlyIfImportant = notifyOnlyIfImportant;
     }
 
     public NotificationSettings() {
-        this.showArticleResources = true;
-        this.showImageResources = true;
+        this.receiveNotifications = true;
+        this.receiveArticleNotifications = true;
         this.notifyOnlyIfImportant = true;
     }
 
-    public boolean getShowArticleResources() {
-        return this.showArticleResources;
+    public boolean getReceiveNotifications() {
+        return receiveNotifications;
     }
 
-    public void setShowArticleResources(boolean showArticleResources) {
-        this.showArticleResources = showArticleResources;
+    public void setReceiveNotifications(boolean receiveNotifications) {
+        this.receiveNotifications = receiveNotifications;
     }
 
-    public boolean getShowImageResources() {
-        return this.showImageResources;
+    public boolean getReceiveArticleNotifications() {
+        return this.receiveArticleNotifications;
     }
 
-    public void setShowImageCategories(boolean showImageResources) {
-        this.showImageResources = showImageResources;
+    public void setReceiveArticleNotifications(boolean receiveArticleNotifications) {
+        this.receiveArticleNotifications = receiveArticleNotifications;
     }
 
     public boolean getNotifyOnlyIfImportant() {

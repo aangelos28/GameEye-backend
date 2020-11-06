@@ -95,7 +95,7 @@ public class UserController {
         final FirebaseToken fbToken = (FirebaseToken) auth.getPrincipal();
 
         try {
-            NotificationSettings notificationSettings = new NotificationSettings(request.showArticles, request.showImages, request.notifyOnlyIfImportant);
+            NotificationSettings notificationSettings = new NotificationSettings(request.showArticles, request.notifyOnlyIfImportant);
 
             Settings settings = new Settings(notificationSettings);
             userService.updateSettings(fbToken.getUid(), settings);

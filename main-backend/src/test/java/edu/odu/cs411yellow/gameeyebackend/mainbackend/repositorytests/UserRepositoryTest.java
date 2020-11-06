@@ -35,13 +35,12 @@ public class UserRepositoryTest {
         UserStatus status = UserStatus.inactive;
         UserPlan plan = UserPlan.free;
 
+        boolean receiveNotifications = true;
         boolean showArticleResources = true;
-        boolean showImageResources = true;
         boolean notifyOnlyIfImportant = true;
 
-        NotificationSettings notificationSettings = new NotificationSettings(showArticleResources,
-                                                                                      showImageResources,
-                                                                                      notifyOnlyIfImportant);
+        NotificationSettings notificationSettings = new NotificationSettings(receiveNotifications,
+                notifyOnlyIfImportant);
 
         Settings settings = new Settings(notificationSettings);
 

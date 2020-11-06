@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Settings;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.UserStatus;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.settings.NotificationSettings;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.UserService;
 import org.junit.jupiter.api.Test;
@@ -91,7 +90,7 @@ public class UserServiceTest {
         notifyOnlyIfImportant = false;
 
 
-        NotificationSettings notificationSettings = new NotificationSettings(showArticles, showImages, notifyOnlyIfImportant);
+        NotificationSettings notificationSettings = new NotificationSettings(showArticles, notifyOnlyIfImportant);
 
         Settings settings = new Settings(notificationSettings);
 
@@ -99,8 +98,7 @@ public class UserServiceTest {
 
          user = userService.getUser(userId);
 
-        assertThat(user.getSettings().getNotificationSettings().getShowArticleResources(), is(showArticles));
-        assertThat(user.getSettings().getNotificationSettings().getShowImageResources(), is(showImages));
+        assertThat(user.getSettings().getNotificationSettings().getReceiveArticleNotifications(), is(showArticles));
         assertThat(user.getSettings().getNotificationSettings().getNotifyOnlyIfImportant(), is(notifyOnlyIfImportant));
 
         ObjectMapper obj= new ObjectMapper();
