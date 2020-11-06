@@ -7,6 +7,7 @@ public class NotificationSettings {
     private boolean receiveArticleNotifications;
     private boolean notifyOnlyIfImportant;
 
+    @PersistenceConstructor
     public NotificationSettings(boolean receiveNotifications, boolean receiveArticleNotifications, boolean notifyOnlyIfImportant) {
         this.receiveNotifications = receiveNotifications;
         this.receiveArticleNotifications = receiveArticleNotifications;
