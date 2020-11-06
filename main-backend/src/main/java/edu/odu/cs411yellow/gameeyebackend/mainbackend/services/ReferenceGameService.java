@@ -53,7 +53,7 @@ public class ReferenceGameService {
             //Assuming gameTitles are no less than 3 characters
             if((longestMatchSize < matchSize) && (matchSize > 3)) {
                 longestMatchSize = matchSize;   //set new longest match
-                matchingIDs.add(game.getContent().getGameId());
+                matchingIDs.add(0,game.getContent().getGameId());
             }
 
             //Case: Another match is equally as accurate
@@ -63,7 +63,7 @@ public class ReferenceGameService {
         }
 
         if(!exactMatch.contentEquals("")){
-            matchingIDs.add(exactMatch);
+            matchingIDs.add(0,exactMatch);
         }
 
         return matchingIDs;
