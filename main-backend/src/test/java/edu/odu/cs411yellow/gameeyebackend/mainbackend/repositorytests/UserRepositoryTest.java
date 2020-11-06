@@ -30,18 +30,18 @@ public class UserRepositoryTest {
 
     @BeforeEach
     public void insertTestUserIntoGameEyeTest() throws Exception {
-
         String userId = "5e98dc5da3464d35b824d052";
         UserStatus status = UserStatus.inactive;
         UserPlan plan = UserPlan.free;
+        List<String> fcmTokens = new ArrayList<>();
 
         boolean showArticleResources = true;
         boolean showImageResources = true;
         boolean notifyOnlyIfImportant = true;
 
         NotificationSettings notificationSettings = new NotificationSettings(showArticleResources,
-                                                                                      showImageResources,
-                                                                                      notifyOnlyIfImportant);
+                                                                             showImageResources,
+                                                                             notifyOnlyIfImportant);
 
         Settings settings = new Settings(notificationSettings);
 
@@ -74,7 +74,7 @@ public class UserRepositoryTest {
         watchList.add(watchedGame);
 
         // Set testUser
-        testUser = new User(userId, status, plan, settings, watchList);
+        testUser = new User(userId, status, plan, settings, watchList, fcmTokens);
 
         // Write testUser to GameEyeTest
         users.insert(testUser);
