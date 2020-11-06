@@ -118,11 +118,8 @@ public class IgdbServiceTest {
     }
 
     @Test
-    public void testFindMaxId() throws InterruptedException, JsonProcessingException {
-        int requestLimitPerSecond = 4;
-        int nullResponseThreshold = 20;
-        int numDaysToBacktrack = 1;
-        int maxId = igdbService.findMaxGameId(requestLimitPerSecond, nullResponseThreshold, numDaysToBacktrack);
+    public void testFindMaxId() throws JsonProcessingException {
+        int maxId = igdbService.findMaxGameId();
 
         Game maxIdGame = new Game(igdbService.getGameResponseById(maxId));
         assertThat(maxIdGame.getIgdbId(), is(not("")));
