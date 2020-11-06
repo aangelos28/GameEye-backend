@@ -81,24 +81,24 @@ public class UserServiceTest {
         // Get the user
         User user = userService.getUser(userId);
 
-        boolean showArticles;
-        boolean showImages;
+        boolean receiveNotifications;
+        boolean receiveArticleNotifications;
         boolean notifyOnlyIfImportant;
 
-        showArticles = true;
-        showImages = false;
+        receiveNotifications = true;
+        receiveArticleNotifications = false;
         notifyOnlyIfImportant = false;
 
 
-        NotificationSettings notificationSettings = new NotificationSettings(showArticles, notifyOnlyIfImportant);
+        NotificationSettings notificationSettings = new NotificationSettings(receiveNotifications,  receiveArticleNotifications, notifyOnlyIfImportant);
 
         Settings settings = new Settings(notificationSettings);
 
         userService.updateSettings(userId, settings);
 
          user = userService.getUser(userId);
-
-        assertThat(user.getSettings().getNotificationSettings().getReceiveArticleNotifications(), is(showArticles));
+         assertThat(user.getSettings().getNotificationSettings().getReceiveNotifications(), is(receiveNotifications));
+        assertThat(user.getSettings().getNotificationSettings().getReceiveArticleNotifications(), is(receiveArticleNotifications));
         assertThat(user.getSettings().getNotificationSettings().getNotifyOnlyIfImportant(), is(notifyOnlyIfImportant));
 
         ObjectMapper obj= new ObjectMapper();

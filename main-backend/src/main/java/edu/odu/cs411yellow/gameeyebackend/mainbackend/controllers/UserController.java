@@ -39,16 +39,11 @@ public class UserController {
 
     public static class SettingsRequest {
 
-        public boolean showArticles;
-        public boolean showImages;
+        public boolean receiveNotifications;
+        public boolean receiveArticleNotifications;
         public boolean notifyOnlyIfImportant;
 
-       public SettingsRequest(boolean showArticles, boolean showImages, boolean notifyOnlyIfImportant) {
-            this.showArticles = showArticles;
-            this.showImages = showImages;
-            this.notifyOnlyIfImportant = notifyOnlyIfImportant;
 
-        }
     }
 
 
@@ -95,7 +90,9 @@ public class UserController {
         final FirebaseToken fbToken = (FirebaseToken) auth.getPrincipal();
 
         try {
-            NotificationSettings notificationSettings = new NotificationSettings(request.showArticles, request.notifyOnlyIfImportant);
+
+            NotificationSettings notificationSettings = new NotificationSettings(request.receiveNotifications, request.receiveArticleNotifications, request.notifyOnlyIfImportant);
+
 
             Settings settings = new Settings(notificationSettings);
             userService.updateSettings(fbToken.getUid(), settings);

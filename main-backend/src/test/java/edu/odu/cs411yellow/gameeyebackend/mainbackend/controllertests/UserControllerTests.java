@@ -46,39 +46,6 @@ public class UserControllerTests {
 
     private WebClient webClient;
 
-    /*
-    @Test
-    public void testSettingsEndpoint() throws Exception {
-        String endpoint = "/private/settings/update";
-        ObjectMapper mapper = new ObjectMapper();
-
-         boolean showArticles;
-         boolean showImages;
-         boolean notifyOnlyIfImportant;
-
-        showArticles = true;
-        showImages = false;
-        notifyOnlyIfImportant = false;
-
-        String validGameId = "123456789";
-        validRequest.id = validGameId;
-
-        // Test for ok response upon valid upadate
-        SettingsRequest validRequest = new SettingsRequest(showArticles, showImages, notifyOnlyIfImportant);
-
-        when(userService.updateSettings()  .thenReturn(true);
-        this.mockMvc.perform(MockMvcRequestBuilders.put(endpoint)
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(mapper.writeValueAsString(validRequest))
-                .characterEncoding("utf-8"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE));
-
-        // Test for not found reply upon invalid game title
-
-    }
-    */
 
 }
 

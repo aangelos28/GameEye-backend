@@ -39,7 +39,7 @@ public class UserRepositoryTest {
         boolean showArticleResources = true;
         boolean notifyOnlyIfImportant = true;
 
-        NotificationSettings notificationSettings = new NotificationSettings(receiveNotifications,
+        NotificationSettings notificationSettings = new NotificationSettings(receiveNotifications, showArticleResources,
                 notifyOnlyIfImportant);
 
         Settings settings = new Settings(notificationSettings);
