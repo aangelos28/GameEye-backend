@@ -41,4 +41,5 @@ public class ElasticGameRepositoryCustomImpl implements ElasticGameRepositoryCus
 
         return elasticSearch.search(searchQuery, ElasticGame.class, IndexCoordinates.of("games"));
     }
+
 }
