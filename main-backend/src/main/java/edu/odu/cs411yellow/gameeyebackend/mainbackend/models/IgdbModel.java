@@ -3,8 +3,6 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.models;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 public class IgdbModel {
@@ -17,7 +15,7 @@ public class IgdbModel {
         @JsonProperty("platforms")
         public List<PlatformResponse> platforms;
         @JsonProperty("updated_at")
-        public int lastUpdatedInSeconds;
+        public long lastUpdatedInSeconds;
         @JsonProperty("genres")
         public List<GenreResponse> genres;
         @JsonProperty("websites")
@@ -36,7 +34,7 @@ public class IgdbModel {
         }
 
         public GameResponse(String igdbId, String title, List<PlatformResponse> platforms,
-                            List<GenreResponse> genres, int lastUpdatedInSeconds,
+                            List<GenreResponse> genres, long lastUpdatedInSeconds,
                             List<WebsiteResponse> sourceUrls, long firstReleaseDateInSeconds) {
             this.igdbId = igdbId;
             this.title = title;
@@ -44,7 +42,7 @@ public class IgdbModel {
             this.lastUpdatedInSeconds = lastUpdatedInSeconds;
             this.genres = genres;
             this.sourceUrls = sourceUrls;
-            this.firstReleaseDateInSeconds= firstReleaseDateInSeconds;
+            this.firstReleaseDateInSeconds = firstReleaseDateInSeconds;
         }
 
         public List<String> getGenres() {
@@ -87,17 +85,6 @@ public class IgdbModel {
             return platforms;
         }
 
-        public String getStatus() {
-            String status;
-            Calendar calendar = Calendar.getInstance();
-            if (this.firstReleaseDateInSeconds <= calendar.getTimeInMillis() / 1000) {
-                status = Status.Released.toString();
-            } else {
-                status = Status.Announced.toString();
-            }
-
-            return status;
-        }
     }
 
     public static class GenreResponse {

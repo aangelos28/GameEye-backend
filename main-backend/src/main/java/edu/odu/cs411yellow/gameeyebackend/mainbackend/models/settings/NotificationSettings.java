@@ -3,7 +3,6 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.models.settings;
 import org.springframework.data.annotation.PersistenceConstructor;
 
 public class NotificationSettings {
-
     private boolean showArticleResources;
     private boolean showImageResources;
     private boolean notifyOnlyIfImportant;

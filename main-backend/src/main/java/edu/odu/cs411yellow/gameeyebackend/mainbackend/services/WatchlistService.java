@@ -139,7 +139,7 @@ public class WatchlistService {
         }
 
         final List<WatchedGame> watchlist = user.getWatchList();
-        final WatchedGame newGame = new WatchedGame(game.getId(), 0, new ResourceNotifications());
+        final WatchedGame newGame = new WatchedGame(game.getId(), new ResourceNotifications());
 
         // Ensure we do not add a duplicate game
         if (!watchlist.contains(newGame)) {

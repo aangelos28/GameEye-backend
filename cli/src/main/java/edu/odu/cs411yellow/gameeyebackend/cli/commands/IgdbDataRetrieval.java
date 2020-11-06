@@ -1,6 +1,7 @@
 package edu.odu.cs411yellow.gameeyebackend.cli.commands;
 
 import com.google.gson.JsonObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
@@ -14,9 +15,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class IgdbDataRetrieval {
     WebClient webClient;
 
-    public IgdbDataRetrieval() {
+    public IgdbDataRetrieval(@Value("${mainbackend.igdb.baseurl}") String igdbUrl) {
         this.webClient = WebClient.builder()
-                .baseUrl("http://localhost:8070/api")
+                .baseUrl(igdbUrl)
                 .build();
     }
 

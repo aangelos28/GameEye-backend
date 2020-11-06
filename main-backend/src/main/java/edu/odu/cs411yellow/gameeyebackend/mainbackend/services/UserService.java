@@ -2,11 +2,14 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.services;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.User;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.UserStatus;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.WatchedGame;
 import org.springframework.beans.factory.annotation.Autowired;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Provides services for managing user profiles.
@@ -72,6 +75,48 @@ public class UserService {
     public void setUserStatus(final String userId, final UserStatus userStatus) {
         User user = users.findUserById(userId);
         user.setStatus(userStatus);
+
+        users.save(user);
+    }
+
+    /**
+     * Removes articles for a watched game from a user's notifications.
+     *
+     * @param userId     Id of the user notifications to modify.
+     * @param gameId     Id of the watched game.
+     * @param articleIds Ids of articles to remove.
+     */
+    public void removeUserArticleNotifications(final String userId, String gameId, List<String> articleIds) {
+        User user = users.findUserById(userId);
+
+        List<WatchedGame> watchedGames = user.getWatchList();
+        for (WatchedGame game: watchedGames) {
+            if (game.getGameId().equals(gameId)) {
+                game.removeArticlesFromResources(articleIds);
+                break;
+            }
+        }
+
+        users.save(user);
+    }
+
+    /**
+     * Adds articles for a watched game from a user's notifications.
+     *
+     * @param userId     Id of the user notifications to modify.
+     * @param gameId     Id of the watched game.
+     * @param articleIds Ids of articles to add.
+     */
+    public void addUserArticleNotifications(final String userId, String gameId, List<String> articleIds) {
+        User user = users.findUserById(userId);
+
+        List<WatchedGame> watchedGames = user.getWatchList();
+        for (WatchedGame game: watchedGames) {
+            if (game.getGameId().equals(gameId)) {
+                game.addArticlesToResources(articleIds);
+                break;
+            }
+        }
 
         users.save(user);
     }

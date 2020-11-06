@@ -3,7 +3,6 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.services;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.SourceUrls;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.elasticsearch.ElasticGame;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ElasticGameRepository;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,6 +77,7 @@ public class IgdbReplicationService {
                     if (!igdbGame.getIgdbId().equals("")) {
                         // Update an existing IGDB game in games collection
                         if (gameService.existsByIgdbId(igdbGame.getIgdbId())) {
+                            // Update game and elastic search if necessary
                             Game updatedGame = updateExistingGame(igdbGame);
                             mongoGameBuffer.add(updatedGame);
 
@@ -89,15 +89,12 @@ public class IgdbReplicationService {
                             igdbGame.setId(ObjectId.get().toString());
                             mongoGameBuffer.add(igdbGame);
 
-                            // Add new game to elasticGameBuffer if it does not exist
-                            if (!(elasticService.existsByTitle(igdbGame.getTitle()))) {
-                                ElasticGame elasticGame = new ElasticGame(igdbGame);
-                                elasticGameBuffer.add(elasticGame);
+                            // Add new game to elasticGameBuffer
+                            ElasticGame elasticGame = new ElasticGame(igdbGame);
+                            elasticGameBuffer.add(elasticGame);
 
-                                newElasticGameCount++;
-                                currentElasticBufferCount++;
-                            }
-
+                            newElasticGameCount++;
+                            currentElasticBufferCount++;
                             currentMongoBufferCount++;
                             newGameCount++;
                         }
@@ -144,10 +141,20 @@ public class IgdbReplicationService {
     private Game updateExistingGame(Game igdbGame) {
         Game existingGame = gameService.findByIgdbId(igdbGame.getIgdbId());
 
+        // Check for IGDB title change
+        if (!existingGame.getTitle().equals(igdbGame.getTitle())) {
+            // Update existing game title with new IGDB title
+            existingGame.setTitle(igdbGame.getTitle());
+
+            // Update elastic game title
+            ElasticGame elasticGame = new ElasticGame(existingGame);
+            elasticService.updateTitle(elasticGame);
+        }
+
         // Update logoUrls, platforms, status, and genres
         existingGame.setLogoUrl(igdbGame.getLogoUrl());
         existingGame.setPlatforms(igdbGame.getPlatforms());
-        existingGame.setStatus(igdbGame.getStatus());
+        existingGame.setReleaseDate(igdbGame.getReleaseDate());
         existingGame.setGenres(igdbGame.getGenres());
 
         // Update sourceUrls

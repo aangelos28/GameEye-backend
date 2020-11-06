@@ -115,7 +115,7 @@ public class IgdbReplicationServiceTest {
             assertThat(preRepGame.getId(), equalTo(postRepGame.getId()));
             assertThat(preRepGame.getIgdbId(), equalTo(postRepGame.getIgdbId()));
             assertThat(preRepGame.getTitle(), equalTo(postRepGame.getTitle()));
-            assertThat(preRepGame.getStatus(), equalTo(postRepGame.getStatus()));
+            assertThat(preRepGame.getReleaseDate(), equalTo(postRepGame.getReleaseDate()));
             assertThat(preRepGame.getResources(), equalTo(postRepGame.getResources()));
             assertThat(preRepGame.getWatchers(), equalTo(postRepGame.getWatchers()));
 

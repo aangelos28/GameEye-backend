@@ -99,7 +99,7 @@ public class IgdbServiceTest {
             }
 
             // Check lastUpdated
-            int responseLastUpdatedInSeconds = responses.get(gameIndex).lastUpdatedInSeconds;
+            long responseLastUpdatedInSeconds = responses.get(gameIndex).lastUpdatedInSeconds;
             // Convert UNIX epoch timestamp from IGDB to year, month, day format
             Date responseLastUpdated = new java.util.Date((long)responseLastUpdatedInSeconds*1000);
             Date gameLastUpdated = games.get(gameIndex).getLastUpdated();
