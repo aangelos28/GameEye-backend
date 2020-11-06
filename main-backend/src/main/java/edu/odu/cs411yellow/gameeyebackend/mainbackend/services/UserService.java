@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
 
-    UserRepository users;
+    private UserRepository users;
 
     @Autowired
     UserService(UserRepository users) {
@@ -81,6 +81,5 @@ public class UserService {
         final User user = this.users.findUserById(firebaseID);
         user.setSettings(settings);
         users.save(user);
-
     }
 }

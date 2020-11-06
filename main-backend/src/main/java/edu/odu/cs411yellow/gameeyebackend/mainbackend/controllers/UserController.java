@@ -37,16 +37,6 @@ public class UserController {
         public String userId;
     }
 
-    public static class SettingsRequest {
-
-        public boolean receiveNotifications;
-        public boolean receiveArticleNotifications;
-        public boolean notifyOnlyIfImportant;
-
-
-    }
-
-
     /**
      * Checks if a user profile exists.
      * @return True if the user profile exists, false otherwise
@@ -82,10 +72,14 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    public static class SettingsRequest {
+        public boolean receiveNotifications;
+        public boolean receiveArticleNotifications;
+        public boolean notifyOnlyIfImportant;
+    }
+
     @PutMapping (path = "/private/settings/update", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateSettings(@RequestBody SettingsRequest request) {
-
-
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         final FirebaseToken fbToken = (FirebaseToken) auth.getPrincipal();
 
