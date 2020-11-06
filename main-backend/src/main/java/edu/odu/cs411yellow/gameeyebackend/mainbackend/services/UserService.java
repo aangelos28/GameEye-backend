@@ -92,7 +92,7 @@ public class UserService {
         User user = users.findUserById(userId);
 
         List<WatchedGame> watchedGames = user.getWatchList();
-        for (WatchedGame game: watchedGames) {
+        for (WatchedGame game : watchedGames) {
             if (game.getGameId().equals(gameId)) {
                 game.removeArticlesFromResources(articleIds);
                 break;
@@ -113,7 +113,7 @@ public class UserService {
         User user = users.findUserById(userId);
 
         List<WatchedGame> watchedGames = user.getWatchList();
-        for (WatchedGame game: watchedGames) {
+        for (WatchedGame game : watchedGames) {
             if (game.getGameId().equals(gameId)) {
                 game.addArticlesToResources(articleIds);
                 break;
@@ -123,9 +123,24 @@ public class UserService {
         users.save(user);
     }
 
-    public void updateSettings(final String firebaseID, Settings settings)
-    {
-        final User user = this.users.findUserById(firebaseID);
+    /**
+     * Get the settings of a specific user.
+     *
+     * @param userId Id of the user
+     */
+    public Settings getSettings(final String userId) {
+        final User user = this.users.findUserById(userId);
+        return user.getSettings();
+    }
+
+    /**
+     * Update the settings of a specific user.
+     *
+     * @param userId   Id of the user
+     * @param settings New settings
+     */
+    public void updateSettings(final String userId, Settings settings) {
+        final User user = this.users.findUserById(userId);
         user.setSettings(settings);
         users.save(user);
     }

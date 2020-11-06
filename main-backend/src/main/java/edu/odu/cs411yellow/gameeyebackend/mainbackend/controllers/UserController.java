@@ -44,6 +44,7 @@ public class UserController {
 
     /**
      * Checks if a user profile exists.
+     *
      * @return True if the user profile exists, false otherwise
      */
     @GetMapping(path = "/private/user/exists")
@@ -83,24 +84,60 @@ public class UserController {
         public boolean notifyOnlyIfImportant;
     }
 
-    @PutMapping (path = "/private/settings/update", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public static class SettingsResponse {
+        public boolean receiveNotifications;
+        public boolean receiveArticleNotifications;
+        public boolean notifyOnlyIfImportant;
+    }
+
+    /**
+     * Gets a user's settings.
+     */
+    @GetMapping(path = "/private/user/settings")
+    public ResponseEntity<?> getSettings() {
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final FirebaseToken fbToken = (FirebaseToken) auth.getPrincipal();
+
+        try {
+            final Settings userSettings = userService.getSettings(fbToken.getUid());
+            final NotificationSettings userNotificationSettings = userSettings.getNotificationSettings();
+
+            final SettingsResponse settingsResponse = new SettingsResponse();
+            settingsResponse.receiveNotifications = userNotificationSettings.getReceiveNotifications();
+            settingsResponse.receiveArticleNotifications = userNotificationSettings.getReceiveArticleNotifications();
+            settingsResponse.notifyOnlyIfImportant = userNotificationSettings.getNotifyOnlyIfImportant();
+
+            return ResponseEntity.ok(settingsResponse);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to get settings");
+        }
+    }
+
+    /**
+     * Updates a user's settings.
+     *
+     * @param request Request with new settings
+     */
+    @PutMapping(path = "/private/user/settings/update", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateSettings(@RequestBody SettingsRequest request) {
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         final FirebaseToken fbToken = (FirebaseToken) auth.getPrincipal();
 
         try {
+            final NotificationSettings notificationSettings = new NotificationSettings(request.receiveNotifications,
+                    request.receiveArticleNotifications, request.notifyOnlyIfImportant);
 
-            NotificationSettings notificationSettings = new NotificationSettings(request.receiveNotifications, request.receiveArticleNotifications, request.notifyOnlyIfImportant);
-
-
-            Settings settings = new Settings(notificationSettings);
+            final Settings settings = new Settings(notificationSettings);
             userService.updateSettings(fbToken.getUid(), settings);
-            return ResponseEntity.status(HttpStatus.OK).body("Updated settings.");
+
+            return ResponseEntity.ok("Updated settings");
         } catch (Exception ex) {
             ex.printStackTrace();
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to update settings.");
         }
     }
+
     /**
      * Deletes a user profile if it does not already exist.
      */

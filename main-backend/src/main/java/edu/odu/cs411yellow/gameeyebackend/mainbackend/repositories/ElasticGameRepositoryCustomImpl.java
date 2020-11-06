@@ -48,5 +48,4 @@ public class ElasticGameRepositoryCustomImpl implements ElasticGameRepositoryCus
 
         return searchHits.hasSearchHits();
     }
-
 }
