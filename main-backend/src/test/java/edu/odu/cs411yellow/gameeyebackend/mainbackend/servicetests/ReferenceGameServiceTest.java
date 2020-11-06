@@ -56,19 +56,19 @@ public class ReferenceGameServiceTest {
 
 
         List<String> gameIDs1 = referenceGameService.getReferencedGames(article1);
-        String gameID1 = gameIDs1.get(gameIDs1.size()-1);
+        String gameID1 = gameIDs1.get(0);
         ElasticGame elasticGame1 =  gameRepository.findByGameId(gameID1);
 
         List<String> gameIDs2 = referenceGameService.getReferencedGames(article2);
-        String gameID2 = gameIDs2.get(gameIDs2.size()-1);
+        String gameID2 = gameIDs2.get(0);
         ElasticGame elasticGame2 =  gameRepository.findByGameId(gameID2);
 
         List<String> gameIDs3 = referenceGameService.getReferencedGames(article3);
-        String gameID3 = gameIDs3.get(gameIDs3.size()-1);
+        String gameID3 = gameIDs3.get(0);
         ElasticGame elasticGame3 =  gameRepository.findByGameId(gameID3);
 
         List<String> gameIDs4 = referenceGameService.getReferencedGames(article4);
-        String gameID4 = gameIDs4.get(gameIDs4.size()-1);
+        String gameID4 = gameIDs4.get(0);
         ElasticGame elasticGame4 =  gameRepository.findByGameId(gameID4);
 
 
