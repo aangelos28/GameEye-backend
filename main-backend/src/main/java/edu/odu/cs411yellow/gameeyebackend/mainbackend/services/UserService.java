@@ -4,26 +4,25 @@ import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Settings;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.User;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.UserStatus;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.WatchedGame;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.settings.NotificationSettings;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Provides services for managing user profiles.
  */
 @Service
 public class UserService {
-
-    private UserRepository users;
+    private final UserRepository users;
+    private final GameRepository games;
 
     @Autowired
-    UserService(UserRepository users) {
+    UserService(UserRepository users, GameRepository games) {
         this.users = users;
+        this.games = games;
     }
 
     /**
@@ -65,6 +64,13 @@ public class UserService {
      * @param userId Id of the user profile to delete
      */
     public void deleteUser(final String userId) {
+        final User user = users.findUserById(userId);
+
+        // Decrement watcher counters for the games the user is watching
+        for (WatchedGame watchedGame : user.getWatchList()) {
+            games.decrementWatchers(watchedGame.getGameId());
+        }
+
         users.deleteById(userId);
     }
 
