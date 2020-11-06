@@ -1,7 +1,7 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.ImageResource;
+import static edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel.GameResponse;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -26,7 +26,7 @@ public class Game {
 
     private List<String> platforms;
 
-    private String status;
+    private Date releaseDate;
 
     private String logoUrl;
 
@@ -42,13 +42,13 @@ public class Game {
     private int watchers;
 
     @PersistenceConstructor
-    public Game(String id, String igdbId, String title, List<String> platforms, String status, String logoUrl,
+    public Game(String id, String igdbId, String title, List<String> platforms, Date releaseDate, String logoUrl,
                 Date lastUpdated, List<String> genres, SourceUrls sourceUrls, Resources resources, int watchers) {
         this.id = id;
         this.igdbId = igdbId;
         this.title = title;
         this.platforms = platforms;
-        this.status = status;
+        this.releaseDate = releaseDate;
         this.logoUrl = logoUrl;
         this.lastUpdated = lastUpdated;
         this.genres = genres;
@@ -61,13 +61,29 @@ public class Game {
         this.igdbId = "";
         this.title = "";
         this.platforms = new ArrayList<>();
-        this.status = "";
+        this.releaseDate = new Date();
         this.logoUrl = "";
         this.lastUpdated = new Date();
         this.genres = new ArrayList<>();
         this.sourceUrls = new SourceUrls();
         this.resources = new Resources();
         this.watchers = 0;
+    }
+
+    public Game(GameResponse game) {
+        this.id = "";
+        this.igdbId = game.igdbId;
+        this.title = game.title;
+        this.platforms = game.getPlatforms();
+        this.releaseDate = new Date(game.firstReleaseDateInSeconds * 1000);
+        String logoUrl = "";
+
+        // Convert UNIX epoch timestamp from IGDB to year, month, day format
+        this.lastUpdated = new Date(game.lastUpdatedInSeconds * 1000);
+        this.genres = game.getGenres();
+        this.sourceUrls = game.getSourceUrls();
+        this.resources = new Resources();
+        int watchers = 0;
     }
 
     public String getId() {
@@ -102,12 +118,12 @@ public class Game {
         this.platforms = platforms;
     }
 
-    public String getStatus() {
-        return this.status;
+    public Date getReleaseDate() {
+        return this.releaseDate;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setReleaseDate(Date releaseDate) {
+        this.releaseDate = releaseDate;
     }
 
     public String getLogoUrl() {
@@ -178,7 +194,7 @@ public class Game {
                 && Objects.equals(igdbId, that.igdbId)
                 && Objects.equals(title, that.title)
                 && Objects.equals(platforms, that.platforms)
-                && Objects.equals(status, that.status)
+                && Objects.equals(releaseDate, that.releaseDate)
                 && Objects.equals(logoUrl, that.logoUrl)
                 && Objects.equals(lastUpdated, that.lastUpdated)
                 && Objects.equals(genres, that.genres)
@@ -189,6 +205,6 @@ public class Game {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id,igdbId,title,platforms,status,logoUrl,genres,sourceUrls,resources);
+        return Objects.hash(id,igdbId,title,platforms, releaseDate,logoUrl,genres,sourceUrls,resources);
     }
 }

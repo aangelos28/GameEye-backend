@@ -2,9 +2,7 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.xml.transform.Source;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class IgdbModel {
@@ -17,11 +15,13 @@ public class IgdbModel {
         @JsonProperty("platforms")
         public List<PlatformResponse> platforms;
         @JsonProperty("updated_at")
-        public int lastUpdatedInSeconds;
+        public long lastUpdatedInSeconds;
         @JsonProperty("genres")
         public List<GenreResponse> genres;
         @JsonProperty("websites")
         public List<WebsiteResponse> sourceUrls;
+        @JsonProperty("first_release_date")
+        public long firstReleaseDateInSeconds;
 
         public GameResponse() {
             this.igdbId = "";
@@ -30,17 +30,19 @@ public class IgdbModel {
             this.lastUpdatedInSeconds = 0;
             this.genres = new ArrayList<>();
             this.sourceUrls = new ArrayList<>();
+            this.firstReleaseDateInSeconds = 0;
         }
 
         public GameResponse(String igdbId, String title, List<PlatformResponse> platforms,
-                            List<GenreResponse> genres, int lastUpdatedInSeconds,
-                            List<WebsiteResponse> sourceUrls) {
+                            List<GenreResponse> genres, long lastUpdatedInSeconds,
+                            List<WebsiteResponse> sourceUrls, long firstReleaseDateInSeconds) {
             this.igdbId = igdbId;
             this.title = title;
             this.platforms = platforms;
             this.lastUpdatedInSeconds = lastUpdatedInSeconds;
             this.genres = genres;
             this.sourceUrls = sourceUrls;
+            this.firstReleaseDateInSeconds = firstReleaseDateInSeconds;
         }
 
         public List<String> getGenres() {
@@ -83,26 +85,6 @@ public class IgdbModel {
             return platforms;
         }
 
-        public Game toGame() {
-            String id = "";
-            String igdbId = this.igdbId;
-            String title = this.title;
-            List<String> platforms = this.getPlatforms();
-            String status = "";
-            String logoUrl = "";
-
-            // Convert UNIX epoch timestamp from IGDB to year, month, day format
-            Date lastUpdated = new java.util.Date((long)this.lastUpdatedInSeconds * 1000);
-            List<String> genres = this.getGenres();
-            SourceUrls sourceUrls = this.getSourceUrls();
-            Resources resources = new Resources();
-            int watchers = 0;
-
-            Game game = new Game(id, igdbId, title, platforms, status, logoUrl, lastUpdated,
-                                 genres, sourceUrls, resources, watchers);
-
-            return game;
-        }
     }
 
     public static class GenreResponse {
@@ -228,6 +210,17 @@ public class IgdbModel {
         @Override
         public String toString() {
             return this.categoryCode;
+        }
+    }
+
+    public static class FindMaxIdResponse {
+        public int id;
+        @JsonProperty("created_at")
+        public long createdAt;
+
+        public FindMaxIdResponse(int id, long createdAt) {
+            this.id = id;
+            this.createdAt = createdAt;
         }
     }
 }

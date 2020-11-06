@@ -1,5 +1,6 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.modeltests;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.*;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.ImageResource;
@@ -22,6 +23,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 
 @RunWith(SpringRunner.class)
@@ -121,5 +125,15 @@ public class GameTest {
 
             assert(foundArticle.equals(actualArticle));
         }
+    }
+
+    @Test
+    public void testGameConstructorFromGameResponse () {
+        int igdbId = 100;
+        IgdbModel.GameResponse gameResponse = igdbService.getGameResponseById(igdbId);
+        Game convertedGame = new Game(gameResponse);
+        Game originalGame = igdbService.getGameById(igdbId);
+
+        assertThat(originalGame, equalTo(convertedGame));
     }
 }

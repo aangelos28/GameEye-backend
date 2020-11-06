@@ -31,7 +31,7 @@ public class IgdbController {
     @PostMapping(path = "/private-admin/igdb/replicate", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> replicateIgdbByRange(@RequestBody IgdbControllerRequest request) {
         try {
-            String result = igdbReplicationService.replicateIgdbByRange(request.getMinId(), request.getMaxId(), request.getLimit());
+            String result = igdbReplicationService.replicateGamesByRange(request.getMinId(), request.getMaxId(), request.getLimit());
             return ResponseEntity.status(HttpStatus.CREATED).body(result);
         } catch (Exception ex) {
             ex.printStackTrace();

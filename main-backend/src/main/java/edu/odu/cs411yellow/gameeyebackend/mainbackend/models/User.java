@@ -23,8 +23,11 @@ public class User {
 
     private List<WatchedGame> watchList;
 
+    private List<String> fcmTokens;
+
     @PersistenceConstructor
-    public User(String id, UserStatus status, UserPlan plan, Settings settings, List<WatchedGame> watchList) throws Exception {
+    public User(String id, UserStatus status, UserPlan plan, Settings settings,
+                List<WatchedGame> watchList, List<String> fcmTokens) throws Exception {
         if (id.equals("")) {
             throw new Exception("User id must not be null.");
         }
@@ -34,6 +37,7 @@ public class User {
         this.plan = plan;
         this.settings = settings;
         this.watchList = watchList;
+        this.fcmTokens = fcmTokens;
     }
 
     public User() {
@@ -42,6 +46,7 @@ public class User {
         this.plan = UserPlan.free;
         this.settings = new Settings();
         this.watchList = new ArrayList<>();
+        this.fcmTokens = new ArrayList<>();
     }
 
     public String getId() {
@@ -84,4 +89,11 @@ public class User {
         this.watchList = watchList;
     }
 
+    public List<String> getFcmTokens() {
+        return fcmTokens;
+    }
+
+    public void setFcmTokens(List<String> fcmTokens) {
+        this.fcmTokens = fcmTokens;
+    }
 }

@@ -1,5 +1,4 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models.settings;
-
 import org.springframework.data.annotation.PersistenceConstructor;
 
 public class NotificationSettings {
@@ -43,5 +42,4 @@ public class NotificationSettings {
     public void setNotifyOnlyIfImportant(boolean notifyOnlyIfImportant) {
         this.notifyOnlyIfImportant = notifyOnlyIfImportant;
     }
-
 }

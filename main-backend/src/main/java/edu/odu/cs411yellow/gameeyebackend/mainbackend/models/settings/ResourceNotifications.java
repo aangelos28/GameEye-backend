@@ -3,7 +3,6 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.models.settings;
 import org.springframework.data.annotation.PersistenceConstructor;
 
 public class ResourceNotifications {
-
     private ArticleNotifications articleNotifications;
 
     private ImageNotifications imageNotifications;
@@ -19,11 +18,11 @@ public class ResourceNotifications {
         this.imageNotifications = new ImageNotifications();
     }
 
-    public ArticleNotifications getArticles() {
+    public ArticleNotifications getArticleNotifications() {
         return articleNotifications;
     }
 
-    public void setArticles(ArticleNotifications articleNotifications) {
+    public void setArticleNotifications(ArticleNotifications articleNotifications) {
         this.articleNotifications = articleNotifications;
     }
 
@@ -34,5 +33,4 @@ public class ResourceNotifications {
     public void setImages(ImageNotifications imageNotifications) {
         this.imageNotifications = imageNotifications;
     }
-
 }

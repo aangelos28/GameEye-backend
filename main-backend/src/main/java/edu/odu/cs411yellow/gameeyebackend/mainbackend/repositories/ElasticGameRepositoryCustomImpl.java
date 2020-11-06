@@ -8,8 +8,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.data.elasticsearch.core.query.*;
 
 public class ElasticGameRepositoryCustomImpl implements ElasticGameRepositoryCustom {
 
@@ -39,4 +38,15 @@ public class ElasticGameRepositoryCustomImpl implements ElasticGameRepositoryCus
 
         return elasticSearch.search(searchQuery, ElasticGame.class, IndexCoordinates.of("games"));
     }
+
+    @Override
+    public boolean existsByTitle(final String title) {
+        Criteria criteria = new Criteria("title").is(title);
+        Query titleQuery = new CriteriaQuery(criteria);
+
+        SearchHits<ElasticGame> searchHits = elasticSearch.search(titleQuery, ElasticGame.class);
+
+        return searchHits.hasSearchHits();
+    }
+
 }

@@ -9,27 +9,15 @@ import java.util.List;
  * Class representing the articles object in the watchList in the users collection.
  */
 public class ArticleNotifications {
-    private Integer count;
-
     private List<String> articleIds;
 
     @PersistenceConstructor
-    public ArticleNotifications(Integer count, List<String> articleIds) {
-        this.count = count;
+    public ArticleNotifications(List<String> articleIds) {
         this.articleIds = articleIds;
     }
 
     public ArticleNotifications() {
-        this.count = 0;
         this.articleIds = new ArrayList<>();
-    }
-
-    public Integer getCount() {
-        return this.count;
-    }
-
-    public void setCount(Integer count) {
-        this.count = count;
     }
 
     public List<String> getArticleIds() {
@@ -38,6 +26,12 @@ public class ArticleNotifications {
 
     public void setArticleIds(List<String> articleIds) {
         this.articleIds = articleIds;
+    }
+
+    public void removeArticles(List<String> articleIds) {
+        for (String id: articleIds) {
+            boolean result = this.articleIds.remove(id);
+        }
     }
 
 }

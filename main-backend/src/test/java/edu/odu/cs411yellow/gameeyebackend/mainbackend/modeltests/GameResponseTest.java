@@ -63,15 +63,4 @@ public class GameResponseTest {
             assert(genreFromGameResponse.equals(genreFromGenres));
         }
     }
-
-    @Test
-    public void testToGame () throws JsonProcessingException {
-        int igdbId = 100;
-        GameResponse gameResponse = igdbService.getGameResponseById(igdbId);
-        Game convertedGame = gameResponse.toGame();
-        Game originalGame = igdbService.getGameById(igdbId);
-
-        assertThat(originalGame, equalTo(convertedGame));
-    }
-
 }

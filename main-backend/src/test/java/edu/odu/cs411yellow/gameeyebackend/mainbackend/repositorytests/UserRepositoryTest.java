@@ -30,10 +30,10 @@ public class UserRepositoryTest {
 
     @BeforeEach
     public void insertTestUserIntoGameEyeTest() throws Exception {
-
         String userId = "5e98dc5da3464d35b824d052";
         UserStatus status = UserStatus.inactive;
         UserPlan plan = UserPlan.free;
+        List<String> fcmTokens = new ArrayList<>();
 
         boolean receiveNotifications = true;
         boolean showArticleResources = true;
@@ -50,7 +50,7 @@ public class UserRepositoryTest {
         List<String> articleIds = new ArrayList<>();
         articleIds.add(articleId);
 
-        ArticleNotifications articleNotifications = new ArticleNotifications(articleCount, articleIds);
+        ArticleNotifications articleNotifications = new ArticleNotifications(articleIds);
 
         // Declare images
         int imageCount = 1;
@@ -58,7 +58,7 @@ public class UserRepositoryTest {
         List<String> imageIds = new ArrayList<>();
         imageIds.add(imageId);
 
-        ImageNotifications imageNotifications = new ImageNotifications(imageCount, imageIds);
+        ImageNotifications imageNotifications = new ImageNotifications(imageIds);
 
         // Declare notificationCategories
         ResourceNotifications resourceNotifications = new ResourceNotifications(articleNotifications, imageNotifications);
@@ -66,14 +66,14 @@ public class UserRepositoryTest {
         // Declare watchGame
         String watchedGameId = "5e98bf94a3464d35b824d04f";
         int notificationCount = 1;
-        WatchedGame watchedGame = new WatchedGame(watchedGameId, notificationCount, resourceNotifications);
+        WatchedGame watchedGame = new WatchedGame(watchedGameId, resourceNotifications);
 
         // Declare watchList
         List<WatchedGame> watchList = new ArrayList<>();
         watchList.add(watchedGame);
 
         // Set testUser
-        testUser = new User(userId, status, plan, settings, watchList);
+        testUser = new User(userId, status, plan, settings, watchList, fcmTokens);
 
         // Write testUser to GameEyeTest
         users.insert(testUser);
@@ -134,8 +134,8 @@ public class UserRepositoryTest {
             ResourceNotifications testResourceNotifications =
                     testUserWatchList.get(i).getResourceNotifications();
 
-            ArticleNotifications foundArticleNotifications = foundResourceNotifications.getArticles();
-            ArticleNotifications testArticleNotifications = testResourceNotifications.getArticles();
+            ArticleNotifications foundArticleNotifications = foundResourceNotifications.getArticleNotifications();
+            ArticleNotifications testArticleNotifications = testResourceNotifications.getArticleNotifications();
 
             List<String> foundArticleIds = foundArticleNotifications.getArticleIds();
             List<String> testArticleIds = testArticleNotifications.getArticleIds();

@@ -6,11 +6,11 @@ import org.springframework.data.elasticsearch.repository.ElasticsearchRepository
 public interface ElasticGameRepository extends ElasticsearchRepository<ElasticGame, String>, ElasticGameRepositoryCustom {
     ElasticGame findByTitle(String title);
 
-    boolean existsByTitle(String title);
-
     ElasticGame findByGameId(String id);
 
     void deleteById(String id);
 
     void deleteByTitle(String title);
+
+    void deleteByGameId(String id);
 }

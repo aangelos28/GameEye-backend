@@ -12,7 +12,7 @@ public class WatchedGameResponse extends WatchedGame {
 
     public WatchedGameResponse(String gameId, Integer notificationCount,
                                ResourceNotifications resourceNotifications, String title, String logoUrl) {
-        super(gameId, notificationCount, resourceNotifications);
+        super(gameId, resourceNotifications);
         this.title = title;
         this.logoUrl = logoUrl;
     }

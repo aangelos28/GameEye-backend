@@ -3,6 +3,7 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.servicetests;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.*;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.ImageResource;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ElasticGameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ImageRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.NewsWebsiteRepository;
@@ -37,13 +38,13 @@ public class GameServiceTest {
     private GameService gameService;
 
     @Autowired
-    private IgdbReplicationService igdbReplicator;
+    private IgdbReplicationService replicationService;
 
     @Autowired
     private IgdbService igdbService;
 
     @Autowired
-    private GameRepository games;
+    private GameRepository gameRepository;
 
     @Autowired
     private NewsWebsiteRepository news;
@@ -51,22 +52,29 @@ public class GameServiceTest {
     @Autowired
     private ImageRepository imageRepository;
 
+    @Autowired
+    private ElasticGameRepository elasticRepository;
+
     @BeforeEach
     public void insertGames() {
     }
 
     @Test
     public void testGetLogoUrl() {
-        String result = igdbReplicator.replicateIgdbByRange(100000, 100200, 250);
+        int minId = 100000;
+        int maxId = 100152;
+        int limit = 250;
+
+        String result = replicationService.replicateGamesByRange(minId, maxId, limit);
         System.out.println(result);
 
         String gameIgdbId1 = "100000";
         String gameIgdbId2 = "100083";
         String gameIgdbId3 = "100152";
 
-        Game game1 = games.findByIgdbId(gameIgdbId1);
-        Game game2 = games.findByIgdbId(gameIgdbId2);
-        Game game3 = games.findByIgdbId(gameIgdbId3);
+        Game game1 = gameRepository.findByIgdbId(gameIgdbId1);
+        Game game2 = gameRepository.findByIgdbId(gameIgdbId2);
+        Game game3 = gameRepository.findByIgdbId(gameIgdbId3);
 
         String logoUrl1 = gameService.getLogoUrl(game1.getId());
         String logoUrl2 = gameService.getLogoUrl(game2.getId());
@@ -82,7 +90,15 @@ public class GameServiceTest {
         assertThat(logoUrl2, containsString(".jpg"));
         assertThat(logoUrl3, containsString(".jpg"));
 
-        games.deleteAll();
+        // Delete new games from elastic.
+        for (int currentId = minId; currentId < maxId + 1; currentId++) {
+            if (gameRepository.existsByIgdbId(String.valueOf(currentId))) {
+                String gameId = gameRepository.findByIgdbId(String.valueOf(currentId)).getId();
+                elasticRepository.deleteByGameId(gameId);
+            }
+        }
+
+        gameRepository.deleteAll();
     }
 
     @Test
@@ -131,12 +147,12 @@ public class GameServiceTest {
         Game newGame = igdbService.getGameById(doomEternalId);
         newGame.setResources(resources);
 
-        games.insert(newGame);
-        Game insertedGame = games.findGameByTitle(newGame.getTitle());
+        gameRepository.insert(newGame);
+        Game insertedGame = gameRepository.findGameByTitle(newGame.getTitle());
 
         assertThat(gameService.getArticles(insertedGame.getId()), is(insertedGame.getResources().getArticles()));
 
-        games.delete(insertedGame);
+        gameRepository.delete(insertedGame);
     }
 
     @Test
@@ -155,7 +171,7 @@ public class GameServiceTest {
             testGames.get(i).setWatchers((watchers * (totalTopGames - i)));
         }
 
-        games.saveAll(testGames);
+        gameRepository.saveAll(testGames);
 
         int maxResults = 5;
         List<Game> foundGames = gameService.getTopGames(maxResults);
@@ -165,7 +181,6 @@ public class GameServiceTest {
             assertThat(foundGames.get(i).getWatchers(), equalTo(testGames.get(i).getWatchers()));
         }
 
-
-        games.deleteAll();
+        gameRepository.deleteAll();
     }
 }
