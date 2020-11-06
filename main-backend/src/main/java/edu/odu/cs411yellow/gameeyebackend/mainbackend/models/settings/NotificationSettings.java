@@ -16,7 +16,7 @@ public class NotificationSettings {
     public NotificationSettings() {
         this.receiveNotifications = true;
         this.receiveArticleNotifications = true;
-        this.notifyOnlyIfImportant = true;
+        this.notifyOnlyIfImportant = false;
     }
 
     public boolean getReceiveNotifications() {
