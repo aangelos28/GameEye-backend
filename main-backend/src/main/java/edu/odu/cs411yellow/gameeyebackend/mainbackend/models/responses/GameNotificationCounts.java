@@ -1,7 +1,7 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models.responses;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.WatchedGame;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.settings.ResourceNotifications;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.notifications.ResourceNotifications;
 
 public class GameNotificationCounts {
     private int totalNotifications;

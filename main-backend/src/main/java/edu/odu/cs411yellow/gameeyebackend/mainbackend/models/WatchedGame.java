@@ -1,6 +1,6 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models;
 
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.settings.ResourceNotifications;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.notifications.ResourceNotifications;
 import org.springframework.data.annotation.PersistenceConstructor;
 
 import java.util.List;

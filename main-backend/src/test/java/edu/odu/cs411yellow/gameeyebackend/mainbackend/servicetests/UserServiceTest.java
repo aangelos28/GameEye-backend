@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Settings;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.UserStatus;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.WatchedGame;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.settings.ArticleNotifications;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.notifications.ArticleNotifications;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.GameService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.IgdbService;

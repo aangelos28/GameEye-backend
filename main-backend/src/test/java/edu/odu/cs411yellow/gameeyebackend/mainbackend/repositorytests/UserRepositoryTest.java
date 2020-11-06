@@ -1,6 +1,9 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.repositorytests;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.*;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.notifications.ArticleNotifications;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.notifications.ImageNotifications;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.notifications.ResourceNotifications;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.settings.*;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.UserRepository;
 
