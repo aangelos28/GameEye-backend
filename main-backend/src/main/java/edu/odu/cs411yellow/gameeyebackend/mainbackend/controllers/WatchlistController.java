@@ -43,9 +43,9 @@ public class WatchlistController {
         final String userId = fbToken.getUid();
 
         if (brief) {
-            return ResponseEntity.ok(watchlistService.getWatchlistGamesShort(userId));
+            return ResponseEntity.ok(watchlistService.getAllWatchlistGamesShort(userId));
         } else {
-            return ResponseEntity.ok(watchlistService.getWatchlistGames(userId));
+            return ResponseEntity.ok(watchlistService.getAllWatchlistGames(userId));
         }
     }
 
@@ -55,18 +55,48 @@ public class WatchlistController {
      * @param index Index of the game in the watchlist to get
      * @return Watched game under index
      */
-    @GetMapping(path = "/private/watchlist/game/{index}")
-    public ResponseEntity<?> getWatchlistGame(@PathVariable int index, @RequestParam(required = false) boolean brief) {
+    @GetMapping(path = "/private/watchlist/game/index/{index}")
+    public ResponseEntity<?> getWatchlistGameByIndex(@PathVariable int index, @RequestParam(required = false) boolean brief) {
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         final FirebaseToken fbToken = (FirebaseToken) auth.getPrincipal();
         final String userId = fbToken.getUid();
 
-        if (brief) {
-            return ResponseEntity.ok(watchlistService.getWatchlistGameShort(userId, index));
-        } else {
-            return ResponseEntity.ok(watchlistService.getWatchlistGame(userId, index));
+        try {
+            if (brief) {
+                return ResponseEntity.ok(watchlistService.getWatchlistGameByIndexShort(userId, index));
+            } else {
+                return ResponseEntity.ok(watchlistService.getWatchlistGameByIndex(userId, index));
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to get game with specified index.");
         }
     }
+
+    /**
+     * Returns the ith game in a user's watchlist.
+     *
+     * @param gameId Id of the game in the watchlist to get
+     * @return Watched game under index
+     */
+    @GetMapping(path = "/private/watchlist/game/{gameId}")
+    public ResponseEntity<?> getWatchlistGameById(@PathVariable String gameId, @RequestParam(required = false) boolean brief) {
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final FirebaseToken fbToken = (FirebaseToken) auth.getPrincipal();
+        final String userId = fbToken.getUid();
+
+        try {
+            if (brief) {
+                return ResponseEntity.ok(watchlistService.getWatchlistGameByIdShort(userId, gameId));
+            } else {
+                return ResponseEntity.ok(watchlistService.getWatchlistGameById(userId, gameId));
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to get game with specified id.");
+        }
+    }
+
 
     /**
      * Adds a game to a user's watchlist.
@@ -135,7 +165,7 @@ public class WatchlistController {
         final String userId = request.getUserId();
 
         try {
-            final List<WatchedGameResponse> watchlist = watchlistService.getWatchlistGames(userId);
+            final List<WatchedGameResponse> watchlist = watchlistService.getAllWatchlistGames(userId);
 
             logger.info(String.format("ADMIN: Got watchlist of user %s.", userId));
 
