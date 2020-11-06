@@ -30,67 +30,28 @@ public class ReferenceGameService {
 
         String articleTitle = article.getTitle();
         SearchHits<ElasticGame> referencedGames = elasticGames.autocompleteGameTitle(articleTitle, 25);
-        int articleTitleLength = articleTitle.length();
-        int longestMatchSize = 0;
-        List <String> matchingIDs = new ArrayList<>();
+        List<String> matchingIDs = new ArrayList<>();
         String exactMatch = "";
 
-        for (var game: referencedGames) {
+        for (var game : referencedGames) {
 
             String gameTitle = game.getContent().getTitle();
             int gameTitleLength = gameTitle.length();
-            int matchSize;
-
-            matchSize = commonStringSize(articleTitle.toCharArray(),gameTitle.toCharArray(),
-                    articleTitleLength,gameTitleLength);
 
             //Case exact match is found
-            if(articleTitle.contains(gameTitle)){
+            if (articleTitle.contains(gameTitle)) {
                 exactMatch = game.getContent().getGameId();
             }
 
-            //Case: No exact Match is found
-            //Assuming gameTitles are no less than 3 characters
-            if((longestMatchSize < matchSize) && (matchSize > 3)) {
-                longestMatchSize = matchSize;   //set new longest match
-                matchingIDs.add(0,game.getContent().getGameId());
+
+            if (!exactMatch.contentEquals("")) {
+                matchingIDs.add(0, exactMatch);
             }
 
-            //Case: Another match is equally as accurate
-            else if (longestMatchSize == matchSize){
-                matchingIDs.add(0,game.getContent().getGameId());
-            }
-        }
-
-        if(!exactMatch.contentEquals("")){
-            matchingIDs.add(0,exactMatch);
         }
 
         return matchingIDs;
-    }
 
-    public int commonStringSize(char [] X, char [] Y, int m, int n) {
-
-        int [][] longCommStr = new int[m + 1][n + 1];
-        int result = 0;  //Store length of the longest common substring
-
-        //Loop through both char arrays to find longest common string
-        for (int i = 0; i <= m; i++)
-        {
-            for (int j = 0; j <= n; j++)
-            {
-                if (i == 0 || j == 0)
-                    longCommStr[i][j] = 0;
-                else if (X[i - 1] == Y[j - 1])
-                {
-                    longCommStr[i][j] = longCommStr[i - 1][j - 1] + 1;
-                    result = Integer.max(result, longCommStr[i][j]);
-                }
-                else
-                    longCommStr[i][j] = 0;
-            }
-        }
-        return result;
     }
 
 }
