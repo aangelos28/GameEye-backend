@@ -1,7 +1,7 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.repositorytests;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.*;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.*;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.settings.*;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.UserRepository;
 
 import org.junit.jupiter.api.AfterEach;
@@ -15,7 +15,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
@@ -36,13 +35,12 @@ public class UserRepositoryTest {
         UserStatus status = UserStatus.inactive;
         UserPlan plan = UserPlan.free;
 
+        boolean receiveNotifications = true;
         boolean showArticleResources = true;
-        boolean showImageResources = true;
         boolean notifyOnlyIfImportant = true;
 
-        NotificationSettings notificationSettings = new NotificationSettings(showArticleResources,
-                                                                                      showImageResources,
-                                                                                      notifyOnlyIfImportant);
+        NotificationSettings notificationSettings = new NotificationSettings(receiveNotifications, showArticleResources,
+                notifyOnlyIfImportant);
 
         Settings settings = new Settings(notificationSettings);
 

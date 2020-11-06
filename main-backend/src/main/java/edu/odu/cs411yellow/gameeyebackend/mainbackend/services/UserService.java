@@ -1,12 +1,12 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.services;
 
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Settings;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.User;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.UserStatus;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.settings.NotificationSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.UserRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * Provides services for managing user profiles.
@@ -14,7 +14,7 @@ import java.util.List;
 @Service
 public class UserService {
 
-    UserRepository users;
+    private UserRepository users;
 
     @Autowired
     UserService(UserRepository users) {
@@ -73,6 +73,13 @@ public class UserService {
         User user = users.findUserById(userId);
         user.setStatus(userStatus);
 
+        users.save(user);
+    }
+
+    public void updateSettings(final String firebaseID, Settings settings)
+    {
+        final User user = this.users.findUserById(firebaseID);
+        user.setSettings(settings);
         users.save(user);
     }
 }
