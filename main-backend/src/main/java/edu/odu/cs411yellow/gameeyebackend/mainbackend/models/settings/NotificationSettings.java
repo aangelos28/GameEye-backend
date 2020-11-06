@@ -3,22 +3,29 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.models.settings;
 import org.springframework.data.annotation.PersistenceConstructor;
 
 public class NotificationSettings {
-
+    private boolean receiveNotifications;
     private boolean showArticleResources;
-    private boolean showImageResources;
     private boolean notifyOnlyIfImportant;
 
     @PersistenceConstructor
-    public NotificationSettings(boolean showArticleResources, boolean showImageResources, boolean notifyOnlyIfImportant) {
+    public NotificationSettings(boolean receiveNotifications, boolean showArticleResources, boolean notifyOnlyIfImportant) {
+        this.receiveNotifications = receiveNotifications;
         this.showArticleResources = showArticleResources;
-        this.showImageResources = showImageResources;
         this.notifyOnlyIfImportant = notifyOnlyIfImportant;
     }
 
     public NotificationSettings() {
+        this.receiveNotifications = true;
         this.showArticleResources = true;
-        this.showImageResources = true;
         this.notifyOnlyIfImportant = true;
+    }
+
+    public boolean isReceiveNotifications() {
+        return receiveNotifications;
+    }
+
+    public void setReceiveNotifications(boolean receiveNotifications) {
+        this.receiveNotifications = receiveNotifications;
     }
 
     public boolean getShowArticleResources() {
@@ -27,14 +34,6 @@ public class NotificationSettings {
 
     public void setShowArticleResources(boolean showArticleResources) {
         this.showArticleResources = showArticleResources;
-    }
-
-    public boolean getShowImageResources() {
-        return this.showImageResources;
-    }
-
-    public void setShowImageCategories(boolean showImageResources) {
-        this.showImageResources = showImageResources;
     }
 
     public boolean getNotifyOnlyIfImportant() {
