@@ -58,7 +58,7 @@ public class ReferenceGameService {
 
             //Case: Another match is equally as accurate
             else if (longestMatchSize == matchSize){
-                matchingIDs.add(game.getContent().getGameId());
+                matchingIDs.add(0,game.getContent().getGameId());
             }
         }
 
