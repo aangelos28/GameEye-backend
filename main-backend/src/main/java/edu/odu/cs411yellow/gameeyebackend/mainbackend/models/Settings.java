@@ -16,11 +16,11 @@ public class Settings {
         this.notificationSettings = new NotificationSettings();
     }
 
-    public NotificationSettings getNotifications() {
+    public NotificationSettings getNotificationSettings() {
         return this.notificationSettings;
     }
 
-    public void setNotifications(NotificationSettings notificationSettings) {
+    public void setNotificationSettings(NotificationSettings notificationSettings) {
         this.notificationSettings = notificationSettings;
     }
 

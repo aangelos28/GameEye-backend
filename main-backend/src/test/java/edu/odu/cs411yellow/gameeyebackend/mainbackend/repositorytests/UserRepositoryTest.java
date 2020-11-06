@@ -35,13 +35,12 @@ public class UserRepositoryTest {
         UserPlan plan = UserPlan.free;
         List<String> fcmTokens = new ArrayList<>();
 
+        boolean receiveNotifications = true;
         boolean showArticleResources = true;
-        boolean showImageResources = true;
         boolean notifyOnlyIfImportant = true;
 
-        NotificationSettings notificationSettings = new NotificationSettings(showArticleResources,
-                                                                             showImageResources,
-                                                                             notifyOnlyIfImportant);
+        NotificationSettings notificationSettings = new NotificationSettings(receiveNotifications, showArticleResources,
+                notifyOnlyIfImportant);
 
         Settings settings = new Settings(notificationSettings);
 

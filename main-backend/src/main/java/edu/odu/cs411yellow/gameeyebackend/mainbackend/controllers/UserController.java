@@ -2,6 +2,8 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.controllers;
 
 import com.google.firebase.auth.FirebaseToken;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.GameService;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Settings;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.settings.NotificationSettings;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +38,7 @@ public class UserController {
     /**
      * Request body for admin endpoints.
      */
-    private static class UserRequest {
+    public static class UserRequest {
         public String userId;
     }
 
@@ -75,6 +77,30 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    public static class SettingsRequest {
+        public boolean receiveNotifications;
+        public boolean receiveArticleNotifications;
+        public boolean notifyOnlyIfImportant;
+    }
+
+    @PutMapping (path = "/private/settings/update", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateSettings(@RequestBody SettingsRequest request) {
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final FirebaseToken fbToken = (FirebaseToken) auth.getPrincipal();
+
+        try {
+
+            NotificationSettings notificationSettings = new NotificationSettings(request.receiveNotifications, request.receiveArticleNotifications, request.notifyOnlyIfImportant);
+
+
+            Settings settings = new Settings(notificationSettings);
+            userService.updateSettings(fbToken.getUid(), settings);
+            return ResponseEntity.status(HttpStatus.OK).body("Updated settings.");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to update settings.");
+        }
+    }
     /**
      * Deletes a user profile if it does not already exist.
      */

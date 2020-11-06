@@ -1,11 +1,15 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.servicetests;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Settings;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.UserStatus;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.WatchedGame;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.settings.ArticleNotifications;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.GameService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.IgdbService;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.settings.NotificationSettings;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.UserService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.WatchlistService;
 import org.bson.types.ObjectId;
@@ -131,5 +135,46 @@ public class UserServiceTest {
         // Delete the user
         userService.deleteUser(userId);
     }
+
+    @Test
+    public void updateSettingsTest() throws JsonProcessingException {
+        final String userId = "UserServiceTest - settingsUserTest";
+
+        // Create the user
+        userService.createUser(userId);
+        // Get the user
+        User user = userService.getUser(userId);
+
+        boolean receiveNotifications;
+        boolean receiveArticleNotifications;
+        boolean notifyOnlyIfImportant;
+
+        receiveNotifications = true;
+        receiveArticleNotifications = false;
+        notifyOnlyIfImportant = false;
+
+
+        NotificationSettings notificationSettings = new NotificationSettings(receiveNotifications,  receiveArticleNotifications, notifyOnlyIfImportant);
+
+        Settings settings = new Settings(notificationSettings);
+
+        userService.updateSettings(userId, settings);
+
+         user = userService.getUser(userId);
+         assertThat(user.getSettings().getNotificationSettings().getReceiveNotifications(), is(receiveNotifications));
+        assertThat(user.getSettings().getNotificationSettings().getReceiveArticleNotifications(), is(receiveArticleNotifications));
+        assertThat(user.getSettings().getNotificationSettings().getNotifyOnlyIfImportant(), is(notifyOnlyIfImportant));
+
+        ObjectMapper obj= new ObjectMapper();
+        System.out.println(obj.writerWithDefaultPrettyPrinter().writeValueAsString(user));
+
+        //Delete the user
+       userService.deleteUser(userId);
+
+        // Ensure that the user is deleted
+        assertThat(userService.checkUserExists(userId), is(false));
+    }
+
+
 }
 
