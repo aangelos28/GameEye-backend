@@ -144,7 +144,7 @@ public class GameServiceTest {
         Resources resources = new Resources(images, articles);
 
         int doomEternalId = 103298;
-        Game newGame = igdbService.getGameById(doomEternalId);
+        Game newGame = igdbService.retrieveGameById(doomEternalId);
         newGame.setResources(resources);
 
         gameRepository.insert(newGame);

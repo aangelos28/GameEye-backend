@@ -28,4 +28,8 @@ public class ElasticGameService {
         elasticGames.deleteById(game.getGameId());
         elasticGames.save(game);
     }
+
+    public void save(ElasticGame game) {
+        elasticGames.save(game);
+    }
 }

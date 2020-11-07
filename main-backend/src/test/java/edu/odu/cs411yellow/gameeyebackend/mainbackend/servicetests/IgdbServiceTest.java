@@ -1,7 +1,6 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.servicetests;
 
 import static edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel.GameResponse;
-import static edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel.CompanyResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -26,20 +25,15 @@ import java.util.List;
 @ActiveProfiles("test")
 @TestPropertySource(locations="classpath:application-test.properties")
 public class IgdbServiceTest {
-
     @Autowired
     IgdbService igdbService;
 
-    @Test
-    public void testGetCompanies() {
-        List<CompanyResponse> companies = igdbService.getCompanies();
-        assertThat(companies.size(), equalTo(10));
-    }
+    ObjectMapper mapper = new ObjectMapper();
 
     @Test
     public void testGetGameById() {
         int igdbId = 300;
-        Game game = igdbService.getGameById(igdbId);
+        Game game = igdbService.retrieveGameById(igdbId);
 
         assert(game.getIgdbId().equals(String.valueOf(igdbId)));
     }
@@ -71,7 +65,7 @@ public class IgdbServiceTest {
         int maxId = 100;
         int limit = 100;
 
-        List<GameResponse> responses = igdbService.getGameResponsesWithSingleRequest(minId, maxId, limit);
+        List<GameResponse> responses = igdbService.retrieveGameResponsesWithSingleRequest(minId, maxId, limit);
         List<Game> games = igdbService.convertGameResponsesToGames(responses);
 
         for (int gameIndex = 0; gameIndex < games.size(); gameIndex++) {
@@ -121,10 +115,19 @@ public class IgdbServiceTest {
     public void testFindMaxId() throws JsonProcessingException {
         int maxId = igdbService.findMaxGameId();
 
-        Game maxIdGame = new Game(igdbService.getGameResponseById(maxId));
+        Game maxIdGame = new Game(igdbService.retrieveGameResponseById(maxId));
         assertThat(maxIdGame.getIgdbId(), is(not("")));
 
-        ObjectMapper mapper = new ObjectMapper();
         System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(maxIdGame));
+    }
+
+    @Test
+    public void testRetrieveGameByTitle() throws JsonProcessingException {
+        String title = "Call of Duty: Black Ops Cold War";
+        Game game = igdbService.retrieveGameByTitle(title);
+
+        assertThat(game.getTitle(), is(title));
+
+        System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(game));
     }
 }

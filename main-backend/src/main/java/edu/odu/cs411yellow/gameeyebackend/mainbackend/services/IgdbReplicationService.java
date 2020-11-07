@@ -138,6 +138,29 @@ public class IgdbReplicationService {
         return status;
     }
 
+    public String replicateGameByTitle(String title) {
+        Game igdbGame = igdbService.retrieveGameByTitle(title);
+
+        // Update an existing IGDB game in games collection
+        if (gameService.existsByIgdbId(igdbGame.getIgdbId())) {
+            // Update game and elastic search if necessary
+            Game updatedGame = updateExistingGame(igdbGame);
+            gameService.save(updatedGame);
+        }
+        else {
+            // Add new game to MongoDB
+            igdbGame.setId(ObjectId.get().toString());
+            gameService.save(igdbGame);
+
+            // Add new game to ElasticSearch
+            ElasticGame elasticGame = new ElasticGame(igdbGame);
+            elasticService.save(elasticGame);
+        }
+
+        return String.format("Replicated game successfully.\nTitle: %1$s\nIGDB ID: %2$s",
+                              igdbGame.getTitle(), igdbGame.getIgdbId());
+    }
+
     private Game updateExistingGame(Game igdbGame) {
         Game existingGame = gameService.findByIgdbId(igdbGame.getIgdbId());
 

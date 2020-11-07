@@ -1,15 +1,11 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.services;
 
 import static edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel.GameResponse;
-import static edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel.CompanyResponse;
 import static edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel.CoverResponse;
-import static edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel.FindMaxIdResponse;
 
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.security.IgdbTokenContainer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -18,8 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,8 +23,6 @@ import java.util.List;
 public class IgdbService {
     private final WebClient webClient;
     IgdbTokenContainer token;
-
-    Logger logger = LoggerFactory.getLogger(IgdbService.class);
 
     @Autowired
     public IgdbService(WebClient.Builder webClientBuilder, @Value("${igdb.baseurl}") String igdbUrl,
@@ -43,17 +35,7 @@ public class IgdbService {
                 .build();
     }
 
-    public List<CompanyResponse> getCompanies() {
-        return this.webClient.post()
-                .uri("/companies")
-                .contentType(MediaType.TEXT_PLAIN)
-                .bodyValue("fields name; limit 10;")
-                .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<CompanyResponse>>() {})
-                .block();
-    }
-
-    public GameResponse getGameResponseById(int id) {
+    public GameResponse retrieveGameResponseById(int id) {
         String fieldsClause = "fields name, updated_at, genres.name, websites.url, websites.category, platforms.name, first_release_date; ";
         String whereClause = String.format("where id = %s;", id);
         String requestBody = String.format("%1$s%2$s", fieldsClause, whereClause);
@@ -70,7 +52,41 @@ public class IgdbService {
         return gameResponses.get(0);
     }
 
-    public List<GameResponse> getGameResponsesWithSingleRequest(int minId, int maxId, int limit) {
+    public GameResponse retrieveGameResponseByTitle(String title) {
+        String fieldsClause = "fields name, updated_at, genres.name, websites.url, websites.category, platforms.name, first_release_date; ";
+        String whereClause = String.format("where name = \"%s\";", title);
+        String requestBody = String.format("%1$s%2$s", fieldsClause, whereClause);
+
+        List<GameResponse> gameResponse = webClient.post()
+                .uri("/games")
+                .contentType(MediaType.TEXT_PLAIN)
+                .bodyValue(requestBody)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<List<GameResponse>>() {})
+                .block();
+
+        return gameResponse.get(0);
+    }
+
+    public CoverResponse retrieveCoverResponseByGameId(String gameId) {
+        String fieldsClause = "fields url, game; ";
+        String whereClause = String.format("where game = %1$s;", gameId);
+        String limitClause = String.format("limit %s;", 1);
+        String requestBody = String.format("%1$s%2$s%3$s", fieldsClause, whereClause, limitClause);
+
+        List<CoverResponse> coverResponses = webClient.post()
+                .uri("/covers")
+                .contentType(MediaType.TEXT_PLAIN)
+                .bodyValue(requestBody)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<List<CoverResponse>>() {
+                })
+                .block();
+
+        return coverResponses.get(0);
+    }
+
+    public List<GameResponse> retrieveGameResponsesWithSingleRequest(int minId, int maxId, int limit) {
         int inclusiveMinId = minId - 1;
         int inclusiveMaxId = maxId + 1;
 
@@ -90,7 +106,7 @@ public class IgdbService {
         return gameResponses;
     }
 
-    public List<CoverResponse> getCoverResponsesWithSingleRequest(int minId, int maxId, int limit) {
+    public List<CoverResponse> retrieveCoverResponsesWithSingleRequest(int minId, int maxId, int limit) {
         int inclusiveMinId = minId - 1;
         int inclusiveMaxId = maxId + 1;
 
@@ -124,13 +140,22 @@ public class IgdbService {
         return games;
     }
 
-    public Game getGameById(int id) {
-        return new Game(getGameResponseById(id));
+    public Game retrieveGameById(int id) {
+        return new Game(retrieveGameResponseById(id));
+    }
+
+    public Game retrieveGameByTitle(String title) {
+        Game game = new Game(retrieveGameResponseByTitle(title));
+        CoverResponse coverResponse = retrieveCoverResponseByGameId(game.getIgdbId());
+
+        game.setLogoUrl(coverResponse.logoUrl);
+
+        return game;
     }
 
     public List<Game> retrieveGamesByRangeWithLimit(int minId, int maxId, int limit) {
-        List<GameResponse> gameResponses = getGameResponsesWithSingleRequest(minId, maxId, limit);
-        List<CoverResponse> coverResponses = getCoverResponsesWithSingleRequest(minId, maxId, limit);
+        List<GameResponse> gameResponses = retrieveGameResponsesWithSingleRequest(minId, maxId, limit);
+        List<CoverResponse> coverResponses = retrieveCoverResponsesWithSingleRequest(minId, maxId, limit);
 
         List<Game> games = convertGameResponsesToGames(gameResponses);
 
