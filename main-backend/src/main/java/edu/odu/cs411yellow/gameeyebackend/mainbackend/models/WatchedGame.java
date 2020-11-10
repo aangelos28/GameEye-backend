@@ -1,28 +1,25 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models;
 
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.ResourceNotifications;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.notifications.ResourceNotifications;
 import org.springframework.data.annotation.PersistenceConstructor;
 
+import java.util.List;
 import java.util.Objects;
 
 public class WatchedGame {
     protected String gameId;
 
-    protected Integer notificationCount;
-
     protected ResourceNotifications resourceNotifications;
 
     @PersistenceConstructor
-    public WatchedGame(String gameId, Integer notificationCount,
+    public WatchedGame(String gameId,
                        ResourceNotifications resourceNotifications) {
         this.gameId = gameId;
-        this.notificationCount = notificationCount;
         this.resourceNotifications = resourceNotifications;
     }
 
     public WatchedGame(WatchedGame other) {
         this.gameId = other.gameId;
-        this.notificationCount = other.notificationCount;
         this.resourceNotifications = other.resourceNotifications;
     }
 
@@ -32,20 +29,11 @@ public class WatchedGame {
 
     public WatchedGame() {
         this.gameId = "";
-        this.notificationCount = 0;
         this.resourceNotifications = new ResourceNotifications();
     }
 
     public String getGameId() {
         return this.gameId;
-    }
-
-    public Integer getNotificationCount() {
-        return this.notificationCount;
-    }
-
-    public void setNotificationCount(Integer notificationCount) {
-        this.notificationCount = notificationCount;
     }
 
     public ResourceNotifications getResourceNotifications() {
@@ -54,6 +42,14 @@ public class WatchedGame {
 
     public void setResourceNotifications(ResourceNotifications resourceNotifications) {
         this.resourceNotifications = resourceNotifications;
+    }
+
+    public void addArticlesToResources(List<String> articleIds) {
+        resourceNotifications.getArticleNotifications().setArticleIds(articleIds);
+    }
+
+    public void removeArticlesFromResources(List<String> articleIds) {
+        resourceNotifications.getArticleNotifications().removeArticles(articleIds);
     }
 
     @Override

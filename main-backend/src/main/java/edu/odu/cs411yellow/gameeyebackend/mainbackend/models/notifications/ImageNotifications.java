@@ -1,4 +1,4 @@
-package edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences;
+package edu.odu.cs411yellow.gameeyebackend.mainbackend.models.notifications;
 
 import org.springframework.data.annotation.PersistenceConstructor;
 
@@ -6,27 +6,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ImageNotifications {
-    private Integer count;
-
     private List<String> imageIds;
 
     @PersistenceConstructor
-    public ImageNotifications(Integer count, List<String> imageIds) {
-        this.count = count;
+    public ImageNotifications(List<String> imageIds) {
         this.imageIds = imageIds;
     }
 
     public ImageNotifications() {
-        this.count = 0;
         this.imageIds = new ArrayList<>();
-    }
-
-    public Integer getCount() {
-        return this.count;
-    }
-
-    public void setCount(Integer count) {
-        this.count = count;
     }
 
     public List<String> getImageIds() {

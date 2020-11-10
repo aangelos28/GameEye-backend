@@ -3,7 +3,7 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.services;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.User;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.WatchedGame;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.ResourceNotifications;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.notifications.ResourceNotifications;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.responses.WatchedGameResponse;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.responses.WatchedGameShortResponse;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
@@ -36,11 +36,11 @@ public class WatchlistService {
     /**
      * Get the watchlist of a user.
      *
-     * @param id The firebase id of the user.
+     * @param userId The firebase id of the user.
      * @return List of watched games.
      */
-    public List<WatchedGameResponse> getWatchlistGames(final String id) {
-        final User user = users.findUserById(id);
+    public List<WatchedGameResponse> getAllWatchlistGames(final String userId) {
+        final User user = users.findUserById(userId);
 
         List<WatchedGame> watchedGames = user.getWatchList();
         List<WatchedGameResponse> watchedGameResponses = new ArrayList<>(watchedGames.size());
@@ -61,11 +61,11 @@ public class WatchlistService {
     /**
      * Get the watchlist of a user. Returns a short result.
      *
-     * @param id The firebase id of the user.
+     * @param userId The firebase id of the user.
      * @return List of watched games.
      */
-    public List<WatchedGameShortResponse> getWatchlistGamesShort(final String id) {
-        final User user = users.findUserById(id);
+    public List<WatchedGameShortResponse> getAllWatchlistGamesShort(final String userId) {
+        final User user = users.findUserById(userId);
 
         List<WatchedGame> watchedGames = user.getWatchList();
         List<WatchedGameShortResponse> watchedGameResponses = new ArrayList<>(watchedGames.size());
@@ -86,12 +86,12 @@ public class WatchlistService {
     /**
      * Gets the watchlist entry with index i.
      *
-     * @param id The firebase id of the user.
-     * @param index      Watchlist entry index
-     * @return Watched game undex index i
+     * @param userId The firebase id of the user.
+     * @param index  Watchlist entry index
+     * @return Watched game under index i
      */
-    public WatchedGameResponse getWatchlistGame(final String id, final int index) {
-        final User user = users.findUserById(id);
+    public WatchedGameResponse getWatchlistGameByIndex(final String userId, final int index) {
+        final User user = users.findUserById(userId);
 
         final WatchedGame watchedGame = user.getWatchList().get(index);
         final Game game = games.findGameById(watchedGame.getGameId());
@@ -106,12 +106,42 @@ public class WatchlistService {
     /**
      * Gets the watchlist entry with index i.
      *
-     * @param id The firebase id of the user.
-     * @param index      Watchlist entry index
-     * @return Watched game undex index i
+     * @param userId The firebase id of the user.
+     * @param gameId Id of the game to get from the watchlist
+     * @return Watched game with specified id
      */
-    public WatchedGameShortResponse getWatchlistGameShort(final String id, final int index) {
-        final User user = users.findUserById(id);
+    public WatchedGameResponse getWatchlistGameById(final String userId, final String gameId) throws Exception {
+        final User user = users.findUserById(userId);
+
+        WatchedGame targetGame = null;
+        for (WatchedGame watchedGame : user.getWatchList()) {
+            if (watchedGame.getGameId().equals(gameId)) {
+                targetGame = watchedGame;
+                break;
+            }
+        }
+        if (targetGame == null) {
+            throw new Exception("Game with specified id not found in user watchlist");
+        }
+
+        final Game game = games.findGameById(targetGame.getGameId());
+
+        final WatchedGameResponse watchedGameResponse = new WatchedGameResponse(targetGame);
+        watchedGameResponse.setTitle(game.getTitle());
+        watchedGameResponse.setLogoUrl(game.getLogoUrl());
+
+        return watchedGameResponse;
+    }
+
+    /**
+     * Gets the watchlist entry with index i.
+     *
+     * @param userId The firebase id of the user.
+     * @param index  Watchlist entry index
+     * @return Watched game under index i
+     */
+    public WatchedGameShortResponse getWatchlistGameByIndexShort(final String userId, final int index) {
+        final User user = users.findUserById(userId);
 
         final WatchedGame watchedGame = user.getWatchList().get(index);
         final String gameId = watchedGame.getGameId();
@@ -125,10 +155,41 @@ public class WatchlistService {
     }
 
     /**
+     * Gets the watchlist entry with index i.
+     *
+     * @param userId The firebase id of the user.
+     * @param gameId Id of the game to get from the watchlist
+     * @return Watched game with specified id
+     */
+    public WatchedGameShortResponse getWatchlistGameByIdShort(final String userId, final String gameId) throws Exception {
+        final User user = users.findUserById(userId);
+
+        WatchedGame targetGame = null;
+        for (WatchedGame watchedGame : user.getWatchList()) {
+            if (watchedGame.getGameId().equals(gameId)) {
+                targetGame = watchedGame;
+                break;
+            }
+        }
+        if (targetGame == null) {
+            throw new Exception("Game with specified id not found in user watchlist");
+        }
+
+        final Game game = games.findGameById(targetGame.getGameId());
+
+        final WatchedGameShortResponse watchedGameResponse = new WatchedGameShortResponse();
+        watchedGameResponse.setId(game.getId());
+        watchedGameResponse.setTitle(game.getTitle());
+
+        return watchedGameResponse;
+    }
+
+
+    /**
      * Add a game to a user's watchlist.
      *
-     * @param id The firebase id of the user.
-     * @param gameId     Id of the game to add.
+     * @param id     The firebase id of the user.
+     * @param gameId Id of the game to add.
      */
     public void addWatchlistGame(final String id, final String gameId) throws Exception {
         final User user = this.users.findUserById(id);
@@ -139,7 +200,7 @@ public class WatchlistService {
         }
 
         final List<WatchedGame> watchlist = user.getWatchList();
-        final WatchedGame newGame = new WatchedGame(game.getId(), 0, new ResourceNotifications());
+        final WatchedGame newGame = new WatchedGame(game.getId(), new ResourceNotifications());
 
         // Ensure we do not add a duplicate game
         if (!watchlist.contains(newGame)) {
@@ -155,8 +216,8 @@ public class WatchlistService {
     /**
      * Delete a game from a user's watchlist.
      *
-     * @param id The firebase id of the user.
-     * @param gameIndex      Index of the game in the watchlist to delete.
+     * @param id        The firebase id of the user.
+     * @param gameIndex Index of the game in the watchlist to delete.
      */
     public void deleteWatchlistGameByIndex(final String id, final int gameIndex) throws Exception {
         final User user = this.users.findUserById(id);
@@ -185,8 +246,8 @@ public class WatchlistService {
     /**
      * Delete a game from a user's watchlist.
      *
-     * @param id The firebase id of the user.
-     * @param gameId         Id of the game to remove.
+     * @param id     The firebase id of the user.
+     * @param gameId Id of the game to remove.
      */
     public void deleteWatchlistGameById(final String id, final String gameId) throws Exception {
         final User user = this.users.findUserById(id);

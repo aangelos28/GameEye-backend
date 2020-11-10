@@ -63,13 +63,6 @@ public class ElasticGameRepositoryTest {
         games.save(game4);
         games.save(game5);
 
-        // Delete elastic games if already present
-        elasticGames.deleteByTitle(game1Title);
-        elasticGames.deleteByTitle(game2Title);
-        elasticGames.deleteByTitle(game3Title);
-        elasticGames.deleteByTitle(game4Title);
-        elasticGames.deleteByTitle(game5Title);
-
         game1 = games.findGameByTitle(game1Title);
         game2 = games.findGameByTitle(game2Title);
         game3 = games.findGameByTitle(game3Title);
@@ -88,11 +81,11 @@ public class ElasticGameRepositoryTest {
         elasticGames.save(elasticGame4);
         elasticGames.save(elasticGame5);
 
-        elasticGame1 = elasticGames.findByTitle(game1Title);
-        elasticGame2 = elasticGames.findByTitle(game2Title);
-        elasticGame3 = elasticGames.findByTitle(game3Title);
-        elasticGame4 = elasticGames.findByTitle(game4Title);
-        elasticGame5 = elasticGames.findByTitle(game5Title);
+        elasticGame1 = elasticGames.findByGameId(game1.getId());
+        elasticGame2 = elasticGames.findByGameId(game2.getId());
+        elasticGame3 = elasticGames.findByGameId(game3.getId());
+        elasticGame4 = elasticGames.findByGameId(game4.getId());
+        elasticGame5 = elasticGames.findByGameId(game5.getId());
 
         assertThat(elasticGame1.getGameId(), is(game1.getId()));
         assertThat(elasticGame1.getTitle(), is(game1.getTitle()));
@@ -110,11 +103,11 @@ public class ElasticGameRepositoryTest {
         assertThat(elasticGame5.getTitle(), is(game5.getTitle()));
 
         // Delete elastic games
-        elasticGames.deleteByTitle(game1Title);
-        elasticGames.deleteByTitle(game2Title);
-        elasticGames.deleteByTitle(game3Title);
-        elasticGames.deleteByTitle(game4Title);
-        elasticGames.deleteByTitle(game5Title);
+        elasticGames.delete(elasticGame1);
+        elasticGames.delete(elasticGame2);
+        elasticGames.delete(elasticGame3);
+        elasticGames.delete(elasticGame4);
+        elasticGames.delete(elasticGame5);
 
         // Delete test games
         games.deleteByTitle(game1Title);
@@ -147,11 +140,6 @@ public class ElasticGameRepositoryTest {
         games.save(game2);
         games.save(game3);
 
-        // Delete elastic games if already present
-        elasticGames.deleteByTitle(game1Title);
-        elasticGames.deleteByTitle(game1Title);
-        elasticGames.deleteByTitle(game1Title);
-
         game1 = games.findGameByTitle(game1Title);
         game2 = games.findGameByTitle(game2Title);
         game3 = games.findGameByTitle(game3Title);
@@ -176,9 +164,9 @@ public class ElasticGameRepositoryTest {
         }
 
         // Delete elastic games
-        elasticGames.deleteByTitle(game1Title);
-        elasticGames.deleteByTitle(game2Title);
-        elasticGames.deleteByTitle(game3Title);
+        elasticGames.delete(elasticGame1);
+        elasticGames.delete(elasticGame2);
+        elasticGames.delete(elasticGame3);
 
         // Delete test games
         games.deleteByTitle(game1Title);

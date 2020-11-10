@@ -1,7 +1,10 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.repositorytests;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.*;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.preferences.*;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.notifications.ArticleNotifications;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.notifications.ImageNotifications;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.notifications.ResourceNotifications;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.settings.*;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.UserRepository;
 
 import org.junit.jupiter.api.AfterEach;
@@ -15,7 +18,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
@@ -31,18 +33,17 @@ public class UserRepositoryTest {
 
     @BeforeEach
     public void insertTestUserIntoGameEyeTest() throws Exception {
-
         String userId = "5e98dc5da3464d35b824d052";
         UserStatus status = UserStatus.inactive;
         UserPlan plan = UserPlan.free;
+        List<String> fcmTokens = new ArrayList<>();
 
+        boolean receiveNotifications = true;
         boolean showArticleResources = true;
-        boolean showImageResources = true;
         boolean notifyOnlyIfImportant = true;
 
-        NotificationSettings notificationSettings = new NotificationSettings(showArticleResources,
-                                                                                      showImageResources,
-                                                                                      notifyOnlyIfImportant);
+        NotificationSettings notificationSettings = new NotificationSettings(receiveNotifications, showArticleResources,
+                notifyOnlyIfImportant);
 
         Settings settings = new Settings(notificationSettings);
 
@@ -52,7 +53,7 @@ public class UserRepositoryTest {
         List<String> articleIds = new ArrayList<>();
         articleIds.add(articleId);
 
-        ArticleNotifications articleNotifications = new ArticleNotifications(articleCount, articleIds);
+        ArticleNotifications articleNotifications = new ArticleNotifications(articleIds);
 
         // Declare images
         int imageCount = 1;
@@ -60,7 +61,7 @@ public class UserRepositoryTest {
         List<String> imageIds = new ArrayList<>();
         imageIds.add(imageId);
 
-        ImageNotifications imageNotifications = new ImageNotifications(imageCount, imageIds);
+        ImageNotifications imageNotifications = new ImageNotifications(imageIds);
 
         // Declare notificationCategories
         ResourceNotifications resourceNotifications = new ResourceNotifications(articleNotifications, imageNotifications);
@@ -68,14 +69,14 @@ public class UserRepositoryTest {
         // Declare watchGame
         String watchedGameId = "5e98bf94a3464d35b824d04f";
         int notificationCount = 1;
-        WatchedGame watchedGame = new WatchedGame(watchedGameId, notificationCount, resourceNotifications);
+        WatchedGame watchedGame = new WatchedGame(watchedGameId, resourceNotifications);
 
         // Declare watchList
         List<WatchedGame> watchList = new ArrayList<>();
         watchList.add(watchedGame);
 
         // Set testUser
-        testUser = new User(userId, status, plan, settings, watchList);
+        testUser = new User(userId, status, plan, settings, watchList, fcmTokens);
 
         // Write testUser to GameEyeTest
         users.insert(testUser);
@@ -136,8 +137,8 @@ public class UserRepositoryTest {
             ResourceNotifications testResourceNotifications =
                     testUserWatchList.get(i).getResourceNotifications();
 
-            ArticleNotifications foundArticleNotifications = foundResourceNotifications.getArticles();
-            ArticleNotifications testArticleNotifications = testResourceNotifications.getArticles();
+            ArticleNotifications foundArticleNotifications = foundResourceNotifications.getArticleNotifications();
+            ArticleNotifications testArticleNotifications = testResourceNotifications.getArticleNotifications();
 
             List<String> foundArticleIds = foundArticleNotifications.getArticleIds();
             List<String> testArticleIds = testArticleNotifications.getArticleIds();

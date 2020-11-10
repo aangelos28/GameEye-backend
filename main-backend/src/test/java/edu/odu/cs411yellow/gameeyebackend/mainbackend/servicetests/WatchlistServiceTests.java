@@ -82,7 +82,7 @@ public class WatchlistServiceTests {
         watchlistService.addWatchlistGame(id, game2.getId());
         watchlistService.addWatchlistGame(id, game3.getId());
 
-        List<WatchedGameResponse> watchlist = watchlistService.getWatchlistGames(id);
+        List<WatchedGameResponse> watchlist = watchlistService.getAllWatchlistGames(id);
 
         // Verify that games are present
         game1 = games.findGameByTitle(game1Title);

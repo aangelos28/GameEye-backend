@@ -1,6 +1,5 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.repositorytests;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.*;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.ImageResource;
@@ -114,7 +113,7 @@ public class GameRepositoryTest {
         assertThat(insertedGame.getIgdbId(), equalTo(foundGame.getIgdbId()));
         assertThat(insertedGame.getTitle(), equalTo(foundGame.getTitle()));
         assertThat(insertedGame.getPlatforms(), equalTo(foundGame.getPlatforms()));
-        assertThat(insertedGame.getStatus(), equalTo(foundGame.getStatus()));
+        assertThat(insertedGame.getReleaseDate(), equalTo(foundGame.getReleaseDate()));
         assertThat(insertedGame.getLastUpdated(), equalTo(foundGame.getLastUpdated()));
         assertThat(insertedGame.getGenres(), equalTo(foundGame.getGenres()));
         assertThat(insertedGame.getSourceUrls(), equalTo(foundGame.getSourceUrls()));

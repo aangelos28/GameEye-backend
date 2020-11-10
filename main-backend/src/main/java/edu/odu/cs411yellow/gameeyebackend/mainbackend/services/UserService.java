@@ -1,7 +1,10 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.services;
 
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Settings;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.User;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.UserStatus;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.WatchedGame;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.UserRepository;
 import org.springframework.stereotype.Service;
@@ -13,12 +16,13 @@ import java.util.List;
  */
 @Service
 public class UserService {
-
-    UserRepository users;
+    private final UserRepository users;
+    private final GameRepository games;
 
     @Autowired
-    UserService(UserRepository users) {
+    UserService(UserRepository users, GameRepository games) {
         this.users = users;
+        this.games = games;
     }
 
     /**
@@ -60,6 +64,13 @@ public class UserService {
      * @param userId Id of the user profile to delete
      */
     public void deleteUser(final String userId) {
+        final User user = users.findUserById(userId);
+
+        // Decrement watcher counters for the games the user is watching
+        for (WatchedGame watchedGame : user.getWatchList()) {
+            games.decrementWatchers(watchedGame.getGameId());
+        }
+
         users.deleteById(userId);
     }
 
@@ -73,6 +84,70 @@ public class UserService {
         User user = users.findUserById(userId);
         user.setStatus(userStatus);
 
+        users.save(user);
+    }
+
+    /**
+     * Removes articles for a watched game from a user's notifications.
+     *
+     * @param userId     Id of the user notifications to modify.
+     * @param gameId     Id of the watched game.
+     * @param articleIds Ids of articles to remove.
+     */
+    public void removeUserArticleNotifications(final String userId, String gameId, List<String> articleIds) {
+        User user = users.findUserById(userId);
+
+        List<WatchedGame> watchedGames = user.getWatchList();
+        for (WatchedGame game : watchedGames) {
+            if (game.getGameId().equals(gameId)) {
+                game.removeArticlesFromResources(articleIds);
+                break;
+            }
+        }
+
+        users.save(user);
+    }
+
+    /**
+     * Adds articles for a watched game from a user's notifications.
+     *
+     * @param userId     Id of the user notifications to modify.
+     * @param gameId     Id of the watched game.
+     * @param articleIds Ids of articles to add.
+     */
+    public void addUserArticleNotifications(final String userId, String gameId, List<String> articleIds) {
+        User user = users.findUserById(userId);
+
+        List<WatchedGame> watchedGames = user.getWatchList();
+        for (WatchedGame game : watchedGames) {
+            if (game.getGameId().equals(gameId)) {
+                game.addArticlesToResources(articleIds);
+                break;
+            }
+        }
+
+        users.save(user);
+    }
+
+    /**
+     * Get the settings of a specific user.
+     *
+     * @param userId Id of the user
+     */
+    public Settings getSettings(final String userId) {
+        final User user = this.users.findUserById(userId);
+        return user.getSettings();
+    }
+
+    /**
+     * Update the settings of a specific user.
+     *
+     * @param userId   Id of the user
+     * @param settings New settings
+     */
+    public void updateSettings(final String userId, Settings settings) {
+        final User user = this.users.findUserById(userId);
+        user.setSettings(settings);
         users.save(user);
     }
 }

@@ -2,6 +2,7 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.servicetests;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.SourceUrls;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ElasticGameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.IgdbReplicationService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.IgdbService;
@@ -24,13 +25,16 @@ import java.util.List;
 @TestPropertySource(locations="classpath:application-test.properties")
 public class IgdbReplicationServiceTest {
     @Autowired
-    IgdbReplicationService igdbReplicator;
+    IgdbReplicationService igdbReplicationService;
 
     @Autowired
     IgdbService igdbService;
 
     @Autowired
     GameRepository gameRepository;
+
+    @Autowired
+    ElasticGameRepository elasticRepository;
 
     @Test
     public void testReplicateIgdbByRangeForNewGames() {
@@ -43,8 +47,7 @@ public class IgdbReplicationServiceTest {
         List<Game> preReplicationTestDbGames = new ArrayList<>();
 
         // Replicate new games to db.
-        String result = igdbReplicator.replicateIgdbByRange(minId, maxId, limit);
-        System.out.println(result);
+        String result = igdbReplicationService.replicateGamesByRange(minId, maxId, limit);
 
         // Find new games from db.
         for (int igdbId = minId; igdbId < maxId-minId+2; igdbId++) {
@@ -74,7 +77,15 @@ public class IgdbReplicationServiceTest {
             assertThat(igdbSourceUrls, equalTo(preRepSourceUrls));
         }
 
-        // Delete new games written to db.
+        // Delete new games from elastic.
+        for (int currentId = minId; currentId < maxId + 1; currentId++) {
+            if (gameRepository.existsByIgdbId(String.valueOf(currentId))) {
+                String gameId = gameRepository.findByIgdbId(String.valueOf(currentId)).getId();
+                elasticRepository.deleteByGameId(gameId);
+            }
+        }
+
+        // Delete new games from mongo db.
         for (int igdbId = minId; igdbId < maxId-minId+2; igdbId++) {
             gameRepository.deleteByIgdbId(String.valueOf(igdbId));
         }
@@ -91,7 +102,7 @@ public class IgdbReplicationServiceTest {
         List<Game> preReplicationTestDbGames = new ArrayList<>();
 
         // Replicate new games to db.
-        String status = igdbReplicator.replicateIgdbByRange(minId, maxId, limit);
+        String status = igdbReplicationService.replicateGamesByRange(minId, maxId, limit);
 
         // Find new games from db.
         for (int igdbId = minId; igdbId < maxId-minId+2; igdbId++) {
@@ -100,7 +111,7 @@ public class IgdbReplicationServiceTest {
 
         // Test for updating existing games. Ensure only required fields are overwritten.
         List<Game> postReplicationTestDbGames = new ArrayList<>();
-        igdbReplicator.replicateIgdbByRange(minId, maxId, limit);
+        igdbReplicationService.replicateGamesByRange(minId, maxId, limit);
 
         // Find updated games in db.
         for (int igdbId = minId; igdbId < maxId-minId+2; igdbId++) {
@@ -116,7 +127,7 @@ public class IgdbReplicationServiceTest {
             assertThat(preRepGame.getId(), equalTo(postRepGame.getId()));
             assertThat(preRepGame.getIgdbId(), equalTo(postRepGame.getIgdbId()));
             assertThat(preRepGame.getTitle(), equalTo(postRepGame.getTitle()));
-            assertThat(preRepGame.getStatus(), equalTo(postRepGame.getStatus()));
+            assertThat(preRepGame.getReleaseDate(), equalTo(postRepGame.getReleaseDate()));
             assertThat(preRepGame.getResources(), equalTo(postRepGame.getResources()));
             assertThat(preRepGame.getWatchers(), equalTo(postRepGame.getWatchers()));
 
@@ -136,6 +147,14 @@ public class IgdbReplicationServiceTest {
             }
             if (!preRepSourceUrls.getTwitterUrl().equals("")) {
                 assertThat(postRepSourceUrls.getTwitterUrl(), notNullValue());
+            }
+        }
+
+        // Delete new games from elastic.
+        for (int currentId = minId; currentId < maxId + 1; currentId++) {
+            if (gameRepository.existsByIgdbId(String.valueOf(currentId))) {
+                String gameId = gameRepository.findByIgdbId(String.valueOf(currentId)).getId();
+                elasticRepository.deleteByGameId(gameId);
             }
         }
 
