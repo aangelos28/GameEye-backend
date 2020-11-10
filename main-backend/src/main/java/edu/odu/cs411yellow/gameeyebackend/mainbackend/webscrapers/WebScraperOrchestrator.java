@@ -89,23 +89,30 @@ public class WebScraperOrchestrator{
     public void forceScrape(){
 
         for(String s:scraperNames){
-            List<Article> articleList = scraper.scrape(s);
-            for (Article art:articleList) {
-                if(!checkIrrelevantArticles(art) && !checkArticleDuplicates(art))
-                {
+            try{
+                List<Article> articleList = scraper.scrape(s);
+                for (Article art:articleList) {
+
+                    //if(!checkIrrelevantArticles(art) && !checkArticleDuplicates(art))
+                    //{
+                    //System.out.println(art.getTitle());
                     scrapedArticles.add(art);
-                    articleTitles.add(art.getTitle());
+                    //articleTitles.add(art.getTitle());
+                    //}
                 }
+            } catch (NullPointerException e){
+                e.printStackTrace();
             }
         }
+
         List<Article> mockNewsArticles = mockNewsScraper.scrape(mockNewsScraper.getScrapperName());
 
         for (Article art:mockNewsArticles) {
-            if(!checkIrrelevantArticles(art) && !checkArticleDuplicates(art))
-            {
+            //if(!checkIrrelevantArticles(art) && !checkArticleDuplicates(art))
+            //{
                 scrapedArticles.add(art);
-                articleTitles.add(art.getTitle());
-            }
+                //articleTitles.add(art.getTitle());
+            //}
         }
 
         //insertDataIntoDatabase();
@@ -121,7 +128,7 @@ public class WebScraperOrchestrator{
         try{
             List<Article> articleList = scraper.scrape(target);
             for (Article art:articleList) {
-                if(!checkIrrelevantArticles(art) && !checkArticleDuplicates(art))
+                //if(!checkIrrelevantArticles(art) && !checkArticleDuplicates(art))
                     scrapedArticles.add(art);
             }
         }catch (NullPointerException e){
@@ -139,14 +146,14 @@ public class WebScraperOrchestrator{
                 /*if(!checkIrrelevantArticles(art) && !checkArticleDuplicates(art))
                     scrapedArticles.add(art);*/
 
-                List<String> ids = performArticleGameReferenceSearch(art);
-                for(String id:ids)
-                {
-                    if(checkArticleDuplicates(id,art))
-                    {
+                //List<String> ids = performArticleGameReferenceSearch(art);
+                //for(String id:ids)
+                //{
+                    //if(checkArticleDuplicates(id,art))
+                    //{
                         scrapedArticles.add(art);
-                    }
-                }
+                    //}
+                //}
             }
 
 
@@ -243,7 +250,7 @@ public class WebScraperOrchestrator{
 
         for(String id:possibleGameIDS){
             ElasticGame game = elastic.findByGameId(id);
-            System.out.println(game.getTitle());
+            //System.out.println(game.getTitle());
         }
 
         if(possibleGameIDS.size()>0)
@@ -300,15 +307,15 @@ public class WebScraperOrchestrator{
      * Adds a game to the GameEye database
      * @param game  game to be added
      */
-    public void addGameToDB(ElasticGame game){
-        String title = game.getTitle();
-        String mongoID = game.getGameId();
-        String elasticID = game.getId();
+    public void addGameToDB(Game game){
 
-        Game newGame = new Game();
-
-        //games.save(newGame);
+        games.save(game);
     }
+
+    public void addArticleToGame(Article a, String gameTitle){
+        games.findGameByTitle(gameTitle).addArticleResources(a);
+    }
+
 
 
     /**
