@@ -12,6 +12,7 @@ import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.elasticsearch.Elast
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.NewsWebsite;
 
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.GameService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.MachineLearningService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.ReferenceGameService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,13 +60,15 @@ public class WebScraperOrchestrator{
     ElasticGameRepository elastic;
 
     private ReferenceGameService rgs;
+    private GameService gameService;
     GameRepository games;
     private MachineLearningService machine;
 
 
     @Autowired
-    public WebScraperOrchestrator (UniversalScraper scraper, MockNewsScraper mockNewsScraper, ElasticGameRepository elastic,
-                                   ReferenceGameService rgs, NewsWebsiteRepository newsWebsiteRepository, GameRepository games){
+    public WebScraperOrchestrator(UniversalScraper scraper, MockNewsScraper mockNewsScraper, ElasticGameRepository elastic,
+                                   ReferenceGameService rgs, NewsWebsiteRepository newsWebsiteRepository, GameRepository games,
+                                   GameService gameService) {
         //this.scrapers = new ArrayList<WebScraper>();
         this.scrapedArticles = new ArrayList<Article>();
         this.mockNewsScraper = mockNewsScraper;
@@ -79,6 +82,7 @@ public class WebScraperOrchestrator{
         this.scraper = scraper;
 
         this.games=games;
+        this.gameService = gameService;
 
     }
 
@@ -313,10 +317,8 @@ public class WebScraperOrchestrator{
     }
 
     public void addArticleToGame(Article a, String gameTitle){
-        games.findGameByTitle(gameTitle).addArticleResources(a);
+        gameService.addArticleToGame(a, gameTitle);
     }
-
-
 
     /**
      * Removes an article from the collection of scraped articles

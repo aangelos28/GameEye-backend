@@ -68,4 +68,10 @@ public class GameService {
     public Game findByIgdbId(String igdbId) {
         return gameRepository.findByIgdbId(igdbId);
     }
+
+    public void addArticleToGame(Article article, String gameTitle){
+        Game game = gameRepository.findGameByTitle(gameTitle);
+        game.addArticleResources(article);
+        save(game);
+    }
 }
