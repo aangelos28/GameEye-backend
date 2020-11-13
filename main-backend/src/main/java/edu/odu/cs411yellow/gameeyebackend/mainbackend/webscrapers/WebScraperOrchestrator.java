@@ -35,9 +35,7 @@ import org.jsoup.select.Elements;
 
 
 import java.io.IOException;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
 @Service
 public class WebScraperOrchestrator{
@@ -46,6 +44,8 @@ public class WebScraperOrchestrator{
 
     private List<WebScraper> scrapers;
     private List<Article> scrapedArticles;
+    private List<Article> allArticles;
+
     private List<String> articleTitles;
 
     private MockNewsScraper mockNewsScraper;
@@ -71,6 +71,7 @@ public class WebScraperOrchestrator{
                                    GameService gameService) {
         //this.scrapers = new ArrayList<WebScraper>();
         this.scrapedArticles = new ArrayList<Article>();
+        this.allArticles = new ArrayList<Article>();
         this.mockNewsScraper = mockNewsScraper;
 
         this.elastic = elastic;
@@ -147,17 +148,18 @@ public class WebScraperOrchestrator{
 
             List<Article> articleList = mockNewsScraper.scrape("GameEye Mock News");
             for (Article art:articleList) {
-                /*if(!checkIrrelevantArticles(art) && !checkArticleDuplicates(art))
-                    scrapedArticles.add(art);*/
 
-                //List<String> ids = performArticleGameReferenceSearch(art);
-                //for(String id:ids)
-                //{
-                    //if(checkArticleDuplicates(id,art))
-                    //{
+                List<String> ids = performArticleGameReferenceSearch(art);
+                List<String> cleanedIds = cleanIds(ids);
+
+                for(String id:cleanedIds)
+                {
+                    allArticles.add(art);
+                    if(checkArticleDuplicates(id,art))
+                    {
                         scrapedArticles.add(art);
-                    //}
-                //}
+                    }
+                }
             }
 
 
@@ -173,6 +175,23 @@ public class WebScraperOrchestrator{
         //TODO
     }
 
+    public List<String> cleanIds(List<String> ids){
+        Iterator<String> iterator = ids.iterator();
+
+        while(iterator.hasNext()){
+            String id = iterator.next();
+            ElasticGame gameToCheck = elastic.findByGameId(id);
+            String title = gameToCheck.getTitle();
+
+            if(Objects.isNull(games.findByTitle(title))){
+                iterator.remove();
+            }
+        }
+
+        return ids;
+    }
+
+
     /**
      * Checks if the article already exists in the database
      * @param a A scraped article
@@ -186,7 +205,7 @@ public class WebScraperOrchestrator{
             //Game gameToCheck = games.findGameById(id);
             ElasticGame gameToCheck = elastic.findByGameId(id);
             String title = gameToCheck.getTitle();
-            System.out.println(title);
+            //System.out.println(title);
             Game gameInDB;
 
             /*if (!games.existsByTitle(title)) {
@@ -218,23 +237,16 @@ public class WebScraperOrchestrator{
     }
 
     public Boolean checkArticleDuplicates(String id, Article a){
-        //Boolean dupe = false;
-            System.out.println("Passed in article: "+a.getTitle()+"\n");
             ElasticGame gameToCheck = elastic.findByGameId(id);
             String title = gameToCheck.getTitle();
-            System.out.println("Found game based on ID: "+title+"\n");
 
             Game gameInDB = games.findByTitle(title);
-
 
             Resources gameResources = gameInDB.getResources();
             List<Article> storedGameArticles = gameResources.getArticles();
 
-
-            System.out.println("Stored Articles for: "+gameInDB.getTitle());
-
             for(Article storedArticle:storedGameArticles){
-                System.out.println(storedArticle.getTitle());
+                //System.out.println(storedArticle.getTitle());
                 if(a.equals(storedArticle)){
                     return true;
                 }
@@ -332,6 +344,8 @@ public class WebScraperOrchestrator{
      * @return A List of articles
      */
     public List<Article> getArticleCollection(){ return scrapedArticles; }
+
+    public List<Article> getAllArticles(){return allArticles; }
 
     public List<String> getArticleTitles(){ return articleTitles; }
 

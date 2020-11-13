@@ -13,6 +13,7 @@ import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.NewsWebsiteRe
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ElasticGameRepositoryCustomImpl;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.GameService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.MachineLearningService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.ReferenceGameService;
 import org.junit.jupiter.api.AfterEach;
@@ -78,6 +79,9 @@ public class WebScraperOrchestratorTest {
     @Autowired
     private GameRepository games;
 
+    @Autowired
+    GameService gameService;
+
     private Game mockgame1;
     private Game mockgame2;
     private Game mockgame3;
@@ -119,13 +123,18 @@ public class WebScraperOrchestratorTest {
         mock.scrape(mock.getScrapperName());
         mockArticles=mock.getArticles();
 
-        //og = new Article(mockArticles.get(0)); //"Destiny 2: Beyond Light adds ice"
+        og = new Article(mockArticles.get(1)); //"Destiny 2: Beyond Light adds ice"
+        List<Article> arts = new ArrayList<>(Arrays.asList(og));
 
-        Resources mock4Resources= new Resources();
+        Resources mock4Resources= new Resources(null,arts);
+        //Resources mock4Resources= new Resources();
+        String title="Destiny 2: Beyond Light";
         mockgame4 = new Game();
-        mockgame4.setTitle("Destiny 2: Beyond Light");
+        mockgame4.setTitle(title);
         mockgame4.setResources(mock4Resources);
-        mockgame4.addArticleResources(og);
+        mock4Resources.setArticles(arts);
+        mockgame4.setId("100000");
+        //mockgame4.addArticleResources(og);
 
 
         games.save(mockgame1);
@@ -133,7 +142,7 @@ public class WebScraperOrchestratorTest {
         games.save(mockgame3);
         games.save(mockgame4);
 
-        /*ElasticGame elasticGame1 = new ElasticGame(mockgame1);
+        ElasticGame elasticGame1 = new ElasticGame(mockgame1);
         ElasticGame elasticGame2 = new ElasticGame(mockgame2);
         ElasticGame elasticGame3 = new ElasticGame(mockgame3);
         ElasticGame elasticGame4 = new ElasticGame(mockgame4);
@@ -142,10 +151,8 @@ public class WebScraperOrchestratorTest {
         elasticGames.save(elasticGame2);
         elasticGames.save(elasticGame3);
         elasticGames.save(elasticGame4);
-*/
-        //mockgame4.addArticleResources(og);
 
-        orchestratorMock = new WebScraperOrchestrator(scraper, mock, elasticGames, rgs, newsWebsiteRepository,games);
+        orchestratorMock = new WebScraperOrchestrator(scraper, mock, elasticGames, rgs, newsWebsiteRepository,games, gameService);
     }
 
     @AfterEach
@@ -162,97 +169,21 @@ public class WebScraperOrchestratorTest {
     }
 
     @Test
-    public void testForceScrape(){
-        orchestratorMock.forceScrape();
-        System.out.println(orchestratorMock.toString());
-        String totalCollection="";
+    public void testInit(){
 
-        for(String s: scraperNames){
-            scraper.scrape(s);
-            totalCollection += scraper.toString()+"\n";
-        }
-
-        //assertEquals(totalCollection,orchestratorMock.toString());
     }
 
-    @Test
-    public void testForceScrapeMockNews(){
-        orchestratorMock.forceScrape(mock);
-        System.out.println(orchestratorMock.toString());
-
-        assertEquals(mock.toString(),orchestratorMock.toString());
-        assertEquals(mock.getArticles(), orchestratorMock.getArticleCollection());
-    }
-
-    @Test
-    public void testForceScrapeGameSpot(){
-        orchestratorMock.forceScrape("GameSpot");
-        System.out.println(orchestratorMock.toString());
-
-        assertEquals(scraper.toString(),orchestratorMock.toString());
-        assertEquals(scraper.getArticles(), orchestratorMock.getArticleCollection());
-    }
-
-    @Test
-    public void testForceScrapeIGN(){
-        orchestratorMock.forceScrape("IGN");
-        System.out.println(orchestratorMock.toString());
-
-        assertEquals(scraper.toString(),orchestratorMock.toString());
-        assertEquals(scraper.getArticles(), orchestratorMock.getArticleCollection());
-    }
-
-    @Test
-    public void testForceScrapePCGamer(){
-        orchestratorMock.forceScrape("PC Gamer");
-        System.out.println(orchestratorMock.toString());
-
-        assertEquals(scraper.toString(),orchestratorMock.toString());
-        assertEquals(scraper.getArticles(), orchestratorMock.getArticleCollection());
-    }
-
-    @Test
-    public void testForceScrapeEuroGamer(){
-        orchestratorMock.forceScrape("Eurogamer");
-        System.out.println(orchestratorMock.toString());
-
-        assertEquals(scraper.toString(),orchestratorMock.toString());
-        assertEquals(scraper.getArticles(), orchestratorMock.getArticleCollection());
-    }
 
     @Test
     public void testCheckArticleDuplicates(){
-
-        mock.scrape(mock.getScrapperName());
-        mockArticles=mock.getArticles();
-
-
-
-        Article og = new Article(mockArticles.get(1)); //"Destiny 2: Beyond Light adds ice"
-        mockgame4.addArticleResources(og);
-
-        String artID = og.getId();
-        String title = "Destiny 2: Beyond Light";
-        String id = "5fa25fd86ffacd4ab297d3e1"; //Destiny 2
-        orchestratorMock.addArticleToGame(og,title);
-
-        //orchestratorMock.addGameToDB(mockgame4);
-
-        //orchestratorMock.games.findGameByTitle(title).addArticleResources(og);
-        Article a = orchestratorMock.games.findGameByTitle(title).getResources().findArticle(artID);
-        System.out.println(mockgame4.getTitle());
-        System.out.println("Trying to Insert: "+a.getTitle());
-        System.out.println("OG: "+og.getTitle());
-
-
+        String title = mockgame4.getTitle();
+        String id = mockgame4.getId();
 
         Article dupe = new Article(og);
-
-        //Boolean duped = orchestratorMock.checkArticleDuplicates(id,dupe);
+        Boolean duped = orchestratorMock.checkArticleDuplicates(id,dupe);
 
         assertEquals(og,dupe);
-
-        //assertThat(duped,is(true));
+        assertThat(duped,is(true));
 
     }
 
@@ -333,16 +264,33 @@ public class WebScraperOrchestratorTest {
         mock.scrape(mock.getScrapperName());
         mockArticles=mock.getArticles();
 
-        Article og = new Article(mockArticles.get(1)); //"Destiny 2: Beyond Light adds ice"
+       // Article og = new Article(mockArticles.get(1)); //"Destiny 2: Beyond Light adds ice"
         //mockgame4.addArticleResources(og);
 
         String artID = og.getId();
         String title = "Destiny 2: Beyond Light";
         String id = "5fa25fd86ffacd4ab297d3e1"; //Destiny 2
-        orchestratorMock.addArticleToGame(og,title);
+        //orchestratorMock.addArticleToGame(og,title);
 
-        Article a = orchestratorMock.games.findGameByTitle(title).getResources().findArticle(artID);
+        //Article a = orchestratorMock.games.findGameByTitle(title).getResources().findArticle(artID);
     }
 
+    @Test
+    public void testGetGamesArticles(){
+        //mock.scrape(mock.getScrapperName());
+        //mockArticles=mock.getArticles();
+        String title = "Destiny 2: Beyond Light";
 
+        //Article og = new Article(mockArticles.get(1)); //"Destiny 2: Beyond Light adds ice"
+        //orchestratorMock.addArticleToGame(og,title);
+
+
+        List <Article> target = orchestratorMock.games.findGameByTitle(title).getResources().getArticles();
+        for(Article a: target){
+            System.out.println(a.getTitle());
+        }
+
+    }
 }
+
+

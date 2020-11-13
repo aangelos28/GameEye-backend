@@ -27,13 +27,11 @@ public class Article {
     /**
      * Reference to the news website that this article was retrieved from.
      */
-    @DBRef
     private NewsWebsite newsWebsite;
 
     /**
      * Reference to a thumbnail for this article, if any.
      */
-    @DBRef
     private Image thumbnail;
 
     /**
