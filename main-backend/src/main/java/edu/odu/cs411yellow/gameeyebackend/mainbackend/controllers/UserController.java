@@ -228,4 +228,26 @@ public class UserController {
 
         return ResponseEntity.ok("Article notifications removed.");
     }
+
+    private static class NotificationTokenRequest {
+        public String notificationToken;
+    }
+
+    /**
+     * Registers a new notification token for a user.
+     */
+    @PostMapping(path = "/private/user/notifications/register")
+    public ResponseEntity<?> registerNotificationToken(@RequestBody NotificationTokenRequest request) {
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final FirebaseToken fbToken = (FirebaseToken) auth.getPrincipal();
+        final String userId = fbToken.getUid();
+
+        try {
+            userService.registerNotificationToken(userId, request.notificationToken);
+
+            return ResponseEntity.ok("Notification token registered");
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+    }
 }

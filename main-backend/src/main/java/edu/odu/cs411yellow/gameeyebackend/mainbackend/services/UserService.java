@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -148,6 +149,41 @@ public class UserService {
     public void updateSettings(final String userId, Settings settings) {
         final User user = this.users.findUserById(userId);
         user.setSettings(settings);
+        users.save(user);
+    }
+
+    /**
+     * Register a new notification token for the specified user.
+     *
+     * @param userId Id of the user
+     * @param notificationToken Notification token to register
+     * @throws Exception Token has already been registered
+     */
+    public void registerNotificationToken(final String userId, final String notificationToken) throws Exception {
+        final User user = this.users.findUserById(userId);
+        List<String> notificationTokens = user.getFcmTokens();
+
+        // Ensure the token has not already been registered
+        if (notificationTokens.contains(notificationToken)) {
+            throw new Exception("Notification token already exists.");
+        }
+
+        // Add the new notification token
+        notificationTokens.add(notificationToken);
+        user.setFcmTokens(notificationTokens);
+
+        users.save(user);
+    }
+
+    /**
+     * Deletes all the notification tokens for the specified user.
+     *
+     * @param userId Id of the user
+     */
+    public void deleteAllNotificationTokens(final String userId) {
+        final User user = this.users.findUserById(userId);
+        user.setFcmTokens(new ArrayList<>());
+
         users.save(user);
     }
 }
