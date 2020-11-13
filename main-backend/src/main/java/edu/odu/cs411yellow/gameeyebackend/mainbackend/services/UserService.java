@@ -155,7 +155,7 @@ public class UserService {
     /**
      * Register a new notification token for the specified user.
      *
-     * @param userId Id of the user
+     * @param userId            Id of the user
      * @param notificationToken Notification token to register
      * @throws Exception Token has already been registered
      */
@@ -170,6 +170,21 @@ public class UserService {
 
         // Add the new notification token
         notificationTokens.add(notificationToken);
+        user.setFcmTokens(notificationTokens);
+
+        users.save(user);
+    }
+
+    /**
+     * Delete the passed notification token for the specified user.
+     *
+     * @param userId            Id of the user
+     * @param notificationToken Notification token to delete
+     */
+    public void deleteNotificationToken(final String userId, final String notificationToken) {
+        final User user = this.users.findUserById(userId);
+        List<String> notificationTokens = user.getFcmTokens();
+        notificationTokens.remove(notificationToken);
         user.setFcmTokens(notificationTokens);
 
         users.save(user);
