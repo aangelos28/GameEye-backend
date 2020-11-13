@@ -15,7 +15,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class IgdbDataRetrieval {
     WebClient webClient;
 
-    public IgdbDataRetrieval(@Value("${mainbackend.igdb.baseurl}") String igdbUrl) {
+    public IgdbDataRetrieval(@Value("${mainbackend.baseurl}") String igdbUrl) {
         this.webClient = WebClient.builder()
                 .baseUrl(igdbUrl)
                 .build();
