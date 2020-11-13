@@ -96,12 +96,13 @@ public class NotificationService {
      * @param subOperation Subscription operation (SUBSCRIBE/UNSUBSCRIBE)
      * @throws Exception Thrown if the game does not exist or the user has not chosen to receive notifications
      */
-    public void modifyUserGameSubscription(final User user, final String gameId, SubscriptionOperation subOperation) throws Exception {
+    public void modifyUserGameSubscription(final String userId, final String gameId, SubscriptionOperation subOperation) throws Exception {
+        final User user = userService.getUser(userId);
         final Settings settings = user.getSettings();
         final NotificationSettings notificationSettings = settings.getNotificationSettings();
 
         if (!notificationSettings.getReceiveNotifications()) {
-            throw new Exception("Cannot subscribe user to game. User does not wish to receive notifications.");
+            return;
         }
         if (!gameService.existsById(gameId)) {
             throw new Exception("Cannot subscribe user to game. Invalid game id.");
