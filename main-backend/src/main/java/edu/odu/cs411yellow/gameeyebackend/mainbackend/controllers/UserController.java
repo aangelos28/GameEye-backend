@@ -1,9 +1,11 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.controllers;
 
 import com.google.firebase.auth.FirebaseToken;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.User;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.GameService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Settings;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.settings.NotificationSettings;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.NotificationService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,15 +26,16 @@ import java.util.List;
 @RestController
 public class UserController {
     private final UserService userService;
-
     private final GameService gameService;
+    private final NotificationService notificationService;
 
     Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
-    public UserController(UserService userService, GameService gameService) {
+    public UserController(UserService userService, GameService gameService, NotificationService notificationService) {
         this.userService = userService;
         this.gameService = gameService;
+        this.notificationService = notificationService;
     }
 
     /**
@@ -123,13 +126,19 @@ public class UserController {
     public ResponseEntity<?> updateSettings(@RequestBody SettingsRequest request) {
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         final FirebaseToken fbToken = (FirebaseToken) auth.getPrincipal();
+        final String userId = fbToken.getUid();
 
         try {
-            final NotificationSettings notificationSettings = new NotificationSettings(request.receiveNotifications,
+            final User user = userService.getUser(userId);
+            final NotificationSettings oldNotificationSettings = user.getSettings().getNotificationSettings();
+            final NotificationSettings newNotificationSettings = new NotificationSettings(request.receiveNotifications,
                     request.receiveArticleNotifications, request.notifyOnlyIfImportant);
 
-            final Settings settings = new Settings(notificationSettings);
+            final Settings settings = new Settings(newNotificationSettings);
             userService.updateSettings(fbToken.getUid(), settings);
+
+            // Update notification subscriptions
+            notificationService.modifyUserSubscriptions(user, oldNotificationSettings);
 
             return ResponseEntity.ok("Updated settings");
         } catch (Exception ex) {
