@@ -69,6 +69,11 @@ public class GameService {
         return gameRepository.findByIgdbId(igdbId);
     }
 
+    /**
+     * Add article to a game in the games collection.
+     * @param article Article object to save within a game document.
+     * @param gameTitle Title of the game in which the article will be stored.
+     */
     public void addArticleToGame(Article article, String gameTitle){
         Game game = gameRepository.findGameByTitle(gameTitle);
         game.addArticleResources(article);
