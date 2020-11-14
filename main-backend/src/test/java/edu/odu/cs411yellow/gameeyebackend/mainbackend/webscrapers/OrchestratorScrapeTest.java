@@ -85,6 +85,7 @@ public class OrchestratorScrapeTest {
 
     @Test
     public void testForceScrapeMockNews(){
+        //mock.scrape();
         orchestratorMock.forceScrape(mock);
         //System.out.println(orchestratorMock.toString());
 

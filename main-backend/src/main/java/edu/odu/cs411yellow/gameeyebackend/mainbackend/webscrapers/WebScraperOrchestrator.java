@@ -149,16 +149,22 @@ public class WebScraperOrchestrator{
             List<Article> articleList = mockNewsScraper.scrape("GameEye Mock News");
             for (Article art:articleList) {
 
-                List<String> ids = performArticleGameReferenceSearch(art);
-                List<String> cleanedIds = cleanIds(ids);
-
-                for(String id:cleanedIds)
-                {
+                if(checkIrrelevantArticles(art)){
                     allArticles.add(art);
-                    if(checkArticleDuplicates(id,art))
-                    {
+                }
+                else {
+                    List<String> ids = performArticleGameReferenceSearch(art);
+                    String id = ids.get(ids.size() - 1);
+                    //List<String> cleanedIds = cleanIds(ids);
+
+                    //for(String id:cleanedIds)
+                    //{
+                    allArticles.add(art);
+                    if (!checkArticleDuplicates(id, art)) {
                         scrapedArticles.add(art);
+                        System.out.println(art.getTitle());
                     }
+                    //}
                 }
             }
 
@@ -242,8 +248,18 @@ public class WebScraperOrchestrator{
 
             Game gameInDB = games.findByTitle(title);
 
-            Resources gameResources = gameInDB.getResources();
-            List<Article> storedGameArticles = gameResources.getArticles();
+            Resources gameResources;
+            List<Article> storedGameArticles = new ArrayList<Article>();
+
+            try{
+                gameResources = gameInDB.getResources();
+                storedGameArticles = gameResources.getArticles();
+
+            }catch(NullPointerException e){
+                //e.printStackTrace();
+                //System.out.print()
+            }
+
 
             for(Article storedArticle:storedGameArticles){
                 //System.out.println(storedArticle.getTitle());
