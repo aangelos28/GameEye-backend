@@ -35,6 +35,10 @@ public class GameService {
         return gameRepository.findTopGames(maxResults) ;
     }
 
+    public Game findGameById(final String gameId) {
+        return gameRepository.findGameById(gameId);
+    }
+
     public boolean existsById(String id) {
         return gameRepository.existsById(id);
     }

@@ -38,6 +38,7 @@ public class GameController {
      */
     public static class GameTitleAutocompletionRequest {
         public String gameTitle;
+        public int maxSuggestions;
     }
 
     /**
@@ -68,7 +69,7 @@ public class GameController {
     @PostMapping(path = "/private/game/complete", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<GameTitleAutocompletionResponse>> getTitleCompletions(@RequestBody GameTitleAutocompletionRequest request) {
         // Autocomplete title
-        SearchHits<ElasticGame> searchHits = elasticGames.autocompleteGameTitle(request.gameTitle, 8);
+        SearchHits<ElasticGame> searchHits = elasticGames.autocompleteGameTitle(request.gameTitle, Integer.min(request.maxSuggestions, 15));
 
         if (searchHits.getTotalHits() == 0) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -179,7 +180,7 @@ public class GameController {
     @PostMapping(path = "/private/game/top", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getMostWatchedGames(@RequestBody TopGamesRequest request) {
         try {
-            List<Game> games = gameService.getTopGames(request.maxResults);
+            List<Game> games = gameService.getTopGames(Integer.min(request.maxResults, 50));
             List<TopGameResponse> gameResponses = new ArrayList<>();
 
             for (Game game: games) {
