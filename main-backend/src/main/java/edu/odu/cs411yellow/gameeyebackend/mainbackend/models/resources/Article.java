@@ -1,7 +1,7 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources;
 
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Image;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.NewsWebsite;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 
 import java.util.Date;
@@ -11,7 +11,7 @@ import java.util.Objects;
  * Represents a news article resource.
  */
 public class Article {
-    private final String id;
+    private String id;
 
     /**
      * Title of the article.
@@ -58,7 +58,11 @@ public class Article {
     public Article(String id, String title, String url, String newsWebsiteName, String thumbnailId, String snippet,
                    Date publicationDate, Date lastUpdated, boolean isImportant) {
 
-        this.id = id;
+        if (id.equals("")) {
+            this.id = ObjectId.get().toHexString();
+        } else {
+            this.id = id;
+        }
         this.title = title;
         this.url = url;
         this.newsWebsiteName = newsWebsiteName;
@@ -70,7 +74,7 @@ public class Article {
     }
 
     public Article() {
-        this.id = "";
+        this.id = ObjectId.get().toHexString();;
         this.title = "";
         this.url = "";
         this.newsWebsiteName = "";
@@ -95,6 +99,10 @@ public class Article {
 
     public String getId() {
         return this.id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -169,6 +177,7 @@ public class Article {
 
         return Objects.equals(id, that.id)
                 && Objects.equals(url, that.url)
+                && Objects.equals(title, that.title)
                 && Objects.equals(newsWebsiteName, that.newsWebsiteName)
                 && Objects.equals(thumbnailId, that.thumbnailId)
                 && Objects.equals(snippet, that.snippet)
