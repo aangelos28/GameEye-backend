@@ -35,8 +35,8 @@ public class WebScraperOrchestrator{
 
     private MockNewsScraper mockNewsScraper;
     private UniversalScraper scraper;
-    //private String[] scraperNames={"GameSpot","Eurogamer","PC Gamer", "IGN","GameEye Mock News"};
-    private String[] scraperNames={"GameSpot","Eurogamer","PC Gamer", "IGN"};
+    private String[] scraperNames={"GameSpot","Eurogamer","PC Gamer", "IGN","GameEye Mock News"};
+    //private String[] scraperNames={"GameSpot","Eurogamer","PC Gamer", "IGN"};
 
     private ElasticsearchOperations elasticSearch;
 
@@ -79,14 +79,27 @@ public class WebScraperOrchestrator{
     public void forceScrape(){
 
         for(String s:scraperNames){
-            try{
-                List<Article> articleList = scraper.scrape(s);
-                for (Article art:articleList) {
+            List<Article> articleList = scraper.scrape(s);
 
+            try{
+                for (Article art:articleList) {
+                    if (checkIrrelevantArticles(art)) {
+                        allArticles.add(art);
+                    } else {
+                        List<String> ids = performArticleGameReferenceSearch(art);
+                        String id = ids.get(ids.size() - 1);
+
+                        allArticles.add(art);
+                        // Add article to scrapedArticles if not a duplicate in db or scrapedArticles
+                        if (!checkArticleDuplicates(id, art) && !scrapedArticles.contains(art)) {
+                            scrapedArticles.add(art);
+                            articleTitles.add(art.getTitle());
+                        }
+                    }
                     //if(!checkIrrelevantArticles(art) && !checkArticleDuplicates(art))
                     //{
                     //System.out.println(art.getTitle());
-                    scrapedArticles.add(art);
+                    //scrapedArticles.add(art);
                     //articleTitles.add(art.getTitle());
                     //}
                 }
@@ -95,15 +108,25 @@ public class WebScraperOrchestrator{
             }
         }
 
-        List<Article> mockNewsArticles = mockNewsScraper.scrape(mockNewsScraper.getScraperName());
+        /*List<Article> mockNewsArticles = mockNewsScraper.scrape(mockNewsScraper.getScraperName());
 
         for (Article art:mockNewsArticles) {
-            //if(!checkIrrelevantArticles(art) && !checkArticleDuplicates(art))
-            //{
-                scrapedArticles.add(art);
-                //articleTitles.add(art.getTitle());
-            //}
-        }
+            if(checkIrrelevantArticles(art)){
+                allArticles.add(art);
+            }
+            else {
+                List<String> ids = performArticleGameReferenceSearch(art);
+                String id = ids.get(ids.size() - 1);
+
+                allArticles.add(art);
+                // Add article to scrapedArticles if not a duplicate in db or scrapedArticles
+                if (!checkArticleDuplicates(id, art) && !scrapedArticles.contains(art)) {
+                    scrapedArticles.add(art);
+                    articleTitles.add(art.getTitle());
+                }
+
+            }
+        }*/
 
         //insertDataIntoDatabase();
     }

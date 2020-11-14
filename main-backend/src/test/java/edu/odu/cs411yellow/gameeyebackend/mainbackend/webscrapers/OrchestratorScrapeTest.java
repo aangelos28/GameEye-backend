@@ -32,7 +32,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestPropertySource(locations = "classpath:application-test.properties")
 public class OrchestratorScrapeTest {
 
-    private String[] scraperNames={"GameSpot","Eurogamer","PC Gamer", "IGN","GameEye Mock News"};
+    //private String[] scraperNames={"GameSpot","Eurogamer","PC Gamer", "IGN","GameEye Mock News"};
+    private String[] scraperNames={"GameSpot","Eurogamer", "IGN","GameEye Mock News"};
 
     @Autowired
     MockNewsScraper mock;
@@ -73,14 +74,18 @@ public class OrchestratorScrapeTest {
     public void testForceScrape(){
         orchestratorMock.forceScrape();
         System.out.println(orchestratorMock.toString());
-        String totalCollection="";
+        List<Article> totalCollection=new ArrayList<Article>();
 
         for(String s: scraperNames){
             scraper.scrape(s);
-            totalCollection += scraper.toString()+"\n";
+            totalCollection.addAll(scraper.getArticles());
+            //scraper.
         }
 
+
+
         //assertEquals(totalCollection,orchestratorMock.toString());
+        assertEquals(totalCollection, orchestratorMock.getAllArticles());
     }
 
     @Test

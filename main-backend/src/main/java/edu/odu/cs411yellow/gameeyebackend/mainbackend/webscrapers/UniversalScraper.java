@@ -131,6 +131,11 @@ public class UniversalScraper implements WebScraper {
     @Override
     public String getScraperName(){ return name; }
 
+    @Override
+    public void emptyArticles(){
+        articles.clear();
+    }
+
     /**
      * Output to JSON format
      * @return JSON

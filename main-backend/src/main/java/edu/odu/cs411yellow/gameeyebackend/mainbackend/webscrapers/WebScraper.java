@@ -58,4 +58,6 @@ public interface WebScraper {
      * @return Boolean
      */
     Boolean checkDuplicateArticles(Article a);
+
+    void emptyArticles();
 }
