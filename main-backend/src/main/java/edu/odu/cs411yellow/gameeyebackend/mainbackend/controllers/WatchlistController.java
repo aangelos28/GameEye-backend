@@ -107,7 +107,7 @@ public class WatchlistController {
      * @param request HTTP request body
      */
     @PostMapping(path = "/private/watchlist/add", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addWatchlistGame(@RequestBody WatchlistGameRequest request) {
+    public ResponseEntity<?> addWatchlistGame(@RequestBody WatchlistGameRequest request) throws Exception {
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         final FirebaseToken fbToken = (FirebaseToken) auth.getPrincipal();
         final String userId = fbToken.getUid();
@@ -119,6 +119,7 @@ public class WatchlistController {
             return ResponseEntity.status(HttpStatus.CREATED).body("Added game to watchlist.");
         } catch (Exception ex) {
             ex.printStackTrace();
+            watchlistService.deleteWatchlistGameById(userId, gameId);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to add game to watchlist.");
         }
     }

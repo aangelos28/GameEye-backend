@@ -138,6 +138,7 @@ public class UserController {
             userService.updateSettings(fbToken.getUid(), settings);
 
             // Update notification subscriptions
+            user.getSettings().setNotificationSettings(newNotificationSettings);
             notificationService.modifyUserSubscriptions(user, oldNotificationSettings);
 
             return ResponseEntity.ok("Updated settings");
@@ -245,7 +246,7 @@ public class UserController {
     /**
      * Registers a new notification token for a user.
      */
-    @PostMapping(path = "/private/user/notifications/register")
+    @PostMapping(path = "/private/user/notifications/token/register")
     public ResponseEntity<?> registerNotificationToken(@RequestBody NotificationTokenRequest request) {
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         final FirebaseToken fbToken = (FirebaseToken) auth.getPrincipal();
@@ -257,6 +258,21 @@ public class UserController {
             return ResponseEntity.ok("Notification token registered");
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+    }
+
+    private static class NotificationTokenDeletionRequest {
+        public String userId;
+    }
+
+    @DeleteMapping(path = "/private-admin/user/notifications/token/delete-all")
+    public ResponseEntity<?> deleteAllNotificationTokens(@RequestBody NotificationTokenDeletionRequest request) {
+        try {
+            userService.deleteAllNotificationTokens(request.userId);
+
+            return ResponseEntity.ok("Notification tokens deleted.");
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 }

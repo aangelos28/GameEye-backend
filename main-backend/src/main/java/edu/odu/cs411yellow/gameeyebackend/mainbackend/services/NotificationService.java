@@ -41,7 +41,7 @@ public class NotificationService {
         final User user = userService.getUser(userId);
         final List<String> notificationTokens = user.getFcmTokens();
 
-        System.out.println(notificationTokens);
+        //System.out.println(notificationTokens);
 
         final MulticastMessage message = MulticastMessage.builder().setNotification(
                 Notification.builder()
@@ -110,6 +110,7 @@ public class NotificationService {
 
         // Subscribe or unsubscribe user to game notifications
         final List<String> notificationTokens = user.getFcmTokens();
+        System.out.println(notificationTokens);
 
         TopicManagementResponse response;
         if (notificationSettings.getNotifyOnlyIfImportant()) {
@@ -176,11 +177,10 @@ public class NotificationService {
      * @param oldNotificationSettings Previous notifications settings (before being changed)
      */
     public void modifyUserSubscriptions(final User user, NotificationSettings oldNotificationSettings) {
-        final Settings settings = user.getSettings();
         final NotificationSettings newNotificationSettings = user.getSettings().getNotificationSettings();
         final boolean newReceiveNotifications = newNotificationSettings.getReceiveNotifications();
         final boolean oldReceiveNotifications = oldNotificationSettings.getReceiveNotifications();
-        final boolean newNotifyOnlyIfImportant = newNotificationSettings.getReceiveNotifications();
+        final boolean newNotifyOnlyIfImportant = newNotificationSettings.getNotifyOnlyIfImportant();
         final boolean oldNotifyOnlyIfImportant = oldNotificationSettings.getNotifyOnlyIfImportant();
 
         final boolean receiveNotificationsChanged = newReceiveNotifications != oldReceiveNotifications;
@@ -194,18 +194,18 @@ public class NotificationService {
                         new TopicSubscriptionOperation("regular", SubscriptionOperation.UNSUBSCRIBE),
                         new TopicSubscriptionOperation("important", SubscriptionOperation.UNSUBSCRIBE)
                 });
-            }
-
-            // Subscribe user to notifications (at least important notifications)
-            modifyAllUserGameSubscriptions(user, new TopicSubscriptionOperation[]{
-                    new TopicSubscriptionOperation("important", SubscriptionOperation.SUBSCRIBE)
-            });
-
-            if (!newNotifyOnlyIfImportant) {
-                // Subscribe to all user notifications
+            } else {
+                // Subscribe user to notifications (at least important notifications)
                 modifyAllUserGameSubscriptions(user, new TopicSubscriptionOperation[]{
-                        new TopicSubscriptionOperation("regular", SubscriptionOperation.SUBSCRIBE)
+                        new TopicSubscriptionOperation("important", SubscriptionOperation.SUBSCRIBE)
                 });
+
+                if (!newNotifyOnlyIfImportant) {
+                    // Subscribe to all user notifications
+                    modifyAllUserGameSubscriptions(user, new TopicSubscriptionOperation[]{
+                            new TopicSubscriptionOperation("regular", SubscriptionOperation.SUBSCRIBE)
+                    });
+                }
             }
         }
 
