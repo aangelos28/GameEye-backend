@@ -1,45 +1,34 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.webscrapers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Image;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.NewsWebsite;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Resources;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.ImageResource;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ElasticGameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.elasticsearch.ElasticGame;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.NewsWebsiteRepository;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ElasticGameRepositoryCustomImpl;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.GameService;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.MachineLearningService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.ReferenceGameService;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
-import org.junit.Before;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.util.Assert;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
@@ -106,21 +95,24 @@ public class WebScraperOrchestratorTest {
 
         Resources mock1Resources= new Resources();
         mockgame1 = new Game();
+        mockgame1.setId("WebScraperOrchTest - MockGame1");
         mockgame1.setTitle("Halo Infinite");
         mockgame1.setResources(mock1Resources);
 
         Resources mock2Resources= new Resources();
         mockgame2 = new Game();
+        mockgame2.setId("WebScraperOrchTest - MockGame2");
         mockgame2.setTitle("Cyberpunk 2077");
         mockgame2.setResources(mock2Resources);
 
 
         Resources mock3Resources= new Resources();
         mockgame3 = new Game();
+        mockgame3.setId("WebScraperOrchTest - MockGame3");
         mockgame3.setTitle("Doom Eternal");
         mockgame3.setResources(mock3Resources);
 
-        mock.scrape(mock.getScrapperName());
+        mock.scrape(mock.getScraperName());
         mockArticles=mock.getArticles();
 
         og = new Article(mockArticles.get(1)); //"Destiny 2: Beyond Light adds ice"
@@ -130,6 +122,7 @@ public class WebScraperOrchestratorTest {
         //Resources mock4Resources= new Resources();
         String title="Destiny 2: Beyond Light";
         mockgame4 = new Game();
+        mockgame4.setId("WebScraperOrchTest - MockGame4");
         mockgame4.setTitle(title);
         mockgame4.setResources(mock4Resources);
         mock4Resources.setArticles(arts);
@@ -157,15 +150,15 @@ public class WebScraperOrchestratorTest {
 
     @AfterEach
     public void deleteTestGames(){
-        games.deleteByTitle(mockgame1.getTitle());
-        games.deleteByTitle(mockgame2.getTitle());
-        games.deleteByTitle(mockgame3.getTitle());
-        games.deleteByTitle(mockgame4.getTitle());
+        games.deleteById(mockgame1.getId());
+        games.deleteById(mockgame2.getId());
+        games.deleteById(mockgame3.getId());
+        games.deleteById(mockgame4.getId());
 
-        elasticGames.deleteByTitle(mockgame1.getTitle());
-        elasticGames.deleteByTitle(mockgame2.getTitle());
-        elasticGames.deleteByTitle(mockgame3.getTitle());
-        elasticGames.deleteByTitle(mockgame4.getTitle());
+        elasticGames.deleteByGameId(mockgame1.getId());
+        elasticGames.deleteByGameId(mockgame2.getId());
+        elasticGames.deleteByGameId(mockgame3.getId());
+        elasticGames.deleteByGameId(mockgame4.getId());
     }
 
     @Test
@@ -203,26 +196,25 @@ public class WebScraperOrchestratorTest {
 
     @Test
     public void testInsertDataIntoDatabase(){
-        Game testGame = games.findGameByTitle("Cyberpunk 2077");
-        Resources initResources = testGame.getResources();
-        List<Article> initArticles = initResources.getArticles();
+        // Retrieve game before inserting articles
+        Game preTestGame = games.findGameByTitle("Cyberpunk 2077");
+        Resources preResources = preTestGame.getResources();
+        List<Article> preArticles = preResources.getArticles();
 
         orchestratorMock.forceScrape(mock);
         System.out.println(orchestratorMock.toString());
         //List<Article> testArts = scrappyMock.getArticleCollection();
         orchestratorMock.insertArticlesIntoDatabase();
 
-        Resources postResources = testGame.getResources();
-        List<Article> postArticles = initResources.getArticles();
+        // Retrieve game after inserting articles
+        Game postTestGame = games.findGameByTitle("Cyberpunk 2077");
+        Resources postResources = postTestGame.getResources();
+        List<Article> postArticles = postResources.getArticles();
 
-        assertNotEquals(initResources,postResources);
-        assertNotEquals(initArticles,postArticles);
+        assertNotEquals(preResources,postResources);
+        assertNotEquals(preArticles,postArticles);
 
-        assertEquals(initResources,postResources);
-        assertEquals(initArticles,postArticles);
-
-        assertNotEquals(initArticles.size(),postArticles.size());
-
+        assertNotEquals(preArticles.size(),postArticles.size());
     }
 
     @Test
@@ -261,7 +253,7 @@ public class WebScraperOrchestratorTest {
 
     @Test
     public void testAddArticleToGameInTestRepo(){
-        mock.scrape(mock.getScrapperName());
+        mock.scrape(mock.getScraperName());
         mockArticles=mock.getArticles();
 
        // Article og = new Article(mockArticles.get(1)); //"Destiny 2: Beyond Light adds ice"
