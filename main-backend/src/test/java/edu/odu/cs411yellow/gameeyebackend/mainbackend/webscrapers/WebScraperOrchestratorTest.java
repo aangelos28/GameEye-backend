@@ -277,6 +277,16 @@ public class WebScraperOrchestratorTest {
             System.out.println(a.getTitle());
         }
     }
+
+    @Test
+    public void testSetArticleImportance(){
+
+    }
+
+    @Test
+    public void testGetArticleImportance(){
+
+    }
 }
 
 

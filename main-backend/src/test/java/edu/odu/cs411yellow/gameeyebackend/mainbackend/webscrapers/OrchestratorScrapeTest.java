@@ -87,7 +87,7 @@ public class OrchestratorScrapeTest {
     public void testForceScrapeMockNews(){
         //mock.scrape();
         orchestratorMock.forceScrape(mock);
-        //System.out.println(orchestratorMock.toString());
+        System.out.println(orchestratorMock.toString());
 
         //assertEquals(mock.toString(),orchestratorMock.toString());
         //assertEquals(mock.getArticles(), orchestratorMock.getArticleCollection());
@@ -99,8 +99,9 @@ public class OrchestratorScrapeTest {
         orchestratorMock.forceScrape("GameSpot");
         System.out.println(orchestratorMock.toString());
 
-        assertEquals(scraper.toString(),orchestratorMock.toString());
-        assertEquals(scraper.getArticles(), orchestratorMock.getArticleCollection());
+        //assertEquals(scraper.toString(),orchestratorMock.toString());
+        //assertEquals(scraper.getArticles(), orchestratorMock.getArticleCollection());
+        assertEquals(scraper.getArticles(),orchestratorMock.getAllArticles());
     }
 
     @Test
@@ -108,8 +109,9 @@ public class OrchestratorScrapeTest {
         orchestratorMock.forceScrape("IGN");
         System.out.println(orchestratorMock.toString());
 
-        assertEquals(scraper.toString(),orchestratorMock.toString());
-        assertEquals(scraper.getArticles(), orchestratorMock.getArticleCollection());
+        //assertEquals(scraper.toString(),orchestratorMock.toString());
+        //assertEquals(scraper.getArticles(), orchestratorMock.getArticleCollection());
+        assertEquals(scraper.getArticles(),orchestratorMock.getAllArticles());
     }
 
     @Test
@@ -117,8 +119,9 @@ public class OrchestratorScrapeTest {
         orchestratorMock.forceScrape("PC Gamer");
         System.out.println(orchestratorMock.toString());
 
-        assertEquals(scraper.toString(),orchestratorMock.toString());
-        assertEquals(scraper.getArticles(), orchestratorMock.getArticleCollection());
+        //assertEquals(scraper.toString(),orchestratorMock.toString());
+        //assertEquals(scraper.getArticles(), orchestratorMock.getArticleCollection());
+        assertEquals(scraper.getArticles(),orchestratorMock.getAllArticles());
     }
 
     @Test
@@ -126,7 +129,8 @@ public class OrchestratorScrapeTest {
         orchestratorMock.forceScrape("Eurogamer");
         System.out.println(orchestratorMock.toString());
 
-        assertEquals(scraper.toString(),orchestratorMock.toString());
-        assertEquals(scraper.getArticles(), orchestratorMock.getArticleCollection());
+        //assertEquals(scraper.toString(),orchestratorMock.toString());
+        //assertEquals(scraper.getArticles(), orchestratorMock.getArticleCollection());
+        assertEquals(scraper.getArticles(),orchestratorMock.getAllArticles());
     }
 }

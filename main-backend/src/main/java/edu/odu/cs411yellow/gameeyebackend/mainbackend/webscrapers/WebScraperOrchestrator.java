@@ -114,16 +114,33 @@ public class WebScraperOrchestrator{
      * @param target String ID for a scraper
      */
     public void forceScrape(String target){
+        List<Article> articleList = scraper.scrape(target);
 
-        try{
-            List<Article> articleList = scraper.scrape(target);
+        for(Article art:articleList) {
+            if (checkIrrelevantArticles(art)) {
+                allArticles.add(art);
+            } else {
+                List<String> ids = performArticleGameReferenceSearch(art);
+                String id = ids.get(ids.size() - 1);
+
+                allArticles.add(art);
+                // Add article to scrapedArticles if not a duplicate in db or scrapedArticles
+                if (!checkArticleDuplicates(id, art) && !scrapedArticles.contains(art)) {
+                    scrapedArticles.add(art);
+                    articleTitles.add(art.getTitle());
+                }
+
+            }
+        }
+
+        /*try{
             for (Article art:articleList) {
                 //if(!checkIrrelevantArticles(art) && !checkArticleDuplicates(art))
                     scrapedArticles.add(art);
             }
         }catch (NullPointerException e){
             e.printStackTrace();
-        }
+        }*/
 
 
         //insertDataIntoDatabase();
@@ -140,16 +157,14 @@ public class WebScraperOrchestrator{
                 else {
                     List<String> ids = performArticleGameReferenceSearch(art);
                     String id = ids.get(ids.size() - 1);
-                    //List<String> cleanedIds = cleanIds(ids);
 
-                    //for(String id:cleanedIds)
-                    //{
                     allArticles.add(art);
                     // Add article to scrapedArticles if not a duplicate in db or scrapedArticles
                     if (!checkArticleDuplicates(id, art) && !scrapedArticles.contains(art)) {
                         scrapedArticles.add(art);
+                        articleTitles.add(art.getTitle());
                     }
-                    //}
+
                 }
             }
 
