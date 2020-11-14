@@ -41,8 +41,6 @@ public class NotificationService {
         final User user = userService.getUser(userId);
         final List<String> notificationTokens = user.getFcmTokens();
 
-        //System.out.println(notificationTokens);
-
         final MulticastMessage message = MulticastMessage.builder().setNotification(
                 Notification.builder()
                         .setTitle(title)
