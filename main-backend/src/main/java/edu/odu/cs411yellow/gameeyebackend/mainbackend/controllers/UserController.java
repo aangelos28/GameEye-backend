@@ -1,9 +1,11 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.controllers;
 
 import com.google.firebase.auth.FirebaseToken;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.User;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.GameService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Settings;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.settings.NotificationSettings;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.NotificationService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,15 +26,16 @@ import java.util.List;
 @RestController
 public class UserController {
     private final UserService userService;
-
     private final GameService gameService;
+    private final NotificationService notificationService;
 
     Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
-    public UserController(UserService userService, GameService gameService) {
+    public UserController(UserService userService, GameService gameService, NotificationService notificationService) {
         this.userService = userService;
         this.gameService = gameService;
+        this.notificationService = notificationService;
     }
 
     /**
@@ -123,13 +126,20 @@ public class UserController {
     public ResponseEntity<?> updateSettings(@RequestBody SettingsRequest request) {
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         final FirebaseToken fbToken = (FirebaseToken) auth.getPrincipal();
+        final String userId = fbToken.getUid();
 
         try {
-            final NotificationSettings notificationSettings = new NotificationSettings(request.receiveNotifications,
+            final User user = userService.getUser(userId);
+            final NotificationSettings oldNotificationSettings = user.getSettings().getNotificationSettings();
+            final NotificationSettings newNotificationSettings = new NotificationSettings(request.receiveNotifications,
                     request.receiveArticleNotifications, request.notifyOnlyIfImportant);
 
-            final Settings settings = new Settings(notificationSettings);
+            final Settings settings = new Settings(newNotificationSettings);
             userService.updateSettings(fbToken.getUid(), settings);
+
+            // Update notification subscriptions
+            user.getSettings().setNotificationSettings(newNotificationSettings);
+            notificationService.modifyUserSubscriptions(user, oldNotificationSettings);
 
             return ResponseEntity.ok("Updated settings");
         } catch (Exception ex) {
@@ -227,5 +237,42 @@ public class UserController {
         userService.removeUserArticleNotifications(userId, request.gameId, request.articleIds);
 
         return ResponseEntity.ok("Article notifications removed.");
+    }
+
+    private static class NotificationTokenRequest {
+        public String notificationToken;
+    }
+
+    /**
+     * Registers a new notification token for a user.
+     */
+    @PostMapping(path = "/private/user/notifications/token/register")
+    public ResponseEntity<?> registerNotificationToken(@RequestBody NotificationTokenRequest request) {
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final FirebaseToken fbToken = (FirebaseToken) auth.getPrincipal();
+        final String userId = fbToken.getUid();
+
+        try {
+            userService.registerNotificationToken(userId, request.notificationToken);
+
+            return ResponseEntity.ok("Notification token registered");
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+    }
+
+    private static class NotificationTokenDeletionRequest {
+        public String userId;
+    }
+
+    @DeleteMapping(path = "/private-admin/user/notifications/token/delete-all")
+    public ResponseEntity<?> deleteAllNotificationTokens(@RequestBody NotificationTokenDeletionRequest request) {
+        try {
+            userService.deleteAllNotificationTokens(request.userId);
+
+            return ResponseEntity.ok("Notification tokens deleted.");
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }
