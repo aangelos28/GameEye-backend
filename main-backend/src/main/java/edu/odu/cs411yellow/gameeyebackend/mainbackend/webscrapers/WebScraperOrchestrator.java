@@ -55,8 +55,8 @@ public class WebScraperOrchestrator{
                                    ReferenceGameService rgs, NewsWebsiteRepository newsWebsiteRepository, GameRepository games,
                                    GameService gameService) {
         //this.scrapers = new ArrayList<WebScraper>();
-        this.scrapedArticles = new ArrayList<Article>();
-        this.allArticles = new ArrayList<Article>();
+        this.scrapedArticles = new ArrayList<>();
+        this.allArticles = new ArrayList<>();
         this.mockNewsScraper = mockNewsScraper;
 
         this.elastic = elastic;
@@ -145,9 +145,9 @@ public class WebScraperOrchestrator{
                     //for(String id:cleanedIds)
                     //{
                     allArticles.add(art);
-                    if (!checkArticleDuplicates(id, art)) {
+                    // Add article to scrapedArticles if not a duplicate in db or scrapedArticles
+                    if (!checkArticleDuplicates(id, art) && !scrapedArticles.contains(art)) {
                         scrapedArticles.add(art);
-                        System.out.println(art.getTitle());
                     }
                     //}
                 }
@@ -216,7 +216,6 @@ public class WebScraperOrchestrator{
                 //System.out.println("broke");
             }
 
-
             for(Article storedArticle:storedGameArticles){
                 if(a.equals(storedArticle)){
                     dupe=true;
@@ -242,9 +241,7 @@ public class WebScraperOrchestrator{
                 //System.out.print()
             }
 
-
             for(Article storedArticle:storedGameArticles){
-                //System.out.println(storedArticle.getTitle());
                 if(a.equals(storedArticle)){
                     return true;
                 }

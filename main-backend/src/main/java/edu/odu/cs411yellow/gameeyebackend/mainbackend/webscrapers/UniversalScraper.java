@@ -1,7 +1,6 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.webscrapers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Image;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.NewsWebsite;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.NewsWebsiteRepository;
@@ -95,10 +94,7 @@ public class UniversalScraper implements WebScraper {
             snippet = snippet.substring(0,255);
         }
 
-        //create null image
-        Image image = new Image(null, ".jpg",null);
-
-        return new Article(null, title, url, websiteName, "",
+        return new Article("", title, url, websiteName, "",
                 snippet, publicationDate, publicationDate, false);
 
     }

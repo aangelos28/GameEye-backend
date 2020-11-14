@@ -118,17 +118,11 @@ public class WebScraperOrchestratorTest {
         og = new Article(mockArticles.get(1)); //"Destiny 2: Beyond Light adds ice"
         List<Article> arts = new ArrayList<>(Arrays.asList(og));
 
-        Resources mock4Resources= new Resources(null,arts);
-        //Resources mock4Resources= new Resources();
         String title="Destiny 2: Beyond Light";
         mockgame4 = new Game();
         mockgame4.setId("WebScraperOrchTest - MockGame4");
         mockgame4.setTitle(title);
-        mockgame4.setResources(mock4Resources);
-        mock4Resources.setArticles(arts);
-        mockgame4.setId("100000");
-        //mockgame4.addArticleResources(og);
-
+        mockgame4.getResources().setArticles(arts);
 
         games.save(mockgame1);
         games.save(mockgame2);
@@ -166,18 +160,20 @@ public class WebScraperOrchestratorTest {
 
     }
 
-
     @Test
     public void testCheckArticleDuplicates(){
         String title = mockgame4.getTitle();
         String id = mockgame4.getId();
 
+        // Check that method returns true for a duplicate article already saved earlier in the test.
         Article dupe = new Article(og);
-        Boolean duped = orchestratorMock.checkArticleDuplicates(id,dupe);
 
-        assertEquals(og,dupe);
-        assertThat(duped,is(true));
+        assertThat(orchestratorMock.checkArticleDuplicates(id,dupe), is(true));
 
+        // Check that method returns false for a unique articles
+        Article unique = new Article(og);
+        unique.setTitle("A unique game article title");
+        assertThat(orchestratorMock.checkArticleDuplicates(id,unique), is(false));
     }
 
     @Test
@@ -191,7 +187,6 @@ public class WebScraperOrchestratorTest {
 
         assertThat(irr,is(true));
         assertThat(nonIrr,is(false));
-
     }
 
     @Test
@@ -220,12 +215,14 @@ public class WebScraperOrchestratorTest {
     @Test
     public void testRemoveFromCollection(){
         orchestratorMock.forceScrape(mock);
-        List<Article> beforeRemoval = orchestratorMock.getArticleCollection();
-        orchestratorMock.removeFromCollection(beforeRemoval.get(0));
-        List<Article> afterRemoval = orchestratorMock.getArticleCollection();
+        List<Article> beforeRemoval = new ArrayList<>(orchestratorMock.getArticleCollection());
+        System.out.println(orchestratorMock.toString());
 
-        assertNotEquals(beforeRemoval,afterRemoval);
-        assertNotEquals(beforeRemoval.size(),afterRemoval.size());
+        orchestratorMock.removeFromCollection(beforeRemoval.get(0));
+        List<Article> afterRemoval = new ArrayList<>(orchestratorMock.getArticleCollection());
+        System.out.println(orchestratorMock.toString());
+
+        assertThat(afterRemoval, is(not(beforeRemoval)));
     }
 
     @Test
@@ -240,7 +237,6 @@ public class WebScraperOrchestratorTest {
             System.out.println("Game ID(s): "+id);
             System.out.println("Game: "+games.findGameByTitle(id));
         }
-
     }
 
     @Test
@@ -276,12 +272,10 @@ public class WebScraperOrchestratorTest {
         //Article og = new Article(mockArticles.get(1)); //"Destiny 2: Beyond Light adds ice"
         //orchestratorMock.addArticleToGame(og,title);
 
-
         List <Article> target = orchestratorMock.games.findGameByTitle(title).getResources().getArticles();
         for(Article a: target){
             System.out.println(a.getTitle());
         }
-
     }
 }
 

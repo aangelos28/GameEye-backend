@@ -1,7 +1,6 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.webscrapers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Image;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.NewsWebsite;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.NewsWebsiteRepository;
@@ -32,7 +31,7 @@ public class MockNewsScraper implements WebScraper{
     @Autowired
     public MockNewsScraper(NewsWebsiteRepository newsWebsites){
         this.newsWebsites = newsWebsites;
-        articles = new ArrayList<Article>();
+        articles = new ArrayList<>();
         url = newsWebsites.findByName(name).getSiteUrl();
         format = new SimpleDateFormat("E, MMMM d, yyyy");
     }
@@ -81,7 +80,7 @@ public class MockNewsScraper implements WebScraper{
             snippet = snippet.substring(0,255);
         }
 
-        return new Article(null , title, url, websiteName, "",
+        return new Article("", title, url, websiteName, "",
                 snippet, date, date, false);
 
     }
