@@ -50,7 +50,7 @@ public class MockNewsScraper implements WebScraper{
             Elements items = RssFeed.select("div");
             for (var i : items){
 
-                Article toAdd = createArticle(i,mockNews);
+                Article toAdd = createArticle(i,mockNews.getName());
                 articles.add(toAdd);
             }
         }
@@ -61,7 +61,7 @@ public class MockNewsScraper implements WebScraper{
     }
 
     @Override
-    public Article createArticle(Element i, NewsWebsite site) throws ParseException {
+    public Article createArticle(Element i, String websiteName) throws ParseException {
 
 
         //Get Info
@@ -81,9 +81,7 @@ public class MockNewsScraper implements WebScraper{
             snippet = snippet.substring(0,255);
         }
 
-        Image image = new Image(null, ".jpg",null);
-
-        return new Article(null , title, url, site, image,
+        return new Article(null , title, url, websiteName, "",
                 snippet, date, date, false);
 
     }
@@ -118,7 +116,7 @@ public class MockNewsScraper implements WebScraper{
      * @return String
      */
     @Override
-    public String getScrapperName(){ return name; }
+    public String getScraperName(){ return name; }
 
     /**
      * Output to JSON format

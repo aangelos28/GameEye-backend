@@ -6,32 +6,17 @@ import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Resources;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.NewsWebsiteRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ElasticGameRepository;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ElasticGameRepositoryCustom;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ElasticGameRepositoryCustomImpl;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.elasticsearch.ElasticGame;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.NewsWebsite;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.GameService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.MachineLearningService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.ReferenceGameService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ApplicationContext;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
-import org.springframework.scheduling.TaskScheduler;
-import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 
 import java.io.IOException;
@@ -110,7 +95,7 @@ public class WebScraperOrchestrator{
             }
         }
 
-        List<Article> mockNewsArticles = mockNewsScraper.scrape(mockNewsScraper.getScrapperName());
+        List<Article> mockNewsArticles = mockNewsScraper.scrape(mockNewsScraper.getScraperName());
 
         for (Article art:mockNewsArticles) {
             //if(!checkIrrelevantArticles(art) && !checkArticleDuplicates(art))
@@ -243,13 +228,10 @@ public class WebScraperOrchestrator{
     }
 
     public Boolean checkArticleDuplicates(String id, Article a){
-            ElasticGame gameToCheck = elastic.findByGameId(id);
-            String title = gameToCheck.getTitle();
-
-            Game gameInDB = games.findByTitle(title);
+            Game gameInDB = games.findGameById(id);
 
             Resources gameResources;
-            List<Article> storedGameArticles = new ArrayList<Article>();
+            List<Article> storedGameArticles = new ArrayList<>();
 
             try{
                 gameResources = gameInDB.getResources();
@@ -301,13 +283,11 @@ public class WebScraperOrchestrator{
            List<String> gameIds = performArticleGameReferenceSearch(a);
 
            for(String id: gameIds){
-               ElasticGame gameInElasticRepo = elastic.findByGameId(id);
-               String title = gameInElasticRepo.getTitle();
-               Game gameInDB = games.findByTitle(title);
-
-               gameInDB.addArticleResources(a);
+               if (games.existsById(id)) {
+                   String gameTitle = games.findGameById(id).getTitle();
+                   gameService.addArticleToGame(a, gameTitle);
+               }
            }
-
         }
     }
 
@@ -333,15 +313,6 @@ public class WebScraperOrchestrator{
 
            a.setIsImportant(important);
 
-    }
-
-    /**
-     * Adds a game to the GameEye database
-     * @param game  game to be added
-     */
-    public void addGameToDB(Game game){
-
-        games.save(game);
     }
 
     public void addArticleToGame(Article a, String gameTitle){
