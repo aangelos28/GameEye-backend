@@ -178,6 +178,6 @@ public class Article {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, url, newsWebsiteName, thumbnailId, snippet, isImportant);
+        return Objects.hash(id, url, newsWebsiteName, thumbnailId, snippet, publicationDate, isImportant);
     }
 }

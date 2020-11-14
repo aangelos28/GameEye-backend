@@ -74,9 +74,25 @@ public class GameService {
      * @param article Article object to save within a game document.
      * @param gameTitle Title of the game in which the article will be stored.
      */
-    public void addArticleToGame(Article article, String gameTitle){
-        Game game = gameRepository.findGameByTitle(gameTitle);
-        game.addArticleResources(article);
-        save(game);
+    public void addArticleToGame (Article article, String gameTitle){
+        // Check for duplicates
+        if (!articleExistsByTitle(article.getTitle(), gameTitle)) {
+            Game game = gameRepository.findGameByTitle(gameTitle);
+            game.addArticleResources(article);
+            save(game);
+        }
+    }
+
+    public boolean articleExistsByTitle (String articleTitle, String gameTitle) {
+        Game game = gameRepository.findByTitle(gameTitle);
+        List<Article> articles = game.getResources().getArticles();
+
+        for (Article article: articles) {
+            if (article.getTitle().equals(articleTitle)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
