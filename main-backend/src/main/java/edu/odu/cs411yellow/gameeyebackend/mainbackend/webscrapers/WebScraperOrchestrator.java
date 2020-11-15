@@ -35,8 +35,9 @@ public class WebScraperOrchestrator{
 
     private MockNewsScraper mockNewsScraper;
     private UniversalScraper scraper;
-    private String[] scraperNames={"GameSpot","Eurogamer","PC Gamer", "IGN","GameEye Mock News"};
-    //private String[] scraperNames={"GameSpot","Eurogamer","PC Gamer", "IGN"};
+
+    private String[] scraperNames={"GameSpot","Eurogamer","PC Gamer","IGN"};
+
 
     private ElasticsearchOperations elasticSearch;
 
@@ -70,6 +71,8 @@ public class WebScraperOrchestrator{
         this.games=games;
         this.gameService = gameService;
 
+        this.articleTitles = new ArrayList<String>();
+
     }
 
     /**
@@ -77,48 +80,53 @@ public class WebScraperOrchestrator{
      * and inserts them into the database
      */
     public void forceScrape(){
-
         for(String s:scraperNames){
             List<Article> articleList = scraper.scrape(s);
 
+            int count=0;
+            //System.out.println(s);
             try{
                 for (Article art:articleList) {
+                    allArticles.add(art);
+                    count++;
                     if (checkIrrelevantArticles(art)) {
-                        allArticles.add(art);
+
                     } else {
                         List<String> ids = performArticleGameReferenceSearch(art);
                         String id = ids.get(ids.size() - 1);
 
-                        allArticles.add(art);
+                        //allArticles.add(art);
                         // Add article to scrapedArticles if not a duplicate in db or scrapedArticles
                         if (!checkArticleDuplicates(id, art) && !scrapedArticles.contains(art)) {
                             scrapedArticles.add(art);
                             articleTitles.add(art.getTitle());
                         }
                     }
-                    //if(!checkIrrelevantArticles(art) && !checkArticleDuplicates(art))
-                    //{
-                    //System.out.println(art.getTitle());
-                    //scrapedArticles.add(art);
-                    //articleTitles.add(art.getTitle());
-                    //}
+
                 }
             } catch (NullPointerException e){
                 e.printStackTrace();
             }
+
+            //System.out.println("Articles: "+count);
+            scraper.emptyArticles();
         }
 
-        /*List<Article> mockNewsArticles = mockNewsScraper.scrape(mockNewsScraper.getScraperName());
+        List<Article> mockNewsArticles = mockNewsScraper.scrape(mockNewsScraper.getScraperName());
 
+        int mockCount =0;
+        //System.out.println("GameEye Mock News");
         for (Article art:mockNewsArticles) {
+            allArticles.add(art);
+            mockCount++;
             if(checkIrrelevantArticles(art)){
-                allArticles.add(art);
+                //allArticles.add(art);
             }
             else {
                 List<String> ids = performArticleGameReferenceSearch(art);
                 String id = ids.get(ids.size() - 1);
 
-                allArticles.add(art);
+                //allArticles.add(art);
                 // Add article to scrapedArticles if not a duplicate in db or scrapedArticles
                 if (!checkArticleDuplicates(id, art) && !scrapedArticles.contains(art)) {
                     scrapedArticles.add(art);
@@ -126,9 +134,13 @@ public class WebScraperOrchestrator{
                 }
 
             }
-        }*/
+        }
+
+        //System.out.println("Article Count: "+mockCount);
+
 
         //insertDataIntoDatabase();
+        mockNewsScraper.emptyArticles();
     }
 
     /**
@@ -156,22 +168,15 @@ public class WebScraperOrchestrator{
             }
         }
 
-        /*try{
-            for (Article art:articleList) {
-                //if(!checkIrrelevantArticles(art) && !checkArticleDuplicates(art))
-                    scrapedArticles.add(art);
-            }
-        }catch (NullPointerException e){
-            e.printStackTrace();
-        }*/
-
-
         //insertDataIntoDatabase();
+        scraper.emptyArticles();
+
     }
 
     public void forceScrape(WebScraper target){
 
             List<Article> articleList = mockNewsScraper.scrape("GameEye Mock News");
+
             for (Article art:articleList) {
 
                 if(checkIrrelevantArticles(art)){
@@ -191,8 +196,9 @@ public class WebScraperOrchestrator{
                 }
             }
 
+        insertArticlesIntoDatabase();
+        mockNewsScraper.emptyArticles();
 
-        //insertDataIntoDatabase();
     }
 
     /**
