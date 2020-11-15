@@ -3,6 +3,7 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.controllers;
 import com.google.firebase.auth.FirebaseToken;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.requests.WatchlistGameRequest;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.responses.WatchedGameResponse;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.NotificationService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.WatchlistService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,13 +23,15 @@ import java.util.List;
 @RestController
 public class WatchlistController {
 
-    WatchlistService watchlistService;
+    private final WatchlistService watchlistService;
+    private final NotificationService notificationService;
 
     Logger logger = LoggerFactory.getLogger(WatchlistController.class);
 
     @Autowired
-    public WatchlistController(WatchlistService watchlistService) {
+    public WatchlistController(WatchlistService watchlistService, NotificationService notificationService) {
         this.watchlistService = watchlistService;
+        this.notificationService = notificationService;
     }
 
     /**
@@ -104,35 +107,20 @@ public class WatchlistController {
      * @param request HTTP request body
      */
     @PostMapping(path = "/private/watchlist/add", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addWatchlistGame(@RequestBody WatchlistGameRequest request) {
+    public ResponseEntity<?> addWatchlistGame(@RequestBody WatchlistGameRequest request) throws Exception {
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         final FirebaseToken fbToken = (FirebaseToken) auth.getPrincipal();
+        final String userId = fbToken.getUid();
+        final String gameId = request.getGameId();
 
         try {
-            watchlistService.addWatchlistGame(fbToken.getUid(), request.getGameId());
+            watchlistService.addWatchlistGame(userId, gameId);
+            notificationService.modifyUserGameSubscription(userId, gameId, NotificationService.SubscriptionOperation.SUBSCRIBE);
             return ResponseEntity.status(HttpStatus.CREATED).body("Added game to watchlist.");
         } catch (Exception ex) {
             ex.printStackTrace();
+            watchlistService.deleteWatchlistGameById(userId, gameId);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to add game to watchlist.");
-        }
-    }
-
-    /**
-     * Deletes a game from a user's watchlist
-     *
-     * @param gameIndex Index of the game in the watchlist to delete.
-     */
-    @DeleteMapping(path = "/private/watchlist/delete/{gameIndex}")
-    public ResponseEntity<?> deleteWatchlistGameByIndex(@PathVariable int gameIndex) {
-        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        final FirebaseToken fbToken = (FirebaseToken) auth.getPrincipal();
-
-        try {
-            watchlistService.deleteWatchlistGameByIndex(fbToken.getUid(), gameIndex);
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Deleted game from watchlist.");
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to delete game with specified index");
         }
     }
 
@@ -145,9 +133,12 @@ public class WatchlistController {
     public ResponseEntity<?> deleteWatchlistGameById(@RequestBody WatchlistGameRequest request) {
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         final FirebaseToken fbToken = (FirebaseToken) auth.getPrincipal();
+        final String userId = fbToken.getUid();
+        final String gameId = request.getGameId();
 
         try {
-            watchlistService.deleteWatchlistGameById(fbToken.getUid(), request.getGameId());
+            watchlistService.deleteWatchlistGameById(userId, gameId);
+            notificationService.modifyUserGameSubscription(userId, gameId, NotificationService.SubscriptionOperation.UNSUBSCRIBE);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body("Deleted game from watchlist.");
         } catch (Exception ex) {
             ex.printStackTrace();
