@@ -54,7 +54,7 @@ public class WebScraperOrchestrator{
     @Autowired
     public WebScraperOrchestrator(UniversalScraper scraper, MockNewsScraper mockNewsScraper, ElasticGameRepository elastic,
                                    ReferenceGameService rgs, NewsWebsiteRepository newsWebsiteRepository, GameRepository games,
-                                   GameService gameService) {
+                                   GameService gameService, MachineLearningService machine) {
         //this.scrapers = new ArrayList<WebScraper>();
         this.scrapedArticles = new ArrayList<>();
         this.allArticles = new ArrayList<>();
@@ -62,7 +62,7 @@ public class WebScraperOrchestrator{
 
         this.elastic = elastic;
         this.rgs = rgs;
-        //this.machine = machine;
+        this.machine = machine;
 
         this.newsWebsiteRepository = newsWebsiteRepository;
 
@@ -196,7 +196,7 @@ public class WebScraperOrchestrator{
                 }
             }
 
-        insertArticlesIntoDatabase();
+        //insertArticlesIntoDatabase();
         mockNewsScraper.emptyArticles();
 
     }
@@ -348,6 +348,10 @@ public class WebScraperOrchestrator{
 
     public List<Boolean> getArticleImportance(){
         return machine.predictArticleImportance(articleTitles);
+    }
+
+    public List<Boolean> getArticleImportance(List<String> titles){
+        return machine.predictArticleImportance(titles);
     }
 
     public void setArticleImportance(Boolean important, Article a){

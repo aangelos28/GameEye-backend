@@ -9,6 +9,7 @@ import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.NewsWebsiteRe
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.GameService;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.MachineLearningService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.ReferenceGameService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,6 +22,7 @@ import static org.hamcrest.Matchers.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.test.context.ActiveProfiles;
@@ -76,17 +78,17 @@ public class WebScraperOrchestratorTest {
     private Game mockgame3;
     private Game mockgame4;
 
-    //@Value("http://411Yellow.cpi.cs.odu.edu")
-    //@Value("${ml.server.host}")
+    /*@Value("http://411Yellow.cpi.cs.odu.edu")
+    @Value("${ml.server.host}")
     private String serverHost;
 
-    //@Value("7745")
-    //@Value("${ml.server.port}")
+    @Value("7745")
+    @Value("${ml.server.port}")
     private Integer serverPort;
-
-    //@Autowired
-    //private MachineLearningService machine = new MachineLearningService(
-    // @Value("${ml.server.host}") serverHost, @Value("${ml.server.port}") serverPort);
+*/
+    @Autowired
+    private MachineLearningService machine;
+    //private MachineLearningService machine = new MachineLearningService(serverHost, serverPort);
 
     Article og;
 
@@ -139,7 +141,8 @@ public class WebScraperOrchestratorTest {
         elasticGames.save(elasticGame3);
         elasticGames.save(elasticGame4);
 
-        orchestratorMock = new WebScraperOrchestrator(scraper, mock, elasticGames, rgs, newsWebsiteRepository,games, gameService);
+        //orchestratorMock = new WebScraperOrchestrator(scraper, mock, elasticGames, rgs, newsWebsiteRepository,games, gameService);
+        orchestratorMock = new WebScraperOrchestrator(scraper, mock, elasticGames, rgs, newsWebsiteRepository,games, gameService,machine);
     }
 
     @AfterEach
@@ -280,12 +283,42 @@ public class WebScraperOrchestratorTest {
 
     @Test
     public void testSetArticleImportance(){
+        Article test1 = new Article();
+        Article test2 = new Article();
 
+        Boolean important = true;
+        Boolean notImportant = false;
+
+        orchestratorMock.setArticleImportance(important,test1);
+        orchestratorMock.setArticleImportance(notImportant,test2);
+
+        assertThat(test1.getIsImportant(),is(true));
+        assertThat(test2.getIsImportant(),is(false));
     }
 
     @Test
     public void testGetArticleImportance(){
+        List<String> titles = new ArrayList<String>();
 
+        String title1 = "Cyberpunk 2077 releases 12/10/2077";
+        String title2 = "Doom Eternal: Where to find all runes";
+        String title3 = "Halo Infinite contains microtransactions";
+        String title4 = "Destiny 2: Beyond Light releases new Seasonal content";
+        String ogTitle = og.getTitle(); //Destiny 2: Beyond Light adds ice
+
+        titles.add(title1);
+        titles.add(title2);
+        titles.add(title3);
+        titles.add(title4);
+        titles.add(ogTitle);
+
+        List<Boolean> importScores = orchestratorMock.getArticleImportance(titles);
+
+        assertThat(importScores.get(0),is(true));
+        assertThat(importScores.get(1),is(false));
+        assertThat(importScores.get(2),is(false));
+        assertThat(importScores.get(3),is(true));
+        assertThat(importScores.get(4),is(true));
     }
 }
 
