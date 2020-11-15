@@ -39,9 +39,7 @@ public class WebScraperOrchestrator{
 
     private String[] scraperNames={"GameSpot","Eurogamer","PC Gamer","IGN"};
 
-
     private ElasticsearchOperations elasticSearch;
-
 
     @Qualifier("elasticsearchOperations")
     ElasticGameRepository elastic;
@@ -50,7 +48,6 @@ public class WebScraperOrchestrator{
     private GameService gameService;
     GameRepository games;
     private MachineLearningService machine;
-
 
     @Autowired
     public WebScraperOrchestrator(UniversalScraper scraper, MockNewsScraper mockNewsScraper, ElasticGameRepository elastic,
@@ -86,12 +83,10 @@ public class WebScraperOrchestrator{
             try{
                 for (Article art:articleList) {
                     allArticles.add(art);
-
                     if (!checkIrrelevantArticles(art)){
                         List<String> ids = performArticleGameReferenceSearch(art);
                         String id = ids.get(ids.size() - 1);
 
-                        //allArticles.add(art);
                         // Add article to scrapedArticles if not a duplicate in db or scrapedArticles
                         if (!checkArticleDuplicates(id, art) && !scrapedArticles.contains(art)) {
                             scrapedArticles.add(art);
@@ -104,7 +99,6 @@ public class WebScraperOrchestrator{
                 e.printStackTrace();
             }
 
-            //System.out.println("Articles: "+count);
             scraper.emptyArticles();
         }
 
@@ -171,7 +165,6 @@ public class WebScraperOrchestrator{
                     List<String> ids = performArticleGameReferenceSearch(art);
                     String id = ids.get(ids.size() - 1);
 
-                    //allArticles.add(art);
                     // Add article to scrapedArticles if not a duplicate in db or scrapedArticles
                     if (!checkArticleDuplicates(id, art) && !scrapedArticles.contains(art)) {
                         scrapedArticles.add(art);

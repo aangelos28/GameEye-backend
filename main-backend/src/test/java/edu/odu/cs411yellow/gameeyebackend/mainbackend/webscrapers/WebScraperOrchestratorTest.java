@@ -22,7 +22,6 @@ import static org.hamcrest.Matchers.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.test.context.ActiveProfiles;
@@ -62,8 +61,6 @@ public class WebScraperOrchestratorTest {
     @Autowired
     private ElasticGameRepository elasticGames;
 
-    //@Autowired
-    //private ElasticGameRepositoryCustomImpl elastic;
 
     @Autowired
     private ReferenceGameService rgs;
@@ -78,17 +75,9 @@ public class WebScraperOrchestratorTest {
     private Game mockgame3;
     private Game mockgame4;
 
-    /*@Value("http://411Yellow.cpi.cs.odu.edu")
-    @Value("${ml.server.host}")
-    private String serverHost;
 
-    @Value("7745")
-    @Value("${ml.server.port}")
-    private Integer serverPort;
-*/
     @Autowired
     private MachineLearningService machine;
-    //private MachineLearningService machine = new MachineLearningService(serverHost, serverPort);
 
     Article og;
 
@@ -141,7 +130,6 @@ public class WebScraperOrchestratorTest {
         elasticGames.save(elasticGame3);
         elasticGames.save(elasticGame4);
 
-        //orchestratorMock = new WebScraperOrchestrator(scraper, mock, elasticGames, rgs, newsWebsiteRepository,games, gameService);
         orchestratorMock = new WebScraperOrchestrator(scraper, mock, elasticGames, rgs, newsWebsiteRepository,games, gameService,machine);
     }
 
@@ -234,7 +222,7 @@ public class WebScraperOrchestratorTest {
         orchestratorMock.forceScrape(mock);
         List<Article> articles = orchestratorMock.getArticleCollection();
         List<String> gameIDs = orchestratorMock.performArticleGameReferenceSearch(articles.get(0));
-       //String game = gameIDs.get(0);
+
         System.out.println(articles.get(0).getTitle());
         for(String id:gameIDs){
             System.out.println("Game ID(s): "+id);
@@ -268,12 +256,7 @@ public class WebScraperOrchestratorTest {
 
     @Test
     public void testGetGamesArticles(){
-        //mock.scrape(mock.getScrapperName());
-        //mockArticles=mock.getArticles();
         String title = "Destiny 2: Beyond Light";
-
-        //Article og = new Article(mockArticles.get(1)); //"Destiny 2: Beyond Light adds ice"
-        //orchestratorMock.addArticleToGame(og,title);
 
         List <Article> target = orchestratorMock.games.findGameByTitle(title).getResources().getArticles();
         for(Article a: target){
