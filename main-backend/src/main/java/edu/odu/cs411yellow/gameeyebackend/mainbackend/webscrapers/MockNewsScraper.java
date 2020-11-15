@@ -1,7 +1,6 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.webscrapers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Image;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.NewsWebsite;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.NewsWebsiteRepository;
@@ -27,30 +26,30 @@ public class MockNewsScraper implements WebScraper{
     private String url;
     private List<Article> articles;
     private DateFormat format;
+    private String name="GameEye Mock News";
 
     @Autowired
     public MockNewsScraper(NewsWebsiteRepository newsWebsites){
         this.newsWebsites = newsWebsites;
         articles = new ArrayList<>();
-        url = newsWebsites.findByName("GameEye Mock News").getSiteUrl();
+        url = newsWebsites.findByName(name).getSiteUrl();
         format = new SimpleDateFormat("E, MMMM d, yyyy");
     }
 
     /**
      * Initiate the scrape
      */
-    @Override
-    public List<Article> scrape(String newsOutlet) {
+    public List<Article> scrape(String newsWebsite) {
 
         try {
-            NewsWebsite mockNews = newsWebsites.findByName(newsOutlet);
+            NewsWebsite mockNews = newsWebsites.findByName(name);
 
             Document RssFeed = Jsoup.parse(Jsoup.connect(url).get().select("ul").toString());
 
             Elements items = RssFeed.select("div");
             for (var i : items){
 
-                Article toAdd = createArticle(i,mockNews);
+                Article toAdd = createArticle(i,mockNews.getName());
                 articles.add(toAdd);
             }
         }
@@ -61,7 +60,7 @@ public class MockNewsScraper implements WebScraper{
     }
 
     @Override
-    public Article createArticle(Element i, NewsWebsite site) throws ParseException {
+    public Article createArticle(Element i, String websiteName) throws ParseException {
 
 
         //Get Info
@@ -81,9 +80,7 @@ public class MockNewsScraper implements WebScraper{
             snippet = snippet.substring(0,255);
         }
 
-        Image image = new Image(null, ".jpg",null);
-
-        return new Article(null , title, url, site, image,
+        return new Article("", title, url, websiteName, "",
                 snippet, date, date, false);
 
     }
@@ -110,6 +107,19 @@ public class MockNewsScraper implements WebScraper{
     @Override
     public Article getArticle(int index) {
         return articles.get(index);
+    }
+
+    /**
+     * Retrieves name of the scraper
+     *
+     * @return String
+     */
+    @Override
+    public String getScraperName(){ return name; }
+
+    @Override
+    public void emptyArticles(){
+        articles.clear();
     }
 
     /**

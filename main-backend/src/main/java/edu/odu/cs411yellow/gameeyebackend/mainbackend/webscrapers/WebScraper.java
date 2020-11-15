@@ -42,11 +42,13 @@ public interface WebScraper {
      * article description, and calculated impact score
      *
      * @param e HTML element pulled from the RSS feed
-     * @param newsSite  Website where the article originated
+     * @param newsWebsiteName  Website where the article originated
      * @return  Article
      * @throws ParseException
      */
-    Article createArticle(Element e, NewsWebsite newsSite) throws ParseException;
+    Article createArticle(Element e, String newsWebsiteName) throws ParseException;
+
+    String getScraperName();
 
     /**
      * Checks if newly created article object is already present in list of
@@ -56,4 +58,6 @@ public interface WebScraper {
      * @return Boolean
      */
     Boolean checkDuplicateArticles(Article a);
+
+    void emptyArticles();
 }
