@@ -143,7 +143,7 @@ public class GameControllerTest {
         articles.add(article);
 
         when(gameService.existsById(validGameId)).thenReturn(true);
-        when(gameService.getArticles(validGameId)).thenReturn(articles);
+        when(gameService.findArticles(validGameId)).thenReturn(articles);
 
         this.mockMvc.perform(MockMvcRequestBuilders.post(endpoint)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)

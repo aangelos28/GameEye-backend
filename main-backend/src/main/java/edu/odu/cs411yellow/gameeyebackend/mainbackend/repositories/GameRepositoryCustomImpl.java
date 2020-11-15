@@ -3,10 +3,14 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.model.Aggregates;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Resources;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.*;
+import org.springframework.data.mongodb.core.mapreduce.MapReduceResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -52,5 +56,17 @@ public class GameRepositoryCustomImpl implements GameRepositoryCustom {
                                     .include("watchers");
 
         return mongo.find(sortByWatchersQuery, Game.class);
+    }
+
+    @Override
+    public List<Article> findArticles(String gameId) {
+        MatchOperation matchStage = Aggregation.match(new Criteria("_id").is(gameId));
+        ProjectionOperation projectStage = Aggregation.project().and("resources.articles").as("articles");
+        UnwindOperation unwindStage = UnwindOperation.newUnwind().path("$resources.articles").noArrayIndex().skipNullAndEmptyArrays();
+        Aggregation aggregation = Aggregation.newAggregation(matchStage, unwindStage, projectStage);
+
+        AggregationResults<Article> results = mongo.aggregate(aggregation, "games", Article.class);
+
+        return results.getMappedResults();
     }
 }

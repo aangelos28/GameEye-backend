@@ -1,22 +1,14 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories;
 
-import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.result.UpdateResult;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.User;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.WatchedGame;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.aggregation.ArrayOperators;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.data.mongodb.core.query.UpdateDefinition;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Custom method implementations for user repository.

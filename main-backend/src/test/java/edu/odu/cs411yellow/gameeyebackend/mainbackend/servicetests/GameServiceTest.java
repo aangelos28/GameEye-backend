@@ -102,7 +102,7 @@ public class GameServiceTest {
     }
 
     @Test
-    public void testGetArticles() {
+    public void testFindArticles() {
         // Declare resource images
         String gameImageId = "5ea1c2b677dabd049ce92784";
         String imageTitle = "gameplay";
@@ -150,7 +150,7 @@ public class GameServiceTest {
         gameRepository.insert(newGame);
         Game insertedGame = gameRepository.findGameByTitle(newGame.getTitle());
 
-        assertThat(gameService.getArticles(insertedGame.getId()), is(insertedGame.getResources().getArticles()));
+        assertThat(gameService.findArticles(insertedGame.getId()), is(insertedGame.getResources().getArticles()));
 
         gameRepository.delete(insertedGame);
     }

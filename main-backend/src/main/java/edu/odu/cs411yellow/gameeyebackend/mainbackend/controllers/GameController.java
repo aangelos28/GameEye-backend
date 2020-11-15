@@ -147,7 +147,7 @@ public class GameController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Game with specified id not found.");
         }
 
-        List<Article> foundArticles = gameService.getArticles(request.id);
+        List<Article> foundArticles = gameService.findArticles(request.id);
         final List<ArticlesResponse> articles = new ArrayList<>();
         for (Article article :foundArticles) {
             ArticlesResponse articleResponse = new ArticlesResponse(article);
