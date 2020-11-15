@@ -138,8 +138,8 @@ public class WebScraperOrchestrator{
 
         //System.out.println("Article Count: "+mockCount);
 
-
-        //insertDataIntoDatabase();
+        assignScrapedArticlesImportance();
+        insertArticlesIntoDatabase();
         mockNewsScraper.emptyArticles();
     }
 
@@ -168,7 +168,8 @@ public class WebScraperOrchestrator{
             }
         }
 
-        //insertDataIntoDatabase();
+        assignScrapedArticlesImportance();
+        insertArticlesIntoDatabase();
         scraper.emptyArticles();
 
     }
@@ -196,7 +197,8 @@ public class WebScraperOrchestrator{
                 }
             }
 
-        //insertArticlesIntoDatabase();
+        assignScrapedArticlesImportance();
+        insertArticlesIntoDatabase();
         mockNewsScraper.emptyArticles();
 
     }
@@ -348,6 +350,14 @@ public class WebScraperOrchestrator{
 
     public List<Boolean> getArticleImportance(){
         return machine.predictArticleImportance(articleTitles);
+    }
+
+    public void assignScrapedArticlesImportance(){
+        List<Boolean> articlesImportance = getArticleImportance();
+        for(int i=0; i < articlesImportance.size(); i++){
+            Boolean temp = articlesImportance.get(i);
+            scrapedArticles.get(i).setIsImportant(temp);
+        }
     }
 
     public List<Boolean> getArticleImportance(List<String> titles){

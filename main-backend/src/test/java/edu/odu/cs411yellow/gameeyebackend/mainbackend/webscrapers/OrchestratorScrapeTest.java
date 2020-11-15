@@ -112,7 +112,16 @@ public class OrchestratorScrapeTest {
         //mock.scrape();
         orchestratorMock.forceScrape(mock);
         //orchestratorMock.forceScrape("GameEye Mock News");
-        System.out.println(orchestratorMock.toString());
+        //System.out.println(orchestratorMock.toString());
+        List<String> titles = orchestratorMock.getArticleTitles();
+        List<Boolean> scores = orchestratorMock.getArticleImportance();
+
+        /*for(String title:titles){
+            System.out.println(title);
+        }
+        for(Boolean score:scores){
+            System.out.println(score);
+        }*/
 
         mock.scrape(mock.getScraperName());
 

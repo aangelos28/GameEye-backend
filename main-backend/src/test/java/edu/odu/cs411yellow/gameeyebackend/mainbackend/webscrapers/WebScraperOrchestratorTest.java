@@ -117,7 +117,7 @@ public class WebScraperOrchestratorTest {
         mock.scrape(mock.getScraperName());
         mockArticles=mock.getArticles();
 
-        og = new Article(mockArticles.get(1)); //"Destiny 2: Beyond Light adds ice"
+        og = new Article(mockArticles.get(2)); //"Destiny 2: Beyond Light adds ice"
         List<Article> arts = new ArrayList<>(Arrays.asList(og));
 
         String title="Destiny 2: Beyond Light";
@@ -319,6 +319,19 @@ public class WebScraperOrchestratorTest {
         assertThat(importScores.get(2),is(false));
         assertThat(importScores.get(3),is(true));
         assertThat(importScores.get(4),is(true));
+    }
+
+    @Test
+    public void testAssignScrapedArticlesImportance(){
+        mock.emptyArticles();
+        orchestratorMock.forceScrape(mock);
+        orchestratorMock.assignScrapedArticlesImportance();
+
+        List<Article> articles = orchestratorMock.getArticleCollection();
+
+        assertThat(articles.get(0).getIsImportant(),is(false)); //Cyberpunk 2077: The most hair styles of any RPG
+        assertThat(articles.get(1).getIsImportant(),is(true));  //New update will be released in December for Genshin Impact
+        assertThat(articles.get(2).getIsImportant(),is(true));  //Destiny 2: Beyond Light adds ice
     }
 }
 
