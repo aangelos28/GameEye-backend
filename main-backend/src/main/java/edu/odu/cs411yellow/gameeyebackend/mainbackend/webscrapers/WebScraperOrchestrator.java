@@ -93,7 +93,6 @@ public class WebScraperOrchestrator{
                             articleTitles.add(art.getTitle());
                         }
                     }
-
                 }
             } catch (NullPointerException e){
                 e.printStackTrace();
@@ -198,10 +197,8 @@ public class WebScraperOrchestrator{
 
         while(iterator.hasNext()){
             String id = iterator.next();
-            ElasticGame gameToCheck = elastic.findByGameId(id);
-            String title = gameToCheck.getTitle();
 
-            if(Objects.isNull(games.findByTitle(title))){
+            if(!gameService.existsById(id)){
                 iterator.remove();
             }
         }
@@ -307,8 +304,7 @@ public class WebScraperOrchestrator{
 
            for(String id: gameIds){
                if (games.existsById(id)) {
-                   String gameTitle = games.findGameById(id).getTitle();
-                   gameService.addArticleToGame(a, gameTitle);
+                   gameService.addArticleToGame(a, id);
                }
            }
         }
@@ -370,10 +366,10 @@ public class WebScraperOrchestrator{
     /**
      * Adds an article to a game's resources
      * @param a An article
-     * @param gameTitle The name of a game in the database
+     * @param gameId The id of a game in the database
      */
-    public void addArticleToGame(Article a, String gameTitle){
-        gameService.addArticleToGame(a, gameTitle);
+    public void addArticleToGame(Article a, String gameId){
+        gameService.addArticleToGame(a, gameId);
     }
 
     /**

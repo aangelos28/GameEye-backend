@@ -7,7 +7,6 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -77,19 +76,16 @@ public class GameService {
     /**
      * Add article to a game in the games collection.
      * @param article Article object to save within a game document.
-     * @param gameTitle Title of the game in which the article will be stored.
+     * @param gameId Id of the game in which the article will be stored.
      */
-    public void addArticleToGame (Article article, String gameTitle){
-        // Check for duplicates
-        if (!articleExistsByTitle(article.getTitle(), gameTitle)) {
-            Game game = gameRepository.findGameByTitle(gameTitle);
-            game.addArticleResources(article);
-            save(game);
-        }
+    public void addArticleToGame (Article article, String gameId){
+        Game game = gameRepository.findGameById(gameId);
+        game.addArticleResource(article);
+        save(game);
     }
 
-    public boolean articleExistsByTitle (String articleTitle, String gameTitle) {
-        Game game = gameRepository.findByTitle(gameTitle);
+    public boolean articleExistsByTitle (String articleTitle, String gameId) {
+        Game game = gameRepository.findGameById(gameId);
         List<Article> articles = game.getResources().getArticles();
 
         if (articles.isEmpty()) {

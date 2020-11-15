@@ -185,10 +185,10 @@ public class Game {
     }
 
     public void addArticlesToResources(List<Article> articles) {
-        resources.setArticles(articles);
+        resources.addArticles(articles);
     }
 
-    public void addArticleResources(Article article) {
+    public void addArticleResource(Article article) {
         resources.addArticle(article);
     }
 
