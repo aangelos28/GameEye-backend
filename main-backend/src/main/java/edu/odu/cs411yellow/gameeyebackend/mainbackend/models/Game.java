@@ -1,5 +1,7 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import static edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel.GameResponse;
 import org.springframework.data.annotation.Id;
@@ -206,5 +208,20 @@ public class Game {
     @Override
     public int hashCode() {
         return Objects.hash(id,igdbId,title,platforms, releaseDate,logoUrl,genres,sourceUrls,resources);
+    }
+
+    @Override
+    public String toString() {
+        ObjectMapper obj= new ObjectMapper();
+        String result = "";
+
+        try {
+            result = obj.writerWithDefaultPrettyPrinter().writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            result = "JsonProcessingException";
+        }
+
+        return result;
     }
 }
