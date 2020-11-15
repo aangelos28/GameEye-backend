@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class ElasticGameController {
-    ElasticGameCreationService elasticGameCreationService;
+    private final ElasticGameCreationService elasticGameCreationService;
 
     @Autowired
     ElasticGameController(ElasticGameCreationService elasticGameCreationService) {
