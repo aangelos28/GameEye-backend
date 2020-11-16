@@ -28,60 +28,45 @@ public class WebScraperOrchestrator{
 
     NewsWebsiteRepository newsWebsiteRepository;
 
-    //private List<Article> scrapedArticles;
-    //private List<Article> allArticles;
-
-    //private List<String> articleTitles;
-
     private MockNewsScraper mockNewsScraper;
     private UniversalScraper scraper;
 
     final private String[] scraperNames={"GameSpot","Eurogamer","PC Gamer","IGN"};
 
-
     @Qualifier("elasticsearchOperations")
     ElasticGameRepository elastic;
 
-    private ReferenceGameService rgs;
+    private ReferenceGameService referenceGameService;
     private GameService gameService;
     GameRepository games;
-    private MachineLearningService machine;
+    private MachineLearningService mlService;
 
     @Autowired
     public WebScraperOrchestrator(
             UniversalScraper scraper,
             MockNewsScraper mockNewsScraper,
             ElasticGameRepository elastic,
-            ReferenceGameService rgs,
+            ReferenceGameService referenceGameService,
             NewsWebsiteRepository newsWebsiteRepository,
             GameRepository games,
             GameService gameService,
-            MachineLearningService machine)
+            MachineLearningService mlService)
     {
-        //this.scrapedArticles = new ArrayList<>();
-        //this.allArticles = new ArrayList<>();
         this.mockNewsScraper = mockNewsScraper;
-
         this.elastic = elastic;
-        this.rgs = rgs;
-        this.machine = machine;
-
+        this.referenceGameService = referenceGameService;
+        this.mlService = mlService;
         this.newsWebsiteRepository = newsWebsiteRepository;
-
         this.scraper = scraper;
-
         this.games=games;
         this.gameService = gameService;
-
-        //this.articleTitles = new ArrayList<String>();
-
     }
 
     /**
      * Forces a scrape from each scraper, cleans and stores the collected articles,
      * and inserts them into the database
      */
-    public List<Article> forceScrape(){
+    public List<Article> scrapeAll(){
         List<Article> scrapedArticles = new ArrayList<Article>();
         List<String> articleTitles = new ArrayList<String>();
 
@@ -136,7 +121,7 @@ public class WebScraperOrchestrator{
      * and inserts them into the database
      * @param target String ID for a scraper
      */
-    public List<Article> forceScrape(String target){
+    public List<Article> scrape(String target){
         List<Article> articleList = scraper.scrape(target);
         List<Article> scrapedArticles = new ArrayList<Article>();
         List<String> articleTitles = new ArrayList<String>();
@@ -167,7 +152,7 @@ public class WebScraperOrchestrator{
      * and inserts them into the database
      * @param target WebScraper object for Mock News Website
      */
-    public List<Article> forceScrape(WebScraper target){
+    public List<Article> scrape(WebScraper target){
         List<Article> articleList = mockNewsScraper.scrape("GameEye Mock News");
         List<Article> scrapedArticles = new ArrayList<Article>();
         List<String> articleTitles = new ArrayList<String>();
@@ -198,7 +183,7 @@ public class WebScraperOrchestrator{
      */
     @Scheduled (cron = "0 0 8,20 * * *")    //Schedules method to run at 8:00 AM and 8:00PM
     public void biDailyScrape(){
-        forceScrape();
+        scrapeAll();
     }
 
 
@@ -223,7 +208,9 @@ public class WebScraperOrchestrator{
             }
 
             for(Article storedArticle:storedGameArticles){
-                if(a.equals(storedArticle)){
+                if(a.getTitle().equals(storedArticle.getTitle()) &&
+                    a.getNewsWebsiteName().equals(storedArticle.getNewsWebsiteName()))
+                {
                     return true;
                 }
             }
@@ -277,7 +264,7 @@ public class WebScraperOrchestrator{
     public List<String> performArticleGameReferenceSearch(Article a){
 
         //List<String> ids = elastic.referencedGames(a);
-        List<String> ids = rgs.getReferencedGames(a);
+        List<String> ids = referenceGameService.getReferencedGames(a);
 
         return ids;
     }
@@ -299,7 +286,7 @@ public class WebScraperOrchestrator{
      * @return A list of Booleans to signify importance
      */
     public List<Boolean> getArticleImportance(List<String> titles){
-        return machine.predictArticleImportance(titles);
+        return mlService.predictArticleImportance(titles);
     }
 
     /**
@@ -309,7 +296,7 @@ public class WebScraperOrchestrator{
     public String toString(){
         ObjectMapper obj= new ObjectMapper();
         String scrapedArticlesStr="";
-        List<Article> scrapedArticles = forceScrape();
+        List<Article> scrapedArticles = scrapeAll();
         for (Article a:scrapedArticles) {
             try {
                 String temp;

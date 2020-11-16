@@ -41,7 +41,7 @@ public class WebScraperOrchestratorTest {
     private String[] scraperNames={"GameSpot","Eurogamer","PC Gamer", "IGN","GameEye Mock News"};
 
     @Autowired
-    MockNewsScraper mock;
+    MockNewsScraper mockNewsScraper;
 
     List<Article> mockArticles;
 
@@ -63,7 +63,7 @@ public class WebScraperOrchestratorTest {
 
 
     @Autowired
-    private ReferenceGameService rgs;
+    private ReferenceGameService referenceGameService;
     @Autowired
     private GameRepository games;
 
@@ -77,7 +77,7 @@ public class WebScraperOrchestratorTest {
 
 
     @Autowired
-    private MachineLearningService machine;
+    private MachineLearningService mlService;
 
     Article og;
 
@@ -103,8 +103,8 @@ public class WebScraperOrchestratorTest {
         mockgame3.setTitle("Doom Eternal");
         mockgame3.setResources(mock3Resources);
 
-        mock.scrape(mock.getScraperName());
-        mockArticles=mock.getArticles();
+        mockNewsScraper.scrape(mockNewsScraper.getScraperName());
+        mockArticles=mockNewsScraper.getArticles();
 
         og = new Article(mockArticles.get(2)); //"Destiny 2: Beyond Light adds ice"
         List<Article> arts = new ArrayList<>(Arrays.asList(og));
@@ -130,7 +130,7 @@ public class WebScraperOrchestratorTest {
         elasticGames.save(elasticGame3);
         elasticGames.save(elasticGame4);
 
-        orchestratorMock = new WebScraperOrchestrator(scraper, mock, elasticGames, rgs, newsWebsiteRepository,games, gameService,machine);
+        orchestratorMock = new WebScraperOrchestrator(scraper, mockNewsScraper, elasticGames, referenceGameService, newsWebsiteRepository,games, gameService,mlService);
     }
 
     @AfterEach
@@ -146,7 +146,7 @@ public class WebScraperOrchestratorTest {
         elasticGames.deleteByGameId(mockgame4.getId());
 
         mockArticles.clear();
-        mock.emptyArticles();
+        mockNewsScraper.emptyArticles();
     }
 
     @Test
@@ -190,7 +190,7 @@ public class WebScraperOrchestratorTest {
         Resources preResources = preTestGame.getResources();
         List<Article> preArticles = preResources.getArticles();
 
-        mockArticles = orchestratorMock.forceScrape(mock);
+        mockArticles = orchestratorMock.scrape(mockNewsScraper);
         //System.out.println(orchestratorMock.toString());
         //List<Article> testArts = scrappyMock.getArticleCollection();
         orchestratorMock.insertArticlesIntoDatabase(mockArticles);
@@ -222,7 +222,7 @@ public class WebScraperOrchestratorTest {
     @Test
     public void testPerformAGRSForSingleGameMention(){
 
-        List<Article> articles = orchestratorMock.forceScrape(mock);
+        List<Article> articles = orchestratorMock.scrape(mockNewsScraper);
         List<String> gameIDs = orchestratorMock.performArticleGameReferenceSearch(articles.get(0));
 
         System.out.println(articles.get(0).getTitle());
@@ -278,8 +278,8 @@ public class WebScraperOrchestratorTest {
 
     @Test
     public void testAssignScrapedArticlesImportance(){
-        mock.emptyArticles();
-        mockArticles=orchestratorMock.forceScrape(mock);
+        mockNewsScraper.emptyArticles();
+        mockArticles=orchestratorMock.scrape(mockNewsScraper);
         List<String> titles = new ArrayList<String>();
 
         for(Article a:mockArticles)

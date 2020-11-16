@@ -42,7 +42,7 @@ public class OrchestratorScrapeTest {
     private String[] scraperNames={"GameSpot","Eurogamer", "PC Gamer","IGN"};
 
     @Autowired
-    MockNewsScraper mock;
+    MockNewsScraper mockNewsScrapper;
 
     List<Article> articles;
 
@@ -72,14 +72,14 @@ public class OrchestratorScrapeTest {
     GameService gameService;
 
     @Autowired
-    MachineLearningService machine;
+    MachineLearningService mlService;
 
 
 
     @BeforeEach
     public void init(){
         //orchestratorMock = new WebScraperOrchestrator(scraper, mock, elasticGames, rgs, newsWebsiteRepository, games, gameService);
-        orchestratorMock = new WebScraperOrchestrator(scraper, mock, elasticGames, rgs, newsWebsiteRepository, games, gameService, machine);
+        orchestratorMock = new WebScraperOrchestrator(scraper, mockNewsScrapper, elasticGames, rgs, newsWebsiteRepository, games, gameService, mlService);
     }
 
 
@@ -90,7 +90,7 @@ public class OrchestratorScrapeTest {
 
     @Test
     public void testForceScrape(){
-        articles = orchestratorMock.forceScrape();
+        articles = orchestratorMock.scrapeAll();
 
         List<Article> totalCollection=new ArrayList<Article>();
         for(String s: scraperNames){
@@ -99,9 +99,9 @@ public class OrchestratorScrapeTest {
             scraper.emptyArticles();
         }
 
-        mock.emptyArticles();
-        mock.scrape(mock.getScraperName());
-        totalCollection.addAll(mock.getArticles());
+        mockNewsScrapper.emptyArticles();
+        mockNewsScrapper.scrape(mockNewsScrapper.getScraperName());
+        totalCollection.addAll(mockNewsScrapper.getArticles());
 
 
         //assertEquals(totalCollection.size(),orchestratorMock.getAllArticles().size());
@@ -112,17 +112,17 @@ public class OrchestratorScrapeTest {
     @Test
     public void testForceScrapeMockNews(){
 
-        articles=orchestratorMock.forceScrape(mock);
-        mock.scrape(mock.getScraperName());
+        articles=orchestratorMock.scrape(mockNewsScrapper);
+        mockNewsScrapper.scrape(mockNewsScrapper.getScraperName());
 
         //assertEquals(mock.getArticles().size(),orchestratorMock.getAllArticles().size());
         assertThat(articles.size(),is(greaterThan(0)));
-        assertThat(articles.size(),is(lessThanOrEqualTo(mock.getArticles().size())));
+        assertThat(articles.size(),is(lessThanOrEqualTo(mockNewsScrapper.getArticles().size())));
     }
 
     @Test
     public void testForceScrapeGameSpot(){
-        articles = orchestratorMock.forceScrape("GameSpot");
+        articles = orchestratorMock.scrape("GameSpot");
         //System.out.println(orchestratorMock.toString());
 
         scraper.scrape("GameSpot");
@@ -135,7 +135,7 @@ public class OrchestratorScrapeTest {
 
     @Test
     public void testForceScrapeIGN(){
-        orchestratorMock.forceScrape("IGN");
+        orchestratorMock.scrape("IGN");
         System.out.println(orchestratorMock.toString());
 
         scraper.scrape("IGN");
@@ -148,7 +148,7 @@ public class OrchestratorScrapeTest {
 
     @Test
     public void testForceScrapePCGamer(){
-        articles=orchestratorMock.forceScrape("PC Gamer");
+        articles=orchestratorMock.scrape("PC Gamer");
         //System.out.println(orchestratorMock.toString());
 
         scraper.scrape("PC Gamer");
@@ -161,7 +161,7 @@ public class OrchestratorScrapeTest {
 
     @Test
     public void testForceScrapeEuroGamer(){
-        articles=orchestratorMock.forceScrape("Eurogamer");
+        articles=orchestratorMock.scrape("Eurogamer");
         //System.out.println(orchestratorMock.toString());
 
         scraper.scrape("EuroGamer");
