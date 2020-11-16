@@ -31,7 +31,6 @@ public class ReferenceGameService {
         String articleTitle = article.getTitle();
         SearchHits<ElasticGame> referencedGames = elasticGames.autocompleteGameTitle(articleTitle, 25);
         List<String> matchingIDs = new ArrayList<>();
-        String exactMatch = "";
 
         for (var game : referencedGames) {
 
@@ -40,18 +39,15 @@ public class ReferenceGameService {
 
             //Case exact match is found
             if (articleTitle.contains(gameTitle)) {
-                exactMatch = game.getContent().getGameId();
+                String exactMatch = game.getContent().getGameId();
+
+                // Add exact match if non-empty string and not already in matchingIDs array
+                if (!exactMatch.contentEquals("") && !matchingIDs.contains(exactMatch)) {
+                    matchingIDs.add(0, exactMatch);
+                }
             }
-
-
-            if (!exactMatch.contentEquals("")) {
-                matchingIDs.add(0, exactMatch);
-            }
-
         }
 
         return matchingIDs;
-
     }
-
 }

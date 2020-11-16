@@ -5,6 +5,7 @@ import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Image;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.elasticsearch.ElasticGame;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ElasticGameRepository;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.NewsWebsiteRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.GameService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,8 +119,7 @@ public class GameController {
     private static class ArticlesResponse {
         public String title;
         public String url;
-        public String logoString;
-        public Image thumbnail;
+        public String websiteName;
         public String snippet;
         public Date publicationDate;
         public boolean impactScore;
@@ -127,8 +127,7 @@ public class GameController {
         public ArticlesResponse(Article article) {
             this.title = article.getTitle();
             this.url = article.getUrl();
-            this.logoString = Base64.getEncoder().encodeToString(article.getNewsWebsite().getLogo().getData());
-            this.thumbnail = article.getThumbnail();
+            this.websiteName = article.getNewsWebsiteName();
             this.snippet = article.getSnippet();
             this.publicationDate = article.getPublicationDate();
             this.impactScore = article.getIsImportant();

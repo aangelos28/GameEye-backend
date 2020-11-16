@@ -1,9 +1,8 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources;
 
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Image;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.NewsWebsite;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import java.util.Date;
 import java.util.Objects;
@@ -12,7 +11,7 @@ import java.util.Objects;
  * Represents a news article resource.
  */
 public class Article {
-    private final String id;
+    private String id;
 
     /**
      * Title of the article.
@@ -25,16 +24,14 @@ public class Article {
     private String url;
 
     /**
-     * Reference to the news website that this article was retrieved from.
+     * Name of the news website from which this article was retrieved.
      */
-    @DBRef
-    private NewsWebsite newsWebsite;
+    private String newsWebsiteName;
 
     /**
      * Reference to a thumbnail for this article, if any.
      */
-    @DBRef
-    private Image thumbnail;
+    private String thumbnailId;
 
     /**
      * Small portion of the text body of an article, usually the first few sentences.
@@ -58,14 +55,18 @@ public class Article {
     private boolean isImportant;
 
     @PersistenceConstructor
-    public Article(String id, String title, String url, NewsWebsite newsWebsite, Image thumbnail, String snippet,
+    public Article(String id, String title, String url, String newsWebsiteName, String thumbnailId, String snippet,
                    Date publicationDate, Date lastUpdated, boolean isImportant) {
 
-        this.id = id;
+        if (id.equals("")) {
+            this.id = ObjectId.get().toHexString();
+        } else {
+            this.id = id;
+        }
         this.title = title;
         this.url = url;
-        this.newsWebsite = newsWebsite;
-        this.thumbnail = thumbnail;
+        this.newsWebsiteName = newsWebsiteName;
+        this.thumbnailId = thumbnailId;
         this.snippet = snippet;
         this.publicationDate = publicationDate;
         this.lastUpdated = lastUpdated;
@@ -73,11 +74,11 @@ public class Article {
     }
 
     public Article() {
-        this.id = "";
+        this.id = ObjectId.get().toHexString();;
         this.title = "";
         this.url = "";
-        this.newsWebsite = new NewsWebsite();
-        this.thumbnail = new Image();
+        this.newsWebsiteName = "";
+        this.thumbnailId = "";
         this.snippet = "";
         this.publicationDate = new Date();
         this.lastUpdated = new Date();
@@ -88,8 +89,8 @@ public class Article {
         this.id = a.getId();
         this.title = a.getTitle();
         this.url = a.getUrl();
-        this.newsWebsite = a.getNewsWebsite();
-        this.thumbnail = a.getThumbnail();
+        this.newsWebsiteName = a.getNewsWebsiteName();
+        this.thumbnailId = a.getThumbnailId();
         this.snippet = a.getSnippet();
         this.publicationDate = a.getPublicationDate();
         this.lastUpdated = a.getLastUpdated();
@@ -98,6 +99,10 @@ public class Article {
 
     public String getId() {
         return this.id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -116,20 +121,20 @@ public class Article {
         this.url = url;
     }
 
-    public NewsWebsite getNewsWebsite() {
-        return this.newsWebsite;
+    public String getNewsWebsiteName() {
+        return this.newsWebsiteName;
     }
 
-    public void setNewsWebsite(NewsWebsite newsWebsite) {
-        this.newsWebsite = newsWebsite;
+    public void setNewsWebsiteName(String newsWebsiteName) {
+        this.newsWebsiteName = newsWebsiteName;
     }
 
-    public Image getThumbnail() {
-        return this.thumbnail;
+    public String getThumbnailId() {
+        return this.thumbnailId;
     }
 
-    public void setThumbnail(Image thumbnail) {
-        this.thumbnail = thumbnail;
+    public void setThumbnailId(String thumbnailId) {
+        this.thumbnailId = thumbnailId;
     }
 
     public String getSnippet() {
@@ -172,16 +177,16 @@ public class Article {
 
         return Objects.equals(id, that.id)
                 && Objects.equals(url, that.url)
-                && Objects.equals(newsWebsite, that.newsWebsite)
-                && Objects.equals(thumbnail, that.thumbnail)
+                && Objects.equals(title, that.title)
+                && Objects.equals(newsWebsiteName, that.newsWebsiteName)
+                && Objects.equals(thumbnailId, that.thumbnailId)
                 && Objects.equals(snippet, that.snippet)
                 && Objects.equals(publicationDate, that.publicationDate)
-                && Objects.equals(lastUpdated, that.lastUpdated)
                 && Objects.equals(isImportant, that.isImportant);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, url, newsWebsite, thumbnail, snippet, isImportant);
+        return Objects.hash(id, url, newsWebsiteName, thumbnailId, snippet, publicationDate, isImportant);
     }
 }

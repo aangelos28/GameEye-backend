@@ -1,7 +1,6 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.webscrapers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Image;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.NewsWebsite;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.NewsWebsiteRepository;
@@ -51,10 +50,9 @@ public class UniversalScraper implements WebScraper {
             Elements items = rssFeed.select("item");
 
             for (var i : items){
-                Article toAdd = createArticle(i,newsSite);
+                Article toAdd = createArticle(i,newsSite.getName());
                 articles.add(toAdd);
             }
-
 
         }
         catch(Exception ex){
@@ -64,7 +62,7 @@ public class UniversalScraper implements WebScraper {
     }
 
     @Override
-    public Article createArticle(Element i, NewsWebsite site) throws ParseException {
+    public Article createArticle(Element i, String websiteName) throws ParseException {
         String title = i.select("title").text();
 
         String url = i.select("link").text();
@@ -76,11 +74,11 @@ public class UniversalScraper implements WebScraper {
         Date publicationDate = format.parse(pubDate);
 
         //parse snippet
-        if (site.getName().contentEquals("IGN")) {
+        if (websiteName.contentEquals("IGN")) {
              snippet = i.select("description").text();
         }
 
-        else if (site.getName().contentEquals("PC Gamer")){
+        else if (websiteName.contentEquals("PC Gamer")){
             Document body = Jsoup.parse(i.selectFirst("title").nextElementSibling().text());
             Elements paragraph = body.select("p");
             snippet = paragraph.text();
@@ -96,10 +94,7 @@ public class UniversalScraper implements WebScraper {
             snippet = snippet.substring(0,255);
         }
 
-        //create null image
-        Image image = new Image(null, ".jpg",null);
-
-        return new Article(null, title, url, site, image,
+        return new Article("", title, url, websiteName, "",
                 snippet, publicationDate, publicationDate, false);
 
     }
@@ -134,7 +129,12 @@ public class UniversalScraper implements WebScraper {
      * @return String
      */
     @Override
-    public String getScrapperName(){ return name; }
+    public String getScraperName(){ return name; }
+
+    @Override
+    public void emptyArticles(){
+        articles.clear();
+    }
 
     /**
      * Output to JSON format

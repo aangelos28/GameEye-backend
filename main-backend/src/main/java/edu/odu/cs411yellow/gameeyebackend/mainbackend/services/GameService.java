@@ -73,9 +73,31 @@ public class GameService {
         return gameRepository.findByIgdbId(igdbId);
     }
 
-    public void addArticleToGame(Article article, String gameTitle){
-        Game game = gameRepository.findGameByTitle(gameTitle);
-        game.addArticleResources(article);
+    /**
+     * Add article to a game in the games collection.
+     * @param article Article object to save within a game document.
+     * @param gameId Id of the game in which the article will be stored.
+     */
+    public void addArticleToGame (Article article, String gameId){
+        Game game = gameRepository.findGameById(gameId);
+        game.addArticleResource(article);
         save(game);
+    }
+
+    public boolean articleExistsByTitle (String articleTitle, String gameId) {
+        Game game = gameRepository.findGameById(gameId);
+        List<Article> articles = game.getResources().getArticles();
+
+        if (articles.isEmpty()) {
+            return false;
+        }
+
+        for (Article article: articles) {
+            if (article.getTitle().equals(articleTitle)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
