@@ -91,7 +91,6 @@ public class WebScraperOrchestrator{
                 e.printStackTrace();
             }
 
-            //scraper.emptyArticles();
         }
 
         List<Article> mockNewsArticles = mockNewsScraper.scrape(mockNewsScraper.getScraperName());
@@ -112,7 +111,7 @@ public class WebScraperOrchestrator{
 
         assignScrapedArticlesImportance(articleTitles, scrapedArticles);
         insertArticlesIntoDatabase(scrapedArticles);
-        //mockNewsScraper.emptyArticles();
+
         return scrapedArticles;
     }
 
@@ -143,7 +142,7 @@ public class WebScraperOrchestrator{
 
         assignScrapedArticlesImportance(articleTitles, scrapedArticles);
         insertArticlesIntoDatabase(scrapedArticles);
-        //scraper.emptyArticles();
+
         return scrapedArticles;
     }
 
@@ -173,7 +172,7 @@ public class WebScraperOrchestrator{
 
         assignScrapedArticlesImportance(articleTitles, scrapedArticles);
         insertArticlesIntoDatabase(scrapedArticles);
-        //mockNewsScraper.emptyArticles();
+
         return scrapedArticles;
     }
 
@@ -263,7 +262,6 @@ public class WebScraperOrchestrator{
      */
     public List<String> performArticleGameReferenceSearch(Article a){
 
-        //List<String> ids = elastic.referencedGames(a);
         List<String> ids = referenceGameService.getReferencedGames(a);
 
         return ids;

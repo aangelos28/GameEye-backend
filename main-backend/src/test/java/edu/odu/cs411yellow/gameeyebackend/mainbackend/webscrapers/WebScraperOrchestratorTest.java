@@ -81,7 +81,7 @@ public class WebScraperOrchestratorTest {
 
     Article og;
 
-    private String mockScraperName = mockNewsScraper.getScraperName();
+    private String mockScraperName = "GameEye Mock News";
 
     @BeforeEach
     public void init(){
@@ -147,7 +147,6 @@ public class WebScraperOrchestratorTest {
         elasticGames.deleteByGameId(mockgame4.getId());
 
         mockArticles.clear();
-        //mockNewsScraper.emptyArticles();
     }
 
     @Test
@@ -191,9 +190,6 @@ public class WebScraperOrchestratorTest {
         Resources preResources = preTestGame.getResources();
         List<Article> preArticles = preResources.getArticles();
 
-        //mockArticles = orchestratorMock.scrape(mockNewsScraper);
-        //System.out.println(orchestratorMock.toString());
-        //List<Article> testArts = scrappyMock.getArticleCollection();
         orchestratorMock.insertArticlesIntoDatabase(mockArticles);
 
         // Retrieve game after inserting articles
@@ -289,8 +285,6 @@ public class WebScraperOrchestratorTest {
         }
 
         orchestratorMock.assignScrapedArticlesImportance(titles,mockArticles);
-
-        //List<Article> articles = orchestratorMock.getArticleCollection();
 
         assertThat(mockArticles.get(0).getIsImportant(),is(false)); //Cyberpunk 2077: The most hair styles of any RPG
         assertThat(mockArticles.get(1).getIsImportant(),is(true));  //New update will be released in December for Genshin Impact

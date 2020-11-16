@@ -23,16 +23,12 @@ import java.util.List;
 public class MockNewsScraper implements WebScraper{
 
     NewsWebsiteRepository newsWebsites;
-    //private String url;
-    //private List<Article> articles;
-    //private DateFormat format;
+
     final private String name="GameEye Mock News";
 
     @Autowired
     public MockNewsScraper(NewsWebsiteRepository newsWebsites){
         this.newsWebsites = newsWebsites;
-        //articles = new ArrayList<>();
-        //format = new SimpleDateFormat("E, MMMM d, yyyy");
     }
 
     /**
@@ -85,63 +81,12 @@ public class MockNewsScraper implements WebScraper{
 
     }
 
-    /*@Override
-    public Boolean checkDuplicateArticles(Article a){
-        return false;
-    }*/
-
-    /**
-     * Retrieve articles
-     * @return list of articles
-     */
-    /*@Override
-    public List<Article> getArticles() {
-        return articles;
-    }*/
-
-    /**
-     * Retrieve article given index
-     * @param index Index pertaining to an article
-     * @return article given an index
-     */
-    /*@Override
-    public Article getArticle(int index) {
-        return articles.get(index);
-    }*/
-
     /**
      * Retrieves name of the scraper
      *
      * @return String
      */
     public String getScraperName(){ return name; }
-
-    /*@Override
-    public void emptyArticles(){
-        articles.clear();
-    }*/
-
-    /**
-     * Output to JSON format
-     * @return JSON
-     */
-    //@Override
-    /*public String toString() {
-        ObjectMapper obj= new ObjectMapper();
-        String articlesStr="";
-        List<Article> articles = scrape();
-        for (Article a:articles){
-            try {
-                String temp;
-                temp = obj.writerWithDefaultPrettyPrinter().writeValueAsString(a);
-                articlesStr = String.format("%1$s\n%2$s", articlesStr, temp);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return articlesStr;
-    }*/
 
 
 }

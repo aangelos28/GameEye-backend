@@ -23,16 +23,10 @@ import java.util.List;
 public class UniversalScraper implements WebScraper {
 
     NewsWebsiteRepository newsWebsites;
-    //private List<Article> articles;
-    //private DateFormat format;
-    //private String name;
-    //private String url;
 
     @Autowired
     public UniversalScraper(NewsWebsiteRepository newsWebsites){
         this.newsWebsites = newsWebsites;
-        //articles = new ArrayList<>();
-        //format = new SimpleDateFormat("E, d MMMM yyyy kk:mm:ss z");
     }
 
     /**
@@ -101,42 +95,6 @@ public class UniversalScraper implements WebScraper {
 
     }
 
-    /*@Override
-    public Boolean checkDuplicateArticles(Article a){
-        return false;
-    }*/
-
-    /**
-     * Retrieve articles
-     * @return list of articles
-     */
-    /*@Override
-    public List<Article> getArticles() {
-        return articles;
-    }*/
-
-    /**
-     * Retrieve article given index
-     * @param index Index pertaining to an article
-     * @return article given an index
-     */
-    /*@Override
-    public Article getArticle(int index) {
-        return articles.get(index);
-    }*/
-
-    /**
-     * Retrieves name of the scraper
-     *
-     * @return String
-     */
-    /*@Override
-    public String getScraperName(){ return name; }*/
-
-    /*@Override
-    public void emptyArticles(){
-        articles.clear();
-    }*/
 
     /**
      * Output to JSON format
