@@ -17,6 +17,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -65,7 +67,7 @@ public class IgdbServiceTest {
         int maxId = 100;
         int limit = 100;
 
-        List<GameResponse> responses = igdbService.retrieveGameResponsesWithSingleRequest(minId, maxId, limit);
+        List<GameResponse> responses = igdbService.retrieveGameResponsesByIdRange(minId, maxId, limit);
         List<Game> games = igdbService.convertGameResponsesToGames(responses);
 
         for (int gameIndex = 0; gameIndex < games.size(); gameIndex++) {
@@ -129,5 +131,20 @@ public class IgdbServiceTest {
         assertThat(game.getTitle(), is(title));
 
         System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(game));
+    }
+
+    @Test
+    public void testConvertTitlesToIgdbWhereClauseNames() {
+        String title1 = "Call of Duty: Black Ops Cold War";
+        String title2 = "Breath of the Wild";
+        String title3 = "Hyrule Warriors";
+
+        List<String> titles = new ArrayList<>(Arrays.asList(title1, title2, title3));
+
+        String actualNames = igdbService.convertTitlesToIgdbWhereClauseNames(titles);
+        String expectedNames = "(\"Call of Duty: Black Ops Cold War\", \"Breath of the Wild\", \"Hyrule Warriors\")";
+
+        assertThat(actualNames, is(expectedNames));
+        System.out.println(actualNames);
     }
 }

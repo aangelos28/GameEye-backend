@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -86,7 +87,7 @@ public class IgdbService {
         return coverResponses.get(0);
     }
 
-    public List<GameResponse> retrieveGameResponsesWithSingleRequest(int minId, int maxId, int limit) {
+    public List<GameResponse> retrieveGameResponsesByIdRange(int minId, int maxId, int limit) {
         int inclusiveMinId = minId - 1;
         int inclusiveMaxId = maxId + 1;
 
@@ -106,12 +107,50 @@ public class IgdbService {
         return gameResponses;
     }
 
-    public List<CoverResponse> retrieveCoverResponsesWithSingleRequest(int minId, int maxId, int limit) {
+    public List<GameResponse> retrieveGameResponsesByTitles(final List<String> titles, int limit) {
+        String names = convertTitlesToIgdbWhereClauseNames(titles);
+
+        String fieldsClause = "fields name, updated_at, genres.name, websites.url, websites.category, platforms.name, first_release_date; ";
+        String whereClause = String.format("where name = %1$s;", names);
+        String limitClause = String.format("limit %s;",limit);
+        String requestBody = String.format("%1$s%2$s%3$s", fieldsClause, whereClause, limitClause);
+
+        List<GameResponse> gameResponses = webClient.post()
+                .uri("/games")
+                .contentType(MediaType.TEXT_PLAIN)
+                .bodyValue(requestBody)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<List<GameResponse>>() {})
+                .block();
+
+        return gameResponses;
+    }
+
+    public List<CoverResponse> retrieveCoverResponsesByGameIdRange(int minId, int maxId, int limit) {
         int inclusiveMinId = minId - 1;
         int inclusiveMaxId = maxId + 1;
 
         String fieldsClause = "fields url, game; ";
         String whereClause = String.format("where game > %1$s & game < %2$s;", inclusiveMinId, inclusiveMaxId);
+        String limitClause = String.format("limit %s;",limit);
+        String requestBody = String.format("%1$s%2$s%3$s", fieldsClause, whereClause, limitClause);
+
+        List<CoverResponse> coverResponses = webClient.post()
+                .uri("/covers")
+                .contentType(MediaType.TEXT_PLAIN)
+                .bodyValue(requestBody)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<List<CoverResponse>>() {})
+                .block();
+
+        return coverResponses;
+    }
+
+    public List<CoverResponse> retrieveCoverResponsesByGameIds(List<String> gameIds, int limit) {
+        String ids = convertIdsToIgdbWhereClauseGameIds(gameIds);
+
+        String fieldsClause = "fields url, game; ";
+        String whereClause = String.format("where game = %1$s; ", ids);
         String limitClause = String.format("limit %s;",limit);
         String requestBody = String.format("%1$s%2$s%3$s", fieldsClause, whereClause, limitClause);
 
@@ -153,9 +192,69 @@ public class IgdbService {
         return game;
     }
 
+    public List<Game> retrieveGamesByTitle(List<String> gameTitles, int limit) {
+        List<String> titles = new ArrayList<>(gameTitles);
+        List<GameResponse> gameResponses = retrieveGameResponsesByTitles(titles, limit);
+        List<String> ids = new ArrayList<>();
+
+        for (GameResponse response: gameResponses) {
+            ids.add(response.igdbId);
+        }
+
+        List<CoverResponse> coverResponses = retrieveCoverResponsesByGameIds(ids, limit);
+
+        List<Game> games = convertGameResponsesToGames(gameResponses);
+
+        // Add logos to games
+        for (Game game: games) {
+            for (CoverResponse cover: coverResponses) {
+                if (game.getIgdbId().equals(cover.gameId)) {
+                    game.setLogoUrl(cover.logoUrl);
+                    break;
+                }
+            }
+        }
+
+        return games;
+    }
+
+    public String convertTitlesToIgdbWhereClauseNames(final List<String> titles) {
+        String names = "(";
+
+        Iterator it = titles.iterator();
+        while (it.hasNext()) {
+            names += "\"" + it.next() + "\"";
+
+            if (it.hasNext()) {
+                names += ", ";
+            }
+        }
+
+        names += ")";
+
+        return names;
+    }
+
+    public String convertIdsToIgdbWhereClauseGameIds(final List<String> ids) {
+        String names = "(";
+
+        Iterator it = ids.iterator();
+        while (it.hasNext()) {
+            names += it.next();
+
+            if (it.hasNext()) {
+                names += ", ";
+            }
+        }
+
+        names += ")";
+
+        return names;
+    }
+
     public List<Game> retrieveGamesByRangeWithLimit(int minId, int maxId, int limit) {
-        List<GameResponse> gameResponses = retrieveGameResponsesWithSingleRequest(minId, maxId, limit);
-        List<CoverResponse> coverResponses = retrieveCoverResponsesWithSingleRequest(minId, maxId, limit);
+        List<GameResponse> gameResponses = retrieveGameResponsesByIdRange(minId, maxId, limit);
+        List<CoverResponse> coverResponses = retrieveCoverResponsesByGameIdRange(minId, maxId, limit);
 
         List<Game> games = convertGameResponsesToGames(gameResponses);
 
