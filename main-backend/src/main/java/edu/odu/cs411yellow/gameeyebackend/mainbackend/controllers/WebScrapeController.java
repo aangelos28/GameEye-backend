@@ -21,12 +21,12 @@ public class WebScrapeController {
     }
 
     /**
-     * Perform ForceScrape on RSS feeds
+     * Perform ForceScrape on All Sources
      *
      */
     @PostMapping(path = "/private-admin/webscraping/force")
-    public ResponseEntity<?> performForceScrapeRSS() {
-        webScraperOrchestrator.forceScrape();
+    public ResponseEntity<?> performForceScrapeAll() {
+        webScraperOrchestrator.scrapeAll();
         return ResponseEntity.ok("Force Scrape of RSS feeds Performed");
     }
 
@@ -36,7 +36,7 @@ public class WebScrapeController {
      */
     @PostMapping(path = "/private-admin/webscraping/mockwebsite/force")
     public ResponseEntity<?> performForceScrapeMockSite() {
-        webScraperOrchestrator.forceScrape(mock);
+        webScraperOrchestrator.scrapeAll();
         return ResponseEntity.ok("Force Scrape of Mock News Performed");
     }
 

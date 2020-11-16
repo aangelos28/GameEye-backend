@@ -23,9 +23,9 @@ public class WebScrape {
      *
      */
     @ShellMethod(value = "Initiate Force Scrape of RSSFeeds.", key = "Force-Scrape-RSS")
-    public void forceScrapeRSS() {
+    public void forceScrapeAll() {
         webClient.post().uri("/private-admin/webscraping/force");
-        String response = "Force Scrape RSS";
+        String response = "Force Scrape All";
         System.out.println(response);
     }
 
