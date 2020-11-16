@@ -36,7 +36,7 @@ public class WebScrapeController {
      */
     @PostMapping(path = "/private-admin/webscraping/mockwebsite/force")
     public ResponseEntity<?> performForceScrapeMockSite() {
-        webScraperOrchestrator.scrapeAll();
+        webScraperOrchestrator.scrape(mock);
         return ResponseEntity.ok("Force Scrape of Mock News Performed");
     }
 
