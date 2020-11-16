@@ -175,14 +175,16 @@ public class Article {
         if (o == null || getClass() != o.getClass()) return false;
         Article that = (Article) o;
 
-        return Objects.equals(id, that.id)
+        /*return Objects.equals(id, that.id)
                 && Objects.equals(url, that.url)
                 && Objects.equals(title, that.title)
                 && Objects.equals(newsWebsiteName, that.newsWebsiteName)
                 && Objects.equals(thumbnailId, that.thumbnailId)
                 && Objects.equals(snippet, that.snippet)
                 && Objects.equals(publicationDate, that.publicationDate)
-                && Objects.equals(isImportant, that.isImportant);
+                && Objects.equals(isImportant, that.isImportant);*/
+
+        return Objects.equals(title, that.title) && Objects.equals(newsWebsiteName, that.newsWebsiteName);
     }
 
     @Override

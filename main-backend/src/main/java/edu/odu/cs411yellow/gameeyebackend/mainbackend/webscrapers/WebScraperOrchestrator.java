@@ -91,7 +91,7 @@ public class WebScraperOrchestrator{
                 e.printStackTrace();
             }
 
-            scraper.emptyArticles();
+            //scraper.emptyArticles();
         }
 
         List<Article> mockNewsArticles = mockNewsScraper.scrape(mockNewsScraper.getScraperName());
@@ -112,7 +112,7 @@ public class WebScraperOrchestrator{
 
         assignScrapedArticlesImportance(articleTitles, scrapedArticles);
         insertArticlesIntoDatabase(scrapedArticles);
-        mockNewsScraper.emptyArticles();
+        //mockNewsScraper.emptyArticles();
         return scrapedArticles;
     }
 
@@ -143,7 +143,7 @@ public class WebScraperOrchestrator{
 
         assignScrapedArticlesImportance(articleTitles, scrapedArticles);
         insertArticlesIntoDatabase(scrapedArticles);
-        scraper.emptyArticles();
+        //scraper.emptyArticles();
         return scrapedArticles;
     }
 
@@ -173,7 +173,7 @@ public class WebScraperOrchestrator{
 
         assignScrapedArticlesImportance(articleTitles, scrapedArticles);
         insertArticlesIntoDatabase(scrapedArticles);
-        mockNewsScraper.emptyArticles();
+        //mockNewsScraper.emptyArticles();
         return scrapedArticles;
     }
 

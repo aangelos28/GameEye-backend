@@ -23,24 +23,24 @@ import java.util.List;
 public class MockNewsScraper implements WebScraper{
 
     NewsWebsiteRepository newsWebsites;
-    private String url;
-    private List<Article> articles;
-    private DateFormat format;
-    private String name="GameEye Mock News";
+    //private String url;
+    //private List<Article> articles;
+    //private DateFormat format;
+    final private String name="GameEye Mock News";
 
     @Autowired
     public MockNewsScraper(NewsWebsiteRepository newsWebsites){
         this.newsWebsites = newsWebsites;
-        articles = new ArrayList<>();
-        url = newsWebsites.findByName(name).getSiteUrl();
-        format = new SimpleDateFormat("E, MMMM d, yyyy");
+        //articles = new ArrayList<>();
+        //format = new SimpleDateFormat("E, MMMM d, yyyy");
     }
 
     /**
      * Initiate the scrape
      */
-    public List<Article> scrape(String newsWebsite) {
-
+    public List<Article> scrape(String name) {
+        List<Article> articles = new ArrayList<>();
+        String url = newsWebsites.findByName(name).getSiteUrl();
         try {
             NewsWebsite mockNews = newsWebsites.findByName(name);
 
@@ -61,7 +61,7 @@ public class MockNewsScraper implements WebScraper{
 
     @Override
     public Article createArticle(Element i, String websiteName) throws ParseException {
-
+        DateFormat format = new SimpleDateFormat("E, MMMM d, yyyy");
 
         //Get Info
         String title = i.select("h2").text();
@@ -85,53 +85,52 @@ public class MockNewsScraper implements WebScraper{
 
     }
 
-    @Override
+    /*@Override
     public Boolean checkDuplicateArticles(Article a){
         return false;
-    }
+    }*/
 
     /**
      * Retrieve articles
      * @return list of articles
      */
-    @Override
+    /*@Override
     public List<Article> getArticles() {
         return articles;
-    }
+    }*/
 
     /**
      * Retrieve article given index
      * @param index Index pertaining to an article
      * @return article given an index
      */
-    @Override
+    /*@Override
     public Article getArticle(int index) {
         return articles.get(index);
-    }
+    }*/
 
     /**
      * Retrieves name of the scraper
      *
      * @return String
      */
-    @Override
     public String getScraperName(){ return name; }
 
-    @Override
+    /*@Override
     public void emptyArticles(){
         articles.clear();
-    }
+    }*/
 
     /**
      * Output to JSON format
      * @return JSON
      */
-    @Override
-    public String toString() {
+    //@Override
+    /*public String toString() {
         ObjectMapper obj= new ObjectMapper();
         String articlesStr="";
+        List<Article> articles = scrape();
         for (Article a:articles){
-
             try {
                 String temp;
                 temp = obj.writerWithDefaultPrettyPrinter().writeValueAsString(a);
@@ -142,7 +141,7 @@ public class MockNewsScraper implements WebScraper{
             }
         }
         return articlesStr;
-    }
+    }*/
 
 
 }

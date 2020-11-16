@@ -81,6 +81,8 @@ public class WebScraperOrchestratorTest {
 
     Article og;
 
+    private String mockScraperName = mockNewsScraper.getScraperName();
+
     @BeforeEach
     public void init(){
 
@@ -103,8 +105,7 @@ public class WebScraperOrchestratorTest {
         mockgame3.setTitle("Doom Eternal");
         mockgame3.setResources(mock3Resources);
 
-        mockNewsScraper.scrape(mockNewsScraper.getScraperName());
-        mockArticles=mockNewsScraper.getArticles();
+        mockArticles = mockNewsScraper.scrape(mockScraperName);
 
         og = new Article(mockArticles.get(2)); //"Destiny 2: Beyond Light adds ice"
         List<Article> arts = new ArrayList<>(Arrays.asList(og));
@@ -146,7 +147,7 @@ public class WebScraperOrchestratorTest {
         elasticGames.deleteByGameId(mockgame4.getId());
 
         mockArticles.clear();
-        mockNewsScraper.emptyArticles();
+        //mockNewsScraper.emptyArticles();
     }
 
     @Test
@@ -190,7 +191,7 @@ public class WebScraperOrchestratorTest {
         Resources preResources = preTestGame.getResources();
         List<Article> preArticles = preResources.getArticles();
 
-        mockArticles = orchestratorMock.scrape(mockNewsScraper);
+        //mockArticles = orchestratorMock.scrape(mockNewsScraper);
         //System.out.println(orchestratorMock.toString());
         //List<Article> testArts = scrappyMock.getArticleCollection();
         orchestratorMock.insertArticlesIntoDatabase(mockArticles);
@@ -278,7 +279,7 @@ public class WebScraperOrchestratorTest {
 
     @Test
     public void testAssignScrapedArticlesImportance(){
-        mockNewsScraper.emptyArticles();
+        mockArticles.clear();
         mockArticles=orchestratorMock.scrape(mockNewsScraper);
         List<String> titles = new ArrayList<String>();
 
