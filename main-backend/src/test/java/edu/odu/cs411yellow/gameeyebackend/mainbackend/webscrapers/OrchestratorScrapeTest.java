@@ -22,6 +22,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,7 +44,7 @@ public class OrchestratorScrapeTest {
     @Autowired
     MockNewsScraper mock;
 
-    List<Article> mockArticles;
+    List<Article> articles;
 
     @Autowired
     UniversalScraper scraper;
@@ -78,69 +82,55 @@ public class OrchestratorScrapeTest {
         orchestratorMock = new WebScraperOrchestrator(scraper, mock, elasticGames, rgs, newsWebsiteRepository, games, gameService, machine);
     }
 
+
+    @AfterEach
+    public void emptyArticles(){
+        articles.clear();
+    }
+
     @Test
     public void testForceScrape(){
-        orchestratorMock.forceScrape();
-        //System.out.println(orchestratorMock.toString());
-        //System.out.println("\n");
-        //System.out.println("Mock Total: "+orchestratorMock.getAllArticles().size());
-
-        //System.out.println("\n \n");
+        articles = orchestratorMock.forceScrape();
 
         List<Article> totalCollection=new ArrayList<Article>();
         for(String s: scraperNames){
             scraper.scrape(s);
-            //System.out.println(s);
             totalCollection.addAll(scraper.getArticles());
-            //System.out.println("Article Count:"+scraper.getArticles().size());
             scraper.emptyArticles();
         }
 
         mock.emptyArticles();
         mock.scrape(mock.getScraperName());
-        //System.out.println(mock.getScraperName());
         totalCollection.addAll(mock.getArticles());
-        //System.out.println("Article Count: "+ mock.getArticles().size());
 
 
-        //System.out.println("\nActual Total:"+totalCollection.size());
-
-        assertEquals(totalCollection.size(),orchestratorMock.getAllArticles().size());
+        //assertEquals(totalCollection.size(),orchestratorMock.getAllArticles().size());
+        assertThat(articles.size(),is(greaterThan(0)));
+        assertThat(articles.size(),is(lessThanOrEqualTo(totalCollection.size())));
     }
 
     @Test
     public void testForceScrapeMockNews(){
-        //mock.scrape();
-        orchestratorMock.forceScrape(mock);
-        //orchestratorMock.forceScrape("GameEye Mock News");
-        //System.out.println(orchestratorMock.toString());
-        List<String> titles = orchestratorMock.getArticleTitles();
-        List<Boolean> scores = orchestratorMock.getArticleImportance();
 
-        /*for(String title:titles){
-            System.out.println(title);
-        }
-        for(Boolean score:scores){
-            System.out.println(score);
-        }*/
-
+        articles=orchestratorMock.forceScrape(mock);
         mock.scrape(mock.getScraperName());
 
-        //assertEquals(mock.toString(),orchestratorMock.toString());
-        //assertEquals(mock.getArticles(), orchestratorMock.getArticleCollection());
-        assertEquals(mock.getArticles().size(),orchestratorMock.getAllArticles().size());
+        //assertEquals(mock.getArticles().size(),orchestratorMock.getAllArticles().size());
+        assertThat(articles.size(),is(greaterThan(0)));
+        assertThat(articles.size(),is(lessThanOrEqualTo(mock.getArticles().size())));
     }
 
     @Test
     public void testForceScrapeGameSpot(){
-        orchestratorMock.forceScrape("GameSpot");
-        System.out.println(orchestratorMock.toString());
+        articles = orchestratorMock.forceScrape("GameSpot");
+        //System.out.println(orchestratorMock.toString());
 
         scraper.scrape("GameSpot");
 
         //assertEquals(scraper.toString(),orchestratorMock.toString());
         //assertEquals(scraper.getArticles(), orchestratorMock.getArticleCollection());
-        assertEquals(scraper.getArticles().size(),orchestratorMock.getAllArticles().size());
+        assertThat(articles.size(),is(greaterThan(0)));
+        assertThat(articles.size(),is(lessThanOrEqualTo(scraper.getArticles().size())));
     }
 
     @Test
@@ -152,30 +142,33 @@ public class OrchestratorScrapeTest {
 
         //assertEquals(scraper.toString(),orchestratorMock.toString());
         //assertEquals(scraper.getArticles(), orchestratorMock.getArticleCollection());
-        assertEquals(scraper.getArticles().size(),orchestratorMock.getAllArticles().size());
+        assertThat(articles.size(),is(greaterThan(0)));
+        assertThat(articles.size(),is(lessThanOrEqualTo(scraper.getArticles().size())));
     }
 
     @Test
     public void testForceScrapePCGamer(){
-        orchestratorMock.forceScrape("PC Gamer");
-        System.out.println(orchestratorMock.toString());
+        articles=orchestratorMock.forceScrape("PC Gamer");
+        //System.out.println(orchestratorMock.toString());
 
         scraper.scrape("PC Gamer");
 
         //assertEquals(scraper.toString(),orchestratorMock.toString());
         //assertEquals(scraper.getArticles(), orchestratorMock.getArticleCollection());
-        assertEquals(scraper.getArticles().size(),orchestratorMock.getAllArticles().size());
+        assertThat(articles.size(),is(greaterThan(0)));
+        assertThat(articles.size(),is(lessThanOrEqualTo(scraper.getArticles().size())));
     }
 
     @Test
     public void testForceScrapeEuroGamer(){
-        orchestratorMock.forceScrape("Eurogamer");
-        System.out.println(orchestratorMock.toString());
+        articles=orchestratorMock.forceScrape("Eurogamer");
+        //System.out.println(orchestratorMock.toString());
 
         scraper.scrape("EuroGamer");
 
         //assertEquals(scraper.toString(),orchestratorMock.toString());
         //assertEquals(scraper.getArticles(), orchestratorMock.getArticleCollection());
-        assertEquals(scraper.getArticles().size(),orchestratorMock.getAllArticles().size());
+        assertThat(articles.size(),is(greaterThan(0)));
+        assertThat(articles.size(),is(lessThanOrEqualTo(scraper.getArticles().size())));
     }
 }
