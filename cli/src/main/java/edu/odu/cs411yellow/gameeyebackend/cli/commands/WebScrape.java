@@ -11,13 +11,12 @@ import org.springframework.web.reactive.function.client.WebClient;
 @ShellComponent
 public class WebScrape {
     WebClient webClient;
-    public WebScrape(@Value("${mainbackend.baseurl}") String url) {
+
+    public WebScrape(@Value("${mainbackend.baseurl}") String baseUrl) {
         this.webClient = WebClient.builder()
-                .baseUrl(url)
+                .baseUrl(baseUrl)
                 .build();
     }
-    //change ${mainbackend.igdb.baseurl} to http://localhost.4200 in application properties
-    //Give everyone updated Application Properties
 
     /**
      * Initiate Scraping of RSS
@@ -25,7 +24,7 @@ public class WebScrape {
      */
     @ShellMethod(value = "Initiate Force Scrape of RSSFeeds.", key = "Force-Scrape-RSS")
     public void forceScrapeRSS() {
-
+        webClient.post().uri("/private-admin/webscraping/force");
         String response = "Force Scrape RSS";
         System.out.println(response);
     }
@@ -36,7 +35,7 @@ public class WebScrape {
      */
     @ShellMethod(value = "Initiate Force Scrape of MockNews.", key = "Force-Scrape-MockNews")
     public void forceScrapeMockNews() {
-
+        webClient.post().uri("/private-admin/webscraping/mockwebsite/force");
         String response = "Force Scrape MockNews";
         System.out.println(response);
     }
