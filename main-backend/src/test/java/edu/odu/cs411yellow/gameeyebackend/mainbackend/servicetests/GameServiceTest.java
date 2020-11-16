@@ -146,7 +146,9 @@ public class GameServiceTest {
         gameRepository.insert(newGame);
         Game insertedGame = gameRepository.findGameByTitle(newGame.getTitle());
 
-        assertThat(gameService.findArticles(insertedGame.getId()), is(insertedGame.getResources().getArticles()));
+        List<Article> retrievedArticles = gameService.findArticles(insertedGame.getId());
+        assertThat(retrievedArticles, is(insertedGame.getResources().getArticles()));
+        retrievedArticles.forEach((article1) -> System.out.println(article1.getTitle()));
 
         gameRepository.delete(insertedGame);
     }

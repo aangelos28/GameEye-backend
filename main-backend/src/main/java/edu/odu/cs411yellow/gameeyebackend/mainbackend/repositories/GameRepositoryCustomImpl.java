@@ -59,14 +59,9 @@ public class GameRepositoryCustomImpl implements GameRepositoryCustom {
     }
 
     @Override
-    public List<Article> findArticles(String gameId) {
-        MatchOperation matchStage = Aggregation.match(new Criteria("_id").is(gameId));
-        ProjectionOperation projectStage = Aggregation.project().and("resources.articles").as("articles");
-        UnwindOperation unwindStage = UnwindOperation.newUnwind().path("$resources.articles").noArrayIndex().skipNullAndEmptyArrays();
-        Aggregation aggregation = Aggregation.newAggregation(matchStage, unwindStage, projectStage);
+    public List<Article> findArticles(final String gameId) {
+        Query query = new Query(new Criteria("_id").is(gameId));
 
-        AggregationResults<Article> results = mongo.aggregate(aggregation, "games", Article.class);
-
-        return results.getMappedResults();
+        return mongo.findDistinct(query, "resources.articles",Game.class, Article.class);
     }
 }
