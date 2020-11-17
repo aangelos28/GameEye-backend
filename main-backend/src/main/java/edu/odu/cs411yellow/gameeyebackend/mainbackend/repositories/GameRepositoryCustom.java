@@ -20,4 +20,5 @@ public interface GameRepositoryCustom {
     String findGameIdByIgdbId(String igdbId);
     void updateLogoPlatformsReleaseDateGenresSourceUrls(String id, String logoUrl, List<String> platforms,
                                                                List<String> genres, Date releaseDate, SourceUrls sourceUrls);
+    void updateLastUpdatedField(String gameId);
 }

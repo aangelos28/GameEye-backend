@@ -59,7 +59,7 @@ public class GameRepositoryCustomImpl implements GameRepositoryCustom {
     }
 
     @Override
-    public String findTitleById(String id) {
+    public String findTitleById(final String id) {
         Query query = new Query(Criteria.where("_id").is(id));
         query.fields().include("title");
 
@@ -67,11 +67,12 @@ public class GameRepositoryCustomImpl implements GameRepositoryCustom {
     }
 
     @Override
-    public void updateGameTitle(String id, String title) {
+    public void updateGameTitle(final String id, final String title) {
         Query query = new Query(Criteria.where("_id").is(id));
         Update update = new Update().set("title", title);
 
         mongo.updateFirst(query, update, Game.class);
+        updateLastUpdatedField(id);
     }
 
     private static class GameId {
@@ -93,7 +94,7 @@ public class GameRepositoryCustomImpl implements GameRepositoryCustom {
     }
 
     @Override
-    public String findGameIdByIgdbId(String igdbId) {
+    public String findGameIdByIgdbId(final String igdbId) {
         Query query = new Query(Criteria.where("igdbId").is(igdbId));
         query.fields().include("_id");
 
@@ -101,8 +102,8 @@ public class GameRepositoryCustomImpl implements GameRepositoryCustom {
     }
 
     @Override
-    public void updateLogoPlatformsReleaseDateGenresSourceUrls(String id, String logoUrl, List<String> platforms,
-                                                               List<String> genres, Date releaseDate, SourceUrls sourceUrls) {
+    public void updateLogoPlatformsReleaseDateGenresSourceUrls(final String id, final String logoUrl, final List<String> platforms,
+                                                               final List<String> genres, final Date releaseDate, final SourceUrls sourceUrls) {
         Query query = new Query(Criteria.where("_id").is(id));
         Update update = new Update()
                 .set("logoUrl", logoUrl)
@@ -110,6 +111,15 @@ public class GameRepositoryCustomImpl implements GameRepositoryCustom {
                 .set("genres", genres)
                 .set("releaseDate", releaseDate)
                 .set("sourceUrls", sourceUrls);
+
+        mongo.updateFirst(query, update, Game.class);
+        updateLastUpdatedField(id);
+    }
+
+    @Override
+    public void updateLastUpdatedField(String gameId) {
+        Query query = new Query(Criteria.where("_id").is(gameId));
+        Update update = new Update().set("lastUpdated", new Date());
 
         mongo.updateFirst(query, update, Game.class);
     }

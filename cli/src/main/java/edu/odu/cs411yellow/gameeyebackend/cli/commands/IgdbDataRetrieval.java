@@ -1,5 +1,6 @@
 package edu.odu.cs411yellow.gameeyebackend.cli.commands;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -14,6 +15,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 @ShellComponent
 public class IgdbDataRetrieval {
     WebClient webClient;
+    final int titleArity = 10;
 
     public IgdbDataRetrieval(@Value("${mainbackend.baseurl}") String baseUrl) {
         this.webClient = WebClient.builder()
@@ -30,8 +32,8 @@ public class IgdbDataRetrieval {
      */
     @ShellMethod(value = "Replicate a range of games by id.", key = "replicate-by-id-range")
     public void replicateByIdRange(@ShellOption("--min-id") int minId,
-                              @ShellOption("--max-id") int maxId,
-                              @ShellOption("--limit")  int limit) {
+                                   @ShellOption("--max-id") int maxId,
+                                   @ShellOption("--limit")  int limit) {
 
     JsonObject request = new JsonObject();
     request.addProperty("minId", minId);
@@ -50,18 +52,18 @@ public class IgdbDataRetrieval {
     }
 
     /**
-     * Replicates a single IGDB game by title to the GameEye database.
+     * Replicates multiple IGDB games by titles to the GameEye database.
      *
-     * @param title title of the IGDB game.
+     * @param titles titles of the IGDB games.
      */
-    @ShellMethod(value = "Replicate a single game by title.", key = "replicate-by-title")
-    public void replicateByTitle(@ShellOption("--title") String title) {
+    @ShellMethod(value = "Replicate a set of games by titles.", key = "replicate-by-titles")
+    public void replicateByTitles(@ShellOption(arity = titleArity) String[] titles) {
 
         JsonObject request = new JsonObject();
-        request.addProperty("title", title);
+        request.addProperty("titles", new Gson().toJson(titles));
 
         String response = this.webClient.post()
-                .uri("/private-admin/igdb/replicate/title")
+                .uri("/private-admin/igdb/replicate/titles")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(request.toString())
                 .retrieve()
