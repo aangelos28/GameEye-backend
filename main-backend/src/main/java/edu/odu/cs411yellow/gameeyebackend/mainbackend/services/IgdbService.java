@@ -53,22 +53,6 @@ public class IgdbService {
         return gameResponses.get(0);
     }
 
-    public GameResponse retrieveGameResponseByTitle(String title) {
-        String fieldsClause = "fields name, updated_at, genres.name, websites.url, websites.category, platforms.name, first_release_date; ";
-        String whereClause = String.format("where name = \"%s\";", title);
-        String requestBody = String.format("%1$s%2$s", fieldsClause, whereClause);
-
-        List<GameResponse> gameResponse = webClient.post()
-                .uri("/games")
-                .contentType(MediaType.TEXT_PLAIN)
-                .bodyValue(requestBody)
-                .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<GameResponse>>() {})
-                .block();
-
-        return gameResponse.get(0);
-    }
-
     public CoverResponse retrieveCoverResponseByGameId(String gameId) {
         String fieldsClause = "fields url, game; ";
         String whereClause = String.format("where game = %1$s;", gameId);
