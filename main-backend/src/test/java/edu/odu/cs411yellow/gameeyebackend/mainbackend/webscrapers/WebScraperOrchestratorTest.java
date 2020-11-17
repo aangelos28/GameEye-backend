@@ -107,12 +107,13 @@ public class WebScraperOrchestratorTest {
 
         mockArticles = mockNewsScraper.scrape(mockScraperName);
 
-        og = new Article(mockArticles.get(2)); //"Destiny 2: Beyond Light adds ice"
+        og = new Article(mockArticles.get(8)); //"Destiny 2: Beyond Light adds ice"
         List<Article> arts = new ArrayList<>(Arrays.asList(og));
 
         String title="Destiny 2: Beyond Light";
         mockgame4 = new Game();
         mockgame4.setId("WebScraperOrchTest - MockGame4");
+        //mockgame4.setId();
         mockgame4.setTitle(title);
         mockgame4.getResources().setArticles(arts);
 
@@ -158,6 +159,7 @@ public class WebScraperOrchestratorTest {
     public void testCheckArticleDuplicates(){
         String title = mockgame4.getTitle();
         String id = mockgame4.getId();
+        System.out.println(title+": "+id);
 
         // Check that method returns true for a duplicate article already saved earlier in the test.
         Article dupe = new Article(og);

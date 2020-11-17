@@ -193,6 +193,11 @@ public class WebScraperOrchestrator{
      * @return Boolean: true if the article already exists
      */
     public Boolean checkArticleDuplicates(String id, Article a){
+
+        ElasticGame game = elastic.findByGameId(id);
+        String title = game.getTitle();
+
+
             Game gameInDB = games.findGameById(id);
 
             Resources gameResources;
@@ -228,7 +233,6 @@ public class WebScraperOrchestrator{
 
         for(String id:possibleGameIDS){
             ElasticGame game = elastic.findByGameId(id);
-            //System.out.println(game.getTitle());
         }
 
         if(possibleGameIDS.size()>0)
