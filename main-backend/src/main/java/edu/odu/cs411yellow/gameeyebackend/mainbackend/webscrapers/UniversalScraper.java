@@ -23,16 +23,10 @@ import java.util.List;
 public class UniversalScraper implements WebScraper {
 
     NewsWebsiteRepository newsWebsites;
-    private List<Article> articles;
-    private DateFormat format;
-    private String name;
-    //private String url;
 
     @Autowired
     public UniversalScraper(NewsWebsiteRepository newsWebsites){
         this.newsWebsites = newsWebsites;
-        articles = new ArrayList<>();
-        format = new SimpleDateFormat("E, d MMMM yyyy kk:mm:ss z");
     }
 
     /**
@@ -40,7 +34,8 @@ public class UniversalScraper implements WebScraper {
      */
     @Override
     public List<Article> scrape(String newsOutlet) {
-        name = newsOutlet;
+        String name = newsOutlet;
+        List<Article> articles = new ArrayList<>();
         try {
             NewsWebsite newsSite = newsWebsites.findByName(newsOutlet);
 
@@ -63,6 +58,7 @@ public class UniversalScraper implements WebScraper {
 
     @Override
     public Article createArticle(Element i, String websiteName) throws ParseException {
+        DateFormat format = new SimpleDateFormat("E, d MMMM yyyy kk:mm:ss z");
         String title = i.select("title").text();
 
         String url = i.select("link").text();
@@ -99,51 +95,16 @@ public class UniversalScraper implements WebScraper {
 
     }
 
-    @Override
-    public Boolean checkDuplicateArticles(Article a){
-        return false;
-    }
-
-    /**
-     * Retrieve articles
-     * @return list of articles
-     */
-    @Override
-    public List<Article> getArticles() {
-        return articles;
-    }
-
-    /**
-     * Retrieve article given index
-     * @param index Index pertaining to an article
-     * @return article given an index
-     */
-    @Override
-    public Article getArticle(int index) {
-        return articles.get(index);
-    }
-
-    /**
-     * Retrieves name of the scraper
-     *
-     * @return String
-     */
-    @Override
-    public String getScraperName(){ return name; }
-
-    @Override
-    public void emptyArticles(){
-        articles.clear();
-    }
 
     /**
      * Output to JSON format
      * @return JSON
      */
-    @Override
-    public String toString() {
+    //@Override
+    public String toString(String name) {
         ObjectMapper obj= new ObjectMapper();
         String articlesStr="";
+        List<Article> articles = scrape(name);
         for (Article a:articles){
 
             try {

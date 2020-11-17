@@ -41,7 +41,7 @@ public class WebScraperOrchestratorTest {
     private String[] scraperNames={"GameSpot","Eurogamer","PC Gamer", "IGN","GameEye Mock News"};
 
     @Autowired
-    MockNewsScraper mock;
+    MockNewsScraper mockNewsScraper;
 
     List<Article> mockArticles;
 
@@ -63,7 +63,7 @@ public class WebScraperOrchestratorTest {
 
 
     @Autowired
-    private ReferenceGameService rgs;
+    private ReferenceGameService referenceGameService;
     @Autowired
     private GameRepository games;
 
@@ -77,9 +77,11 @@ public class WebScraperOrchestratorTest {
 
 
     @Autowired
-    private MachineLearningService machine;
+    private MachineLearningService mlService;
 
     Article og;
+
+    private String mockScraperName = "GameEye Mock News";
 
     @BeforeEach
     public void init(){
@@ -87,7 +89,7 @@ public class WebScraperOrchestratorTest {
         Resources mock1Resources= new Resources();
         mockgame1 = new Game();
         mockgame1.setId("WebScraperOrchTest - MockGame1");
-        mockgame1.setTitle("Halo Infinite");
+        mockgame1.setTitle("Genshin Impact");
         mockgame1.setResources(mock1Resources);
 
         Resources mock2Resources= new Resources();
@@ -103,15 +105,15 @@ public class WebScraperOrchestratorTest {
         mockgame3.setTitle("Doom Eternal");
         mockgame3.setResources(mock3Resources);
 
-        mock.scrape(mock.getScraperName());
-        mockArticles=mock.getArticles();
+        mockArticles = mockNewsScraper.scrape(mockScraperName);
 
-        og = new Article(mockArticles.get(2)); //"Destiny 2: Beyond Light adds ice"
+        og = new Article(mockArticles.get(8)); //"Destiny 2: Beyond Light adds ice"
         List<Article> arts = new ArrayList<>(Arrays.asList(og));
 
         String title="Destiny 2: Beyond Light";
         mockgame4 = new Game();
         mockgame4.setId("WebScraperOrchTest - MockGame4");
+        //mockgame4.setId();
         mockgame4.setTitle(title);
         mockgame4.getResources().setArticles(arts);
 
@@ -130,7 +132,7 @@ public class WebScraperOrchestratorTest {
         elasticGames.save(elasticGame3);
         elasticGames.save(elasticGame4);
 
-        orchestratorMock = new WebScraperOrchestrator(scraper, mock, elasticGames, rgs, newsWebsiteRepository,games, gameService,machine);
+        orchestratorMock = new WebScraperOrchestrator(scraper, mockNewsScraper, elasticGames, referenceGameService, newsWebsiteRepository,games, gameService,mlService);
     }
 
     @AfterEach
@@ -144,6 +146,8 @@ public class WebScraperOrchestratorTest {
         elasticGames.deleteByGameId(mockgame2.getId());
         elasticGames.deleteByGameId(mockgame3.getId());
         elasticGames.deleteByGameId(mockgame4.getId());
+
+        mockArticles.clear();
     }
 
     @Test
@@ -155,6 +159,7 @@ public class WebScraperOrchestratorTest {
     public void testCheckArticleDuplicates(){
         String title = mockgame4.getTitle();
         String id = mockgame4.getId();
+        System.out.println(title+": "+id);
 
         // Check that method returns true for a duplicate article already saved earlier in the test.
         Article dupe = new Article(og);
@@ -170,11 +175,16 @@ public class WebScraperOrchestratorTest {
     @Test
     public void testCheckIrrelevantArticles(){
 
-        Article irrelevant = mockArticles.get(mockArticles.size()-1);    //"GameEye Launch"
-        Article nonIrrelevant = mockArticles.get(0);    //"GameEye Launch"
-
+        Article irrelevant = mockArticles.get(mockArticles.size()-1);    //"Making sense of the SCAA’s new Flavor Wheel"
         boolean irr = orchestratorMock.checkIrrelevantArticles(irrelevant);
-        boolean nonIrr = orchestratorMock.checkIrrelevantArticles(nonIrrelevant);
+        System.out.println(irrelevant.getTitle());
+        System.out.println(irr);
+
+        Article relevant = mockArticles.get(mockArticles.size()-6);    //"Cyberpunk 2077 Delayed to 12/10/2077
+        boolean nonIrr = orchestratorMock.checkIrrelevantArticles(relevant);
+        System.out.println(relevant.getTitle());
+        System.out.println(nonIrr);
+
 
         assertThat(irr,is(true));
         assertThat(nonIrr,is(false));
@@ -187,10 +197,7 @@ public class WebScraperOrchestratorTest {
         Resources preResources = preTestGame.getResources();
         List<Article> preArticles = preResources.getArticles();
 
-        orchestratorMock.forceScrape(mock);
-        System.out.println(orchestratorMock.toString());
-        //List<Article> testArts = scrappyMock.getArticleCollection();
-        orchestratorMock.insertArticlesIntoDatabase();
+        orchestratorMock.insertArticlesIntoDatabase(mockArticles);
 
         // Retrieve game after inserting articles
         Game postTestGame = games.findGameByTitle("Cyberpunk 2077");
@@ -203,7 +210,7 @@ public class WebScraperOrchestratorTest {
         assertNotEquals(preArticles.size(),postArticles.size());
     }
 
-    @Test
+   /* @Test
     public void testRemoveFromCollection(){
         orchestratorMock.forceScrape(mock);
         List<Article> beforeRemoval = new ArrayList<>(orchestratorMock.getArticleCollection());
@@ -214,13 +221,12 @@ public class WebScraperOrchestratorTest {
         System.out.println(orchestratorMock.toString());
 
         assertThat(afterRemoval, is(not(beforeRemoval)));
-    }
+    }*/
 
     @Test
     public void testPerformAGRSForSingleGameMention(){
 
-        orchestratorMock.forceScrape(mock);
-        List<Article> articles = orchestratorMock.getArticleCollection();
+        List<Article> articles = orchestratorMock.scrape(mockNewsScraper);
         List<String> gameIDs = orchestratorMock.performArticleGameReferenceSearch(articles.get(0));
 
         System.out.println(articles.get(0).getTitle());
@@ -239,22 +245,6 @@ public class WebScraperOrchestratorTest {
     }
 
     @Test
-    public void testAddArticleToGameInTestRepo(){
-        mock.scrape(mock.getScraperName());
-        mockArticles=mock.getArticles();
-
-       // Article og = new Article(mockArticles.get(1)); //"Destiny 2: Beyond Light adds ice"
-        //mockgame4.addArticleResources(og);
-
-        String artID = og.getId();
-        String title = "Destiny 2: Beyond Light";
-        String id = "5fa25fd86ffacd4ab297d3e1"; //Destiny 2
-        //orchestratorMock.addArticleToGame(og,title);
-
-        //Article a = orchestratorMock.games.findGameByTitle(title).getResources().findArticle(artID);
-    }
-
-    @Test
     public void testGetGamesArticles(){
         String title = "Destiny 2: Beyond Light";
 
@@ -264,20 +254,6 @@ public class WebScraperOrchestratorTest {
         }
     }
 
-    @Test
-    public void testSetArticleImportance(){
-        Article test1 = new Article();
-        Article test2 = new Article();
-
-        Boolean important = true;
-        Boolean notImportant = false;
-
-        orchestratorMock.setArticleImportance(important,test1);
-        orchestratorMock.setArticleImportance(notImportant,test2);
-
-        assertThat(test1.getIsImportant(),is(true));
-        assertThat(test2.getIsImportant(),is(false));
-    }
 
     @Test
     public void testGetArticleImportance(){
@@ -306,15 +282,19 @@ public class WebScraperOrchestratorTest {
 
     @Test
     public void testAssignScrapedArticlesImportance(){
-        mock.emptyArticles();
-        orchestratorMock.forceScrape(mock);
-        orchestratorMock.assignScrapedArticlesImportance();
+        List<String> titles = new ArrayList<String>();
 
-        List<Article> articles = orchestratorMock.getArticleCollection();
+        for(Article a:mockArticles)
+        {
+            titles.add(a.getTitle());
+            System.out.println(a.getTitle());
+        }
 
-        assertThat(articles.get(0).getIsImportant(),is(false)); //Cyberpunk 2077: The most hair styles of any RPG
-        assertThat(articles.get(1).getIsImportant(),is(true));  //New update will be released in December for Genshin Impact
-        assertThat(articles.get(2).getIsImportant(),is(true));  //Destiny 2: Beyond Light adds ice
+        orchestratorMock.assignScrapedArticlesImportance(titles,mockArticles);
+
+        assertThat(mockArticles.get(6).getIsImportant(),is(false)); //Cyberpunk 2077: The most hair styles of any RPG
+        assertThat(mockArticles.get(7).getIsImportant(),is(true));  //New update will be released in December for Genshin Impact
+        assertThat(mockArticles.get(8).getIsImportant(),is(true));  //Destiny 2: Beyond Light adds ice
     }
 }
 
