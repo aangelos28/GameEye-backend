@@ -3,6 +3,7 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.services;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.SourceUrls;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.elasticsearch.ElasticGame;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,15 +18,17 @@ public class IgdbReplicationService {
     IgdbService igdbService;
     GameService gameService;
     ElasticGameService elasticService;
+    GameRepository gameRepository;
 
     Logger logger = LoggerFactory.getLogger(IgdbReplicationService.class);
 
     @Autowired
     public IgdbReplicationService(IgdbService igdbService, GameService gameService,
-                                  ElasticGameService elasticService) {
+                                  ElasticGameService elasticService, GameRepository gameRepository) {
         this.igdbService = igdbService;
         this.gameService = gameService;
         this.elasticService = elasticService;
+        this.gameRepository = gameRepository;
     }
 
     public String replicateGamesByRange(int minId, int maxId, int limit) {
@@ -78,10 +81,8 @@ public class IgdbReplicationService {
                         // Update an existing IGDB game in games collection
                         if (gameService.existsByIgdbId(igdbGame.getIgdbId())) {
                             // Update game and elastic search if necessary
-                            Game updatedGame = updateExistingGame(igdbGame);
-                            mongoGameBuffer.add(updatedGame);
+                            updateExistingGame(igdbGame);
 
-                            currentMongoBufferCount++;
                             updatedGameCount++;
                         }
                         else {
@@ -186,10 +187,8 @@ public class IgdbReplicationService {
                         // Update an existing IGDB game in games collection
                         if (gameService.existsByIgdbId(igdbGame.getIgdbId())) {
                             // Update game and elastic search if necessary
-                            Game updatedGame = updateExistingGame(igdbGame);
-                            mongoGameBuffer.add(updatedGame);
+                            updateExistingGame(igdbGame);
 
-                            currentMongoBufferCount++;
                             updatedGameCount++;
                         }
                         else {
@@ -246,45 +245,29 @@ public class IgdbReplicationService {
         return status;
     }
 
-    private Game updateExistingGame(Game igdbGame) {
-        Game existingGame = gameService.findByIgdbId(igdbGame.getIgdbId());
+    private void updateExistingGame(Game igdbGame) {
+        String gameId = gameRepository.findGameIdByIgdbId(igdbGame.getIgdbId());
+        String existingTitle = gameRepository.findTitleById(gameId);
 
         // Check for IGDB title change
-        if (!existingGame.getTitle().equals(igdbGame.getTitle())) {
+        if (!existingTitle.equals(igdbGame.getTitle())) {
             // Update existing game title with new IGDB title
-            existingGame.setTitle(igdbGame.getTitle());
+            gameRepository.updateGameTitle(gameId, igdbGame.getTitle());
 
             // Update elastic game title
-            ElasticGame elasticGame = new ElasticGame(existingGame);
+            ElasticGame elasticGame = new ElasticGame();
+            elasticGame.setGameId(gameId);
+            elasticGame.setTitle(igdbGame.getTitle());
+
             elasticService.updateTitle(elasticGame);
         }
 
-        // Update logoUrls, platforms, status, and genres
-        existingGame.setLogoUrl(igdbGame.getLogoUrl());
-        existingGame.setPlatforms(igdbGame.getPlatforms());
-        existingGame.setReleaseDate(igdbGame.getReleaseDate());
-        existingGame.setGenres(igdbGame.getGenres());
-
-        // Update sourceUrls
-        SourceUrls newSourceUrls = igdbGame.getSourceUrls();
-        SourceUrls existingSourceUrls = existingGame.getSourceUrls();
-
-        if (!newSourceUrls.getPublisherUrl().equals("")) {
-            existingSourceUrls.setPublisherUrl(newSourceUrls.getPublisherUrl());
-        }
-        if (!newSourceUrls.getSteamUrl().equals("")) {
-            existingSourceUrls.setSteamUrl(newSourceUrls.getSteamUrl());
-        }
-        if (!newSourceUrls.getSubRedditUrl().equals("")) {
-            existingSourceUrls.setSubRedditUrl(newSourceUrls.getSubRedditUrl());
-        }
-        if (!newSourceUrls.getTwitterUrl().equals("")) {
-            existingSourceUrls.setTwitterUrl(newSourceUrls.getTwitterUrl());
-        }
-
-        // Save new urls in existing
-        existingGame.setSourceUrls(existingSourceUrls);
-
-        return existingGame;
+        // Update logoUrl, platforms, release date, genres, and sourceUrls
+        gameRepository.updateLogoPlatformsReleaseDateGenresSourceUrls(gameId,
+                                                                      igdbGame.getLogoUrl(),
+                                                                      igdbGame.getPlatforms(),
+                                                                      igdbGame.getGenres(),
+                                                                      igdbGame.getReleaseDate(),
+                                                                      igdbGame.getSourceUrls());
     }
 }

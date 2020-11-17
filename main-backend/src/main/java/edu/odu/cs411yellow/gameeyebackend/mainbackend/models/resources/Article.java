@@ -58,11 +58,7 @@ public class Article {
     public Article(String id, String title, String url, String newsWebsiteName, String thumbnailId, String snippet,
                    Date publicationDate, Date lastUpdated, boolean isImportant) {
 
-        if (id.equals("")) {
-            this.id = ObjectId.get().toHexString();
-        } else {
-            this.id = id;
-        }
+        this.id = id;
         this.title = title;
         this.url = url;
         this.newsWebsiteName = newsWebsiteName;
@@ -74,7 +70,7 @@ public class Article {
     }
 
     public Article() {
-        this.id = ObjectId.get().toHexString();;
+        this.id = ObjectId.get().toHexString();
         this.title = "";
         this.url = "";
         this.newsWebsiteName = "";

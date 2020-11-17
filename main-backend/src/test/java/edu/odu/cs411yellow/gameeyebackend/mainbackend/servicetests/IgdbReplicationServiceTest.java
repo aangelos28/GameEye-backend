@@ -130,24 +130,6 @@ public class IgdbReplicationServiceTest {
             assertThat(preRepGame.getReleaseDate(), equalTo(postRepGame.getReleaseDate()));
             assertThat(preRepGame.getResources(), equalTo(postRepGame.getResources()));
             assertThat(preRepGame.getWatchers(), equalTo(postRepGame.getWatchers()));
-
-            // Check sourceUrls. Urls that were empty can be empty or non-empty.
-            // Non-empty urls should remain non-empty and not become empty.
-            SourceUrls preRepSourceUrls = preRepGame.getSourceUrls();
-            SourceUrls postRepSourceUrls = postRepGame.getSourceUrls();
-
-            if (!preRepSourceUrls.getPublisherUrl().equals("")) {
-                assertThat(postRepSourceUrls.getPublisherUrl(), notNullValue());
-            }
-            if (!preRepSourceUrls.getSteamUrl().equals("")) {
-                assertThat(postRepSourceUrls.getSteamUrl(), notNullValue());
-            }
-            if (!preRepSourceUrls.getSubRedditUrl().equals("")) {
-                assertThat(postRepSourceUrls.getSubRedditUrl(), notNullValue());
-            }
-            if (!preRepSourceUrls.getTwitterUrl().equals("")) {
-                assertThat(postRepSourceUrls.getTwitterUrl(), notNullValue());
-            }
         }
 
         // Delete new games from elastic.
@@ -171,7 +153,7 @@ public class IgdbReplicationServiceTest {
         int igdbId1 = 178;  // "Battlehawks 1942"
         int igdbId2 = 156;  // "Star Wars: Episode I - Battle for Naboo"
         int igdbId3 = 189;  // "LEGO Indiana Jones: The Original Adventures"
-        int limit = 1;
+        int limit = 10;
 
         List<Game> igdbGames = new ArrayList<>();
         igdbGames.add(igdbService.retrieveGameById(igdbId1));
@@ -226,6 +208,73 @@ public class IgdbReplicationServiceTest {
         }
 
         // Delete new games from mongo db.
+        for (Game game: preReplicationTestDbGames) {
+            gameRepository.deleteByIgdbId(String.valueOf(game.getIgdbId()));
+        }
+    }
+
+    @Test
+    public void testReplicateIgdbByTitlesForUpdatingExistingGames() {
+        // Test for adding new games
+        // List of ids for games titles with only one id match
+        int igdbId1 = 178;  // "Battlehawks 1942"
+        int igdbId2 = 156;  // "Star Wars: Episode I - Battle for Naboo"
+        int igdbId3 = 189;  // "LEGO Indiana Jones: The Original Adventures"
+        int limit = 10;
+
+        List<Game> igdbGames = new ArrayList<>();
+        igdbGames.add(igdbService.retrieveGameById(igdbId1));
+        igdbGames.add(igdbService.retrieveGameById(igdbId2));
+        igdbGames.add(igdbService.retrieveGameById(igdbId3));
+
+        List<Game> preReplicationTestDbGames = new ArrayList<>();
+        List<String> titles = new ArrayList<>();
+
+        // Fill titles list with game titles from retrieved IGDB games
+        for (Game game: igdbGames) {
+            titles.add(game.getTitle());
+        }
+
+        // Replicate new games to db.
+        String result1 = igdbReplicationService.replicateGamesByTitles(titles, limit);
+
+        // Find new games from db.
+        for (Game game: igdbGames) {
+            preReplicationTestDbGames.add(gameRepository.findByIgdbId(String.valueOf(game.getIgdbId())));
+        }
+
+        // Test for updating existing games. Ensure only required fields are overwritten.
+        List<Game> postReplicationTestDbGames = new ArrayList<>();
+        String result2 = igdbReplicationService.replicateGamesByTitles(titles, limit);
+
+        // Find updated games in db.
+        for (Game game: igdbGames) {
+            postReplicationTestDbGames.add(gameRepository.findByIgdbId(String.valueOf(game.getIgdbId())));
+        }
+
+        // Compare IGDB games to new games written to db.
+        for (int i = 0; i < igdbGames.size(); i++) {
+            Game preRepGame = preReplicationTestDbGames.get(i);
+            Game postRepGame = postReplicationTestDbGames.get(i);
+
+            // The following fields should remain the same before/after replication
+            assertThat(preRepGame.getId(), equalTo(postRepGame.getId()));
+            assertThat(preRepGame.getIgdbId(), equalTo(postRepGame.getIgdbId()));
+            assertThat(preRepGame.getTitle(), equalTo(postRepGame.getTitle()));
+            assertThat(preRepGame.getReleaseDate(), equalTo(postRepGame.getReleaseDate()));
+            assertThat(preRepGame.getResources(), equalTo(postRepGame.getResources()));
+            assertThat(preRepGame.getWatchers(), equalTo(postRepGame.getWatchers()));
+        }
+
+        // Delete new games from elastic.
+        for (Game game: preReplicationTestDbGames) {
+            if (gameRepository.existsByIgdbId(String.valueOf(game.getIgdbId()))) {
+                String gameId = gameRepository.findByIgdbId(String.valueOf(game.getIgdbId())).getId();
+                elasticRepository.deleteByGameId(gameId);
+            }
+        }
+
+        // Delete new and updated games written to db.
         for (Game game: preReplicationTestDbGames) {
             gameRepository.deleteByIgdbId(String.valueOf(game.getIgdbId()));
         }

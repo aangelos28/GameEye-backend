@@ -3,7 +3,10 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.model.Aggregates;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.SourceUrls;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -11,6 +14,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -52,5 +56,61 @@ public class GameRepositoryCustomImpl implements GameRepositoryCustom {
                                     .include("watchers");
 
         return mongo.find(sortByWatchersQuery, Game.class);
+    }
+
+    @Override
+    public String findTitleById(String id) {
+        Query query = new Query(Criteria.where("_id").is(id));
+        query.fields().include("title");
+
+        return mongo.findOne(query, String.class, "games");
+    }
+
+    @Override
+    public void updateGameTitle(String id, String title) {
+        Query query = new Query(Criteria.where("_id").is(id));
+        Update update = new Update().set("title", title);
+
+        mongo.updateFirst(query, update, Game.class);
+    }
+
+    private static class GameId {
+        @Id
+        private String id;
+
+        @PersistenceConstructor
+        public GameId(String id) {
+            this.id = id;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+    }
+
+    @Override
+    public String findGameIdByIgdbId(String igdbId) {
+        Query query = new Query(Criteria.where("igdbId").is(igdbId));
+        query.fields().include("_id");
+
+        return mongo.findOne(query, GameId.class, "games").getId();
+    }
+
+    @Override
+    public void updateLogoPlatformsReleaseDateGenresSourceUrls(String id, String logoUrl, List<String> platforms,
+                                                               List<String> genres, Date releaseDate, SourceUrls sourceUrls) {
+        Query query = new Query(Criteria.where("_id").is(id));
+        Update update = new Update()
+                .set("logoUrl", logoUrl)
+                .set("platforms", platforms)
+                .set("genres", genres)
+                .set("releaseDate", releaseDate)
+                .set("sourceUrls", sourceUrls);
+
+        mongo.updateFirst(query, update, Game.class);
     }
 }
