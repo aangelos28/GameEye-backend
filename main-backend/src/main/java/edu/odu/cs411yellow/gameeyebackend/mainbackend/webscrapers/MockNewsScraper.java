@@ -1,7 +1,6 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.webscrapers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Image;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.NewsWebsite;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.NewsWebsiteRepository;
@@ -24,33 +23,29 @@ import java.util.List;
 public class MockNewsScraper implements WebScraper{
 
     NewsWebsiteRepository newsWebsites;
-    private String url;
-    private List<Article> articles;
-    private DateFormat format;
+
+    final private String name="GameEye Mock News";
 
     @Autowired
     public MockNewsScraper(NewsWebsiteRepository newsWebsites){
         this.newsWebsites = newsWebsites;
-        articles = new ArrayList<>();
-        url = newsWebsites.findByName("GameEye Mock News").getSiteUrl();
-        format = new SimpleDateFormat("E, MMMM d, yyyy");
     }
 
     /**
      * Initiate the scrape
      */
-    @Override
-    public List<Article> scrape(String newsOutlet) {
-
+    public List<Article> scrape(String name) {
+        List<Article> articles = new ArrayList<>();
+        String url = newsWebsites.findByName(name).getSiteUrl();
         try {
-            NewsWebsite mockNews = newsWebsites.findByName(newsOutlet);
+            NewsWebsite mockNews = newsWebsites.findByName(name);
 
             Document RssFeed = Jsoup.parse(Jsoup.connect(url).get().select("ul").toString());
 
             Elements items = RssFeed.select("div");
             for (var i : items){
 
-                Article toAdd = createArticle(i,mockNews);
+                Article toAdd = createArticle(i,mockNews.getName());
                 articles.add(toAdd);
             }
         }
@@ -61,8 +56,8 @@ public class MockNewsScraper implements WebScraper{
     }
 
     @Override
-    public Article createArticle(Element i, NewsWebsite site) throws ParseException {
-
+    public Article createArticle(Element i, String websiteName) throws ParseException {
+        DateFormat format = new SimpleDateFormat("E, MMMM d, yyyy");
 
         //Get Info
         String title = i.select("h2").text();
@@ -81,58 +76,17 @@ public class MockNewsScraper implements WebScraper{
             snippet = snippet.substring(0,255);
         }
 
-        Image image = new Image(null, ".jpg",null);
-
-        return new Article(null , title, url, site, image,
+        return new Article("", title, url, websiteName, "",
                 snippet, date, date, false);
 
     }
 
-    @Override
-    public Boolean checkDuplicateArticles(Article a){
-        return false;
-    }
-
     /**
-     * Retrieve articles
-     * @return list of articles
+     * Retrieves name of the scraper
+     *
+     * @return String
      */
-    @Override
-    public List<Article> getArticles() {
-        return articles;
-    }
-
-    /**
-     * Retrieve article given index
-     * @param index Index pertaining to an article
-     * @return article given an index
-     */
-    @Override
-    public Article getArticle(int index) {
-        return articles.get(index);
-    }
-
-    /**
-     * Output to JSON format
-     * @return JSON
-     */
-    @Override
-    public String toString() {
-        ObjectMapper obj= new ObjectMapper();
-        String articlesStr="";
-        for (Article a:articles){
-
-            try {
-                String temp;
-                temp = obj.writerWithDefaultPrettyPrinter().writeValueAsString(a);
-                articlesStr = String.format("%1$s\n%2$s", articlesStr, temp);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return articlesStr;
-    }
+    public String getScraperName(){ return name; }
 
 
 }

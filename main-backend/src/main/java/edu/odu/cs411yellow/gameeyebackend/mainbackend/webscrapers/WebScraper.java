@@ -26,7 +26,7 @@ public interface WebScraper {
      *
      * @return A List of Articles
      */
-    List<Article> getArticles();
+    //List<Article> getArticles();
 
     /**
      * Retrieves a specific news article provided an index.
@@ -34,7 +34,7 @@ public interface WebScraper {
      * @param index Index pertaining to an article
      * @return Article
      */
-    Article getArticle(int index);
+    //Article getArticle(int index);
 
     /**
      * Creates an Article object from the extracted url, article title, article
@@ -42,11 +42,13 @@ public interface WebScraper {
      * article description, and calculated impact score
      *
      * @param e HTML element pulled from the RSS feed
-     * @param newsSite  Website where the article originated
+     * @param newsWebsiteName  Website where the article originated
      * @return  Article
      * @throws ParseException
      */
-    Article createArticle(Element e, NewsWebsite newsSite) throws ParseException;
+    Article createArticle(Element e, String newsWebsiteName) throws ParseException;
+
+    //String getScraperName();
 
     /**
      * Checks if newly created article object is already present in list of
@@ -55,5 +57,7 @@ public interface WebScraper {
      * @param a Newly created Article
      * @return Boolean
      */
-    Boolean checkDuplicateArticles(Article a);
+    //Boolean checkDuplicateArticles(Article a);
+
+    //void emptyArticles();
 }

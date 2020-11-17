@@ -57,12 +57,8 @@ public class GameRepositoryTest {
 
         List<ImageResource> images = new ArrayList<>(Arrays.asList(imageResource));
 
-        // Retrieve newsWebsite from newsWebsites collection
-        NewsWebsite newsWebsite = news.findByName("IGN");
-
-        // Retrieve thumbnail from images collection
-        String imageId = "5f7aa192685dad531c57d54d";
-        Image thumbnail = imageRepository.findImageById(imageId);
+        String newsWebsiteName = "IGN";
+        String thumbnailId = "GameRepositoryTest - ThumbnailId1";
 
         // Declare article object
         String articleId = "5ea1c2e777dabd049ce92788";
@@ -77,8 +73,8 @@ public class GameRepositoryTest {
         Date articleLastUpdated = new Date(120, 8, 27);
         boolean important = true;
 
-        Article article = new Article(articleId, articleTitle, articleUrl, newsWebsite,
-                thumbnail, articleSnippet, publicationDate,
+        Article article = new Article(articleId, articleTitle, articleUrl, newsWebsiteName,
+                thumbnailId, articleSnippet, publicationDate,
                 articleLastUpdated, important);
 
         List<Article> articles = new ArrayList<>(Arrays.asList(article));
