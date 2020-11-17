@@ -165,7 +165,7 @@ public class IgdbReplicationService {
                 remainder -= limit;
 
                 igdbGameBuffer.addAll(igdbService.retrieveGamesByTitle(titles.subList(0, limit - 1), limit));
-                titles.removeAll(titles.subList(0, limit - 1));
+                titles.subList(0, limit - 1).clear();
 
                 logger.info(String.format("Retrieved %1$s games. %2$s games remaining.", limit, remainder));
             } else {
@@ -244,29 +244,6 @@ public class IgdbReplicationService {
         logger.info(status);
 
         return status;
-    }
-
-    public String replicateGameByTitle(String title) {
-        Game igdbGame = igdbService.retrieveGameByTitle(title);
-
-        // Update an existing IGDB game in games collection
-        if (gameService.existsByIgdbId(igdbGame.getIgdbId())) {
-            // Update game and elastic search if necessary
-            Game updatedGame = updateExistingGame(igdbGame);
-            gameService.save(updatedGame);
-        }
-        else {
-            // Add new game to MongoDB
-            igdbGame.setId(ObjectId.get().toString());
-            gameService.save(igdbGame);
-
-            // Add new game to ElasticSearch
-            ElasticGame elasticGame = new ElasticGame(igdbGame);
-            elasticService.save(elasticGame);
-        }
-
-        return String.format("Replicated game successfully.\nTitle: %1$s\nIGDB ID: %2$s",
-                              igdbGame.getTitle(), igdbGame.getIgdbId());
     }
 
     private Game updateExistingGame(Game igdbGame) {

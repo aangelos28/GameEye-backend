@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 /**
  * REST API for interacting with IGDB game data.
  */
@@ -59,21 +61,22 @@ public class IgdbController {
     }
 
     /**
-     * Request for replicating a single game by title.
+     * Request for replicating games by titles.
      */
-    public static class TitleRequest {
-        public String title;
+    public static class TitlesRequest {
+        public List<String> titles;
+        public int limit;
     }
 
     /**
-     * Replicates a single game from IGDB to the GameEye database.
-     * Accepts the title of the game to replicate.
-     * @param request HTTP request body
+     * Replicates a multiple games from IGDB to the GameEye database.
+     * Accepts the titles of the game to replicate.
+     * @param request HTTP request body containing a list of titles and a limit per API request.
      */
-    @PostMapping(path = "/private-admin/igdb/replicate/title", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> replicateIgdbByRange(@RequestBody TitleRequest request) {
+    @PostMapping(path = "/private-admin/igdb/replicate/titles", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> replicateIgdbByRange(@RequestBody TitlesRequest request) {
         try {
-            String result = igdbReplicationService.replicateGameByTitle(request.title);
+            String result = igdbReplicationService.replicateGamesByTitles(request.titles, request.limit);
             return ResponseEntity.status(HttpStatus.CREATED).body(result);
         } catch (Exception ex) {
             ex.printStackTrace();

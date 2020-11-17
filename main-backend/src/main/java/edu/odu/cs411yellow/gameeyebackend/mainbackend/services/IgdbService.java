@@ -183,17 +183,7 @@ public class IgdbService {
         return new Game(retrieveGameResponseById(id));
     }
 
-    public Game retrieveGameByTitle(String title) {
-        Game game = new Game(retrieveGameResponseByTitle(title));
-        CoverResponse coverResponse = retrieveCoverResponseByGameId(game.getIgdbId());
-
-        game.setLogoUrl(coverResponse.logoUrl);
-
-        return game;
-    }
-
-    public List<Game> retrieveGamesByTitle(List<String> gameTitles, int limit) {
-        List<String> titles = new ArrayList<>(gameTitles);
+    public List<Game> retrieveGamesByTitle(List<String> titles, int limit) {
         List<GameResponse> gameResponses = retrieveGameResponsesByTitles(titles, limit);
         List<String> ids = new ArrayList<>();
 

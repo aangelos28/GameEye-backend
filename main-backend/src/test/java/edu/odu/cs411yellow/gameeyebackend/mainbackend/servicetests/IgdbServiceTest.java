@@ -124,16 +124,6 @@ public class IgdbServiceTest {
     }
 
     @Test
-    public void testRetrieveGameByTitle() throws JsonProcessingException {
-        String title = "Call of Duty: Black Ops Cold War";
-        Game game = igdbService.retrieveGameByTitle(title);
-
-        assertThat(game.getTitle(), is(title));
-
-        System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(game));
-    }
-
-    @Test
     public void testConvertTitlesToIgdbWhereClauseNames() {
         String title1 = "Call of Duty: Black Ops Cold War";
         String title2 = "Breath of the Wild";
