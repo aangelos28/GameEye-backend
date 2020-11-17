@@ -231,9 +231,9 @@ public class WebScraperOrchestrator{
     public Boolean checkIrrelevantArticles(Article a){
         List<String> possibleGameIDS = performArticleGameReferenceSearch(a);
 
-        for(String id:possibleGameIDS){
+        /*for(String id:possibleGameIDS){
             ElasticGame game = elastic.findByGameId(id);
-        }
+        }*/
 
         if(possibleGameIDS.size()>0)
         {

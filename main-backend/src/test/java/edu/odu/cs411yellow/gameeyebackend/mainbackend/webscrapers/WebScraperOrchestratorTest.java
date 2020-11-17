@@ -89,7 +89,7 @@ public class WebScraperOrchestratorTest {
         Resources mock1Resources= new Resources();
         mockgame1 = new Game();
         mockgame1.setId("WebScraperOrchTest - MockGame1");
-        mockgame1.setTitle("Halo Infinite");
+        mockgame1.setTitle("Genshin Impact");
         mockgame1.setResources(mock1Resources);
 
         Resources mock2Resources= new Resources();
@@ -175,11 +175,16 @@ public class WebScraperOrchestratorTest {
     @Test
     public void testCheckIrrelevantArticles(){
 
-        Article irrelevant = mockArticles.get(mockArticles.size()-1);    //"GameEye Launch"
-        Article nonIrrelevant = mockArticles.get(0);    //"GameEye Launch"
-
+        Article irrelevant = mockArticles.get(mockArticles.size()-1);    //"Making sense of the SCAA’s new Flavor Wheel"
         boolean irr = orchestratorMock.checkIrrelevantArticles(irrelevant);
-        boolean nonIrr = orchestratorMock.checkIrrelevantArticles(nonIrrelevant);
+        System.out.println(irrelevant.getTitle());
+        System.out.println(irr);
+
+        Article relevant = mockArticles.get(mockArticles.size()-6);    //"Cyberpunk 2077 Delayed to 12/10/2077
+        boolean nonIrr = orchestratorMock.checkIrrelevantArticles(relevant);
+        System.out.println(relevant.getTitle());
+        System.out.println(nonIrr);
+
 
         assertThat(irr,is(true));
         assertThat(nonIrr,is(false));
@@ -277,20 +282,19 @@ public class WebScraperOrchestratorTest {
 
     @Test
     public void testAssignScrapedArticlesImportance(){
-        mockArticles.clear();
-        mockArticles=orchestratorMock.scrape(mockNewsScraper);
         List<String> titles = new ArrayList<String>();
 
         for(Article a:mockArticles)
         {
             titles.add(a.getTitle());
+            System.out.println(a.getTitle());
         }
 
         orchestratorMock.assignScrapedArticlesImportance(titles,mockArticles);
 
-        assertThat(mockArticles.get(0).getIsImportant(),is(false)); //Cyberpunk 2077: The most hair styles of any RPG
-        assertThat(mockArticles.get(1).getIsImportant(),is(true));  //New update will be released in December for Genshin Impact
-        assertThat(mockArticles.get(2).getIsImportant(),is(true));  //Destiny 2: Beyond Light adds ice
+        assertThat(mockArticles.get(6).getIsImportant(),is(false)); //Cyberpunk 2077: The most hair styles of any RPG
+        assertThat(mockArticles.get(7).getIsImportant(),is(true));  //New update will be released in December for Genshin Impact
+        assertThat(mockArticles.get(8).getIsImportant(),is(true));  //Destiny 2: Beyond Light adds ice
     }
 }
 
