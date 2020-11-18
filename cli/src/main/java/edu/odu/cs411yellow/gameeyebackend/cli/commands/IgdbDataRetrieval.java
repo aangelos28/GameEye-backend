@@ -56,7 +56,7 @@ public class IgdbDataRetrieval {
      *
      * @param titles titles of the IGDB games.
      */
-    @ShellMethod(value = "Replicate a set of games by titles.", key = "replicate-by-titles")
+    @ShellMethod(value = "Replicate a set of games by titles. Input a list of " + titleArity + " titles.", key = "replicate-by-titles")
     public void replicateByTitles(@ShellOption(arity = titleArity) String[] titles) {
 
         JsonObject request = new JsonObject();
