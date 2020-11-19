@@ -8,6 +8,7 @@ import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepositor
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.NewsWebsiteRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.GameService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.MachineLearningService;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.NotificationService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.ReferenceGameService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -70,6 +71,9 @@ public class OrchestratorScrapeTest {
     @Autowired
     MachineLearningService mlService;
 
+    @Autowired
+    NotificationService notificationService;
+
     private Game mockgame1;
     private Game mockgame2;
     private Game mockgame3;
@@ -112,7 +116,7 @@ public class OrchestratorScrapeTest {
         elasticGames.save(elasticGame3);
         elasticGames.save(elasticGame4);
 
-        orchestratorMock = new WebScraperOrchestrator(scraper, mockNewsScrapper, rgs, games, gameService, mlService);
+        orchestratorMock = new WebScraperOrchestrator(scraper, mockNewsScrapper, rgs, games, gameService, mlService, notificationService);
     }
 
     @AfterEach
