@@ -1,5 +1,6 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
@@ -213,14 +214,43 @@ public class IgdbModel {
         }
     }
 
-    public static class FindMaxIdResponse {
-        public int id;
-        @JsonProperty("created_at")
-        public long createdAt;
+    public static class IdResponse {
+        @JsonProperty("game")
+        private String gameId;
+        @JsonIgnore
+        @JsonProperty("id")
+        private String releaseId;
 
-        public FindMaxIdResponse(int id, long createdAt) {
-            this.id = id;
-            this.createdAt = createdAt;
+        @JsonProperty("date")
+        private long releaseDate;
+
+        public IdResponse(String gameId, long releaseDate) {
+            this.gameId = gameId;
+            this.releaseDate = releaseDate;
+        }
+
+        public String getGameId() {
+            return gameId;
+        }
+
+        public void setId(String id) {
+            this.gameId = gameId;
+        }
+
+        public String getReleaseId() {
+            return releaseId;
+        }
+
+        public void setReleaseId(String releaseId) {
+            this.releaseId = releaseId;
+        }
+
+        public long getReleaseDate() {
+            return releaseDate;
+        }
+
+        public void setReleaseDate(long releaseDate) {
+            this.releaseDate = releaseDate;
         }
     }
 }

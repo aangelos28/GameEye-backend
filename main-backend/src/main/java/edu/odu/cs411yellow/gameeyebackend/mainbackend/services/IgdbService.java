@@ -2,6 +2,8 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.services;
 
 import static edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel.GameResponse;
 import static edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel.CoverResponse;
+import static edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel.IdResponse;
+
 
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
@@ -13,9 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Service for calling IGDB REST API.
@@ -110,6 +110,25 @@ public class IgdbService {
         return gameResponses;
     }
 
+    public List<GameResponse> retrieveGameResponsesByIds(final List<String> ids, int limit) {
+        String formattedIds = convertIdsToIgdbWhereClauseGameIds(ids);
+
+        String fieldsClause = "fields name, updated_at, genres.name, websites.url, websites.category, platforms.name, first_release_date; ";
+        String whereClause = String.format("where id = %1$s;", formattedIds);
+        String limitClause = String.format("limit %s;",limit);
+        String requestBody = String.format("%1$s%2$s%3$s", fieldsClause, whereClause, limitClause);
+
+        List<GameResponse> gameResponses = webClient.post()
+                .uri("/games")
+                .contentType(MediaType.TEXT_PLAIN)
+                .bodyValue(requestBody)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<List<GameResponse>>() {})
+                .block();
+
+        return gameResponses;
+    }
+
     public List<CoverResponse> retrieveCoverResponsesByGameIdRange(int minId, int maxId, int limit) {
         int inclusiveMinId = minId - 1;
         int inclusiveMaxId = maxId + 1;
@@ -149,6 +168,37 @@ public class IgdbService {
         return coverResponses;
     }
 
+    public List<GameResponse> retrieveNewReleaseGameResponses(long releaseDateUpperBound, int limit) {
+        String fieldsClause = "fields game, date; ";
+        String whereClause = "";
+
+        if (releaseDateUpperBound == 0) {
+            whereClause = String.format("where human != \"TBD\";");
+        } else {
+            whereClause = String.format("where human != \"TBD\" & date < %s;", releaseDateUpperBound);
+        }
+
+        String sortClause = String.format("sort date desc;");
+        String limitClause = String.format("limit %s;",limit);
+        String requestBody = String.format("%1$s%2$s%3$s%4$s", fieldsClause, whereClause, sortClause, limitClause);
+
+        List<IdResponse> idResponses = webClient.post()
+                .uri("/release_dates")
+                .contentType(MediaType.TEXT_PLAIN)
+                .bodyValue(requestBody)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<List<IdResponse>>() {})
+                .block();
+
+        List<String> ids = new ArrayList<>();
+
+        for (IdResponse id: idResponses) {
+            ids.add(id.getGameId());
+        }
+
+        return retrieveGameResponsesByIds(ids, limit);
+    }
+
     public List<Game> convertGameResponsesToGames(List<GameResponse> gameResponses) {
         List<Game> games = new ArrayList<>();
 
@@ -161,6 +211,16 @@ public class IgdbService {
         }
 
         return games;
+    }
+
+    public Map<String, String> convertCoverResponsesToLogos(List<CoverResponse> coverResponses) {
+        Map<String, String> logos = new HashMap<>();
+
+        for (CoverResponse cover: coverResponses) {
+            logos.put(cover.gameId, cover.logoUrl);
+        }
+
+        return logos;
     }
 
     public Game retrieveGameById(int id) {
@@ -176,18 +236,26 @@ public class IgdbService {
         }
 
         List<CoverResponse> coverResponses = retrieveCoverResponsesByGameIds(ids, limit);
+        List<Game> games = convertGameResponsesToGames(gameResponses);
+        Map<String, String> logos = convertCoverResponsesToLogos(coverResponses);
+        addLogosToGames(games, logos);
+
+        return games;
+    }
+
+    public List<Game> retrieveNewReleases(long oldestReleaseDate, int limit) {
+        List<GameResponse> gameResponses = retrieveNewReleaseGameResponses(oldestReleaseDate, limit);
+
+        List<String> ids = new ArrayList<>();
+
+        for (GameResponse response: gameResponses) {
+            ids.add(response.igdbId);
+        }
 
         List<Game> games = convertGameResponsesToGames(gameResponses);
-
-        // Add logos to games
-        for (Game game: games) {
-            for (CoverResponse cover: coverResponses) {
-                if (game.getIgdbId().equals(cover.gameId)) {
-                    game.setLogoUrl(cover.logoUrl);
-                    break;
-                }
-            }
-        }
+        List<CoverResponse> coverResponses = retrieveCoverResponsesByGameIds(ids, limit);
+        Map<String, String> logos = convertCoverResponsesToLogos(coverResponses);
+        addLogosToGames(games, logos);
 
         return games;
     }
@@ -231,18 +299,22 @@ public class IgdbService {
         List<CoverResponse> coverResponses = retrieveCoverResponsesByGameIdRange(minId, maxId, limit);
 
         List<Game> games = convertGameResponsesToGames(gameResponses);
+        Map<String, String> logos = convertCoverResponsesToLogos(coverResponses);
 
-        // Add logos to games
-        for (Game game: games) {
-            for (CoverResponse cover: coverResponses) {
-                if (game.getIgdbId().equals(cover.gameId)) {
-                    game.setLogoUrl(cover.logoUrl);
-                    break;
-                }
-            }
-        }
+        addLogosToGames(games, logos);
 
         return games;
+    }
+
+    public void addLogosToGames(List<Game> games, Map<String, String> logos) {
+        // Add logos to games
+        for (int i = 0; i < games.size(); i++) {
+            String igdbId = games.get(i).getIgdbId();
+
+            if (logos.get(igdbId) != null) {
+                games.get(i).setLogoUrl(logos.get(igdbId));
+            }
+        }
     }
 
     public int findMaxGameId() {

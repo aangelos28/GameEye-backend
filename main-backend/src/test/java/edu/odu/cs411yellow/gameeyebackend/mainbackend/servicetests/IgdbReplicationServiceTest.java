@@ -1,5 +1,7 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.servicetests;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.SourceUrls;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ElasticGameRepository;
@@ -35,6 +37,8 @@ public class IgdbReplicationServiceTest {
 
     @Autowired
     ElasticGameRepository elasticRepository;
+
+    ObjectMapper mapper = new ObjectMapper();
 
     @Test
     public void testReplicateIgdbByRangeForNewGames() {
@@ -264,6 +268,53 @@ public class IgdbReplicationServiceTest {
             assertThat(preRepGame.getReleaseDate(), equalTo(postRepGame.getReleaseDate()));
             assertThat(preRepGame.getResources(), equalTo(postRepGame.getResources()));
             assertThat(preRepGame.getWatchers(), equalTo(postRepGame.getWatchers()));
+        }
+
+        // Delete new games from elastic.
+        for (Game game: preReplicationTestDbGames) {
+            if (gameRepository.existsByIgdbId(String.valueOf(game.getIgdbId()))) {
+                String gameId = gameRepository.findByIgdbId(String.valueOf(game.getIgdbId())).getId();
+                elasticRepository.deleteByGameId(gameId);
+            }
+        }
+
+        // Delete new and updated games written to db.
+        for (Game game: preReplicationTestDbGames) {
+            gameRepository.deleteByIgdbId(String.valueOf(game.getIgdbId()));
+        }
+    }
+
+    @Test
+    public void testReplicateNewReleasesForUpdatingExistingGames() throws JsonProcessingException {
+        int numNewGames = 100;
+        int limit = 250;
+
+        // Replicate new games to db.
+        String result1 = igdbReplicationService.replicateNewReleases(numNewGames, limit);
+
+        // Find new games from db.
+        List<Game> preReplicationTestDbGames = gameRepository.findAll();
+
+        // Test for updating existing games. Ensure only required fields are overwritten.
+        String result2 = igdbReplicationService.replicateNewReleases(numNewGames, limit);
+
+        // Find updated games in db.
+        List<Game> postReplicationTestDbGames = gameRepository.findAll();
+
+        // Compare IGDB games to new games written to db.
+        for (int i = 0; i < preReplicationTestDbGames.size(); i++) {
+            Game preRepGame = preReplicationTestDbGames.get(i);
+            Game postRepGame = postReplicationTestDbGames.get(i);
+
+            // The following fields should remain the same before/after replication
+            assertThat(preRepGame.getId(), equalTo(postRepGame.getId()));
+            assertThat(preRepGame.getIgdbId(), equalTo(postRepGame.getIgdbId()));
+            assertThat(preRepGame.getTitle(), equalTo(postRepGame.getTitle()));
+            assertThat(preRepGame.getReleaseDate(), equalTo(postRepGame.getReleaseDate()));
+            assertThat(preRepGame.getResources(), equalTo(postRepGame.getResources()));
+            assertThat(preRepGame.getWatchers(), equalTo(postRepGame.getWatchers()));
+
+            System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(postRepGame));
         }
 
         // Delete new games from elastic.

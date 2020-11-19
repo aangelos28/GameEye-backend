@@ -1,7 +1,9 @@
 package edu.odu.cs411yellow.gameeyebackend.cli.commands;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import edu.odu.cs411yellow.gameeyebackend.cli.model.GameTitles;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.shell.standard.ShellComponent;
@@ -9,13 +11,15 @@ import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.io.File;
+import java.io.IOException;
+
 /**
  * Contains CLI commands related to IGDB data retrieval.
  */
 @ShellComponent
 public class IgdbDataRetrieval {
     WebClient webClient;
-    final int titleArity = 10;
 
     public IgdbDataRetrieval(@Value("${mainbackend.baseurl}") String baseUrl) {
         this.webClient = WebClient.builder()
@@ -54,13 +58,27 @@ public class IgdbDataRetrieval {
     /**
      * Replicates multiple IGDB games by titles to the GameEye database.
      *
-     * @param titles titles of the IGDB games.
+     * @param file input file containing a list of titles formatted in JSON.
+     * @param limit limit maximum number of games per API request.
      */
-    @ShellMethod(value = "Replicate a set of games by titles. Input a list of " + titleArity + " titles.", key = "replicate-by-titles")
-    public void replicateByTitles(@ShellOption(arity = titleArity) String[] titles) {
+    @ShellMethod(value = "Replicate a set of games by titles. --file for *.json file and --limit for request limit.", key = "replicate-by-titles")
+    public void replicateByTitles(@ShellOption("--file") String file,
+                                  @ShellOption("--limit") int limit) throws IOException {
+        File inputFile = new File(file);
+        ObjectMapper mapper = new ObjectMapper();
+        GameTitles titles = mapper.readValue(inputFile, GameTitles.class);
+
+        System.out.println(String.format("Attempting to replicate %s games.", titles.titles.size()));
 
         JsonObject request = new JsonObject();
-        request.addProperty("titles", new Gson().toJson(titles));
+        JsonArray titleArray = new JsonArray();
+
+        for (int i = 0; i < titles.getTitles().size(); i++) {
+            titleArray.add(titles.getTitles().get(i));
+        }
+
+        request.add("titles", titleArray);
+        request.addProperty("limit", limit);
 
         String response = this.webClient.post()
                 .uri("/private-admin/igdb/replicate/titles")
