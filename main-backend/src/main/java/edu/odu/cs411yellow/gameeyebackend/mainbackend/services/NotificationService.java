@@ -6,6 +6,7 @@ import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.User;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.WatchedGame;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.settings.NotificationSettings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,7 +38,8 @@ public class NotificationService {
      * @param imageUrl Notification image url
      * @throws FirebaseMessagingException Thrown if the notification could not be sent
      */
-    public void sendTargetedNotification(final String userId, final String title, final String body, final String imageUrl) throws FirebaseMessagingException {
+    @Async
+    public void sendTargetedNotificationAsync(final String userId, final String title, final String body, final String imageUrl) throws FirebaseMessagingException {
         final User user = userService.getUser(userId);
         final List<String> notificationTokens = user.getFcmTokens();
 
@@ -73,7 +75,8 @@ public class NotificationService {
      * @param imageUrl Notification image url
      * @throws FirebaseMessagingException Thrown if the notification could not be sent
      */
-    public void sendTopicNotification(final String topic, final String title, final String body, final String imageUrl) throws FirebaseMessagingException {
+    @Async
+    public void sendTopicNotificationAsync(final String topic, final String title, final String body, final String imageUrl) throws FirebaseMessagingException {
         final Message message = Message.builder().setNotification(
                 Notification.builder()
                         .setTitle(title)
@@ -89,12 +92,13 @@ public class NotificationService {
     /**
      * Modifies the notification subscription of a user for a specific game
      *
-     * @param user         User object
+     * @param userId       ID of the user
      * @param gameId       ID of the game to modify notification subscription for
      * @param subOperation Subscription operation (SUBSCRIBE/UNSUBSCRIBE)
      * @throws Exception Thrown if the game does not exist or the user has not chosen to receive notifications
      */
-    public void modifyUserGameSubscription(final String userId, final String gameId, SubscriptionOperation subOperation) throws Exception {
+    @Async
+    public void modifyUserGameSubscriptionAsync(final String userId, final String gameId, SubscriptionOperation subOperation) throws Exception {
         final User user = userService.getUser(userId);
         final Settings settings = user.getSettings();
         final NotificationSettings notificationSettings = settings.getNotificationSettings();
@@ -153,7 +157,8 @@ public class NotificationService {
      * @param user          User objects
      * @param subOperations List of topics suffixes and the subscription operation for each
      */
-    public void modifyAllUserGameSubscriptions(final User user, TopicSubscriptionOperation[] subOperations) {
+    @Async
+    public void modifyAllUserGameSubscriptionsAsync(final User user, TopicSubscriptionOperation[] subOperations) {
         final List<String> notificationTokens = user.getFcmTokens();
         final List<WatchedGame> watchlist = user.getWatchList();
 
@@ -174,7 +179,8 @@ public class NotificationService {
      * @param user                    User object with new notification settings
      * @param oldNotificationSettings Previous notifications settings (before being changed)
      */
-    public void modifyUserSubscriptions(final User user, NotificationSettings oldNotificationSettings) {
+    @Async
+    public void modifyUserSubscriptionsAsync(final User user, NotificationSettings oldNotificationSettings) {
         final NotificationSettings newNotificationSettings = user.getSettings().getNotificationSettings();
         final boolean newReceiveNotifications = newNotificationSettings.getReceiveNotifications();
         final boolean oldReceiveNotifications = oldNotificationSettings.getReceiveNotifications();
@@ -188,19 +194,19 @@ public class NotificationService {
         if (receiveNotificationsChanged) {
             // User has selected to not receive notifications
             if (!newReceiveNotifications) {
-                modifyAllUserGameSubscriptions(user, new TopicSubscriptionOperation[]{
+                modifyAllUserGameSubscriptionsAsync(user, new TopicSubscriptionOperation[]{
                         new TopicSubscriptionOperation("regular", SubscriptionOperation.UNSUBSCRIBE),
                         new TopicSubscriptionOperation("important", SubscriptionOperation.UNSUBSCRIBE)
                 });
             } else {
                 // Subscribe user to notifications (at least important notifications)
-                modifyAllUserGameSubscriptions(user, new TopicSubscriptionOperation[]{
+                modifyAllUserGameSubscriptionsAsync(user, new TopicSubscriptionOperation[]{
                         new TopicSubscriptionOperation("important", SubscriptionOperation.SUBSCRIBE)
                 });
 
                 if (!newNotifyOnlyIfImportant) {
                     // Subscribe to all user notifications
-                    modifyAllUserGameSubscriptions(user, new TopicSubscriptionOperation[]{
+                    modifyAllUserGameSubscriptionsAsync(user, new TopicSubscriptionOperation[]{
                             new TopicSubscriptionOperation("regular", SubscriptionOperation.SUBSCRIBE)
                     });
                 }
@@ -211,7 +217,7 @@ public class NotificationService {
         if (newReceiveNotifications && notifyOnlyIfImportantChanged) {
             if (newNotifyOnlyIfImportant) {
                 // User only wants to be notified for important news
-                modifyAllUserGameSubscriptions(user, new TopicSubscriptionOperation[]{
+                modifyAllUserGameSubscriptionsAsync(user, new TopicSubscriptionOperation[]{
                         new TopicSubscriptionOperation("regular", SubscriptionOperation.UNSUBSCRIBE)
                 });
             } else {
@@ -219,7 +225,7 @@ public class NotificationService {
                     // Only change this if the receive notitifcations setting has not been changed
                     // as it also subscribes to the regular topics
                     // User wants to be notified of everything
-                    modifyAllUserGameSubscriptions(user, new TopicSubscriptionOperation[]{
+                    modifyAllUserGameSubscriptionsAsync(user, new TopicSubscriptionOperation[]{
                             new TopicSubscriptionOperation("regular", SubscriptionOperation.SUBSCRIBE)
                     });
                 }

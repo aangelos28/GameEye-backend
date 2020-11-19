@@ -139,7 +139,7 @@ public class UserController {
 
             // Update notification subscriptions
             user.getSettings().setNotificationSettings(newNotificationSettings);
-            notificationService.modifyUserSubscriptions(user, oldNotificationSettings);
+            notificationService.modifyUserSubscriptionsAsync(user, oldNotificationSettings);
 
             return ResponseEntity.ok("Updated settings");
         } catch (Exception ex) {

@@ -1,4 +1,5 @@
-package edu.odu.cs411yellow.gameeyebackend.mainbackend.webscrapers;
+package edu.odu.cs411yellow.gameeyebackend.mainbackend.webscraping;
+
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -14,8 +15,6 @@ import java.util.List;
 @SpringBootTest
 @ActiveProfiles("test")
 public class UniversalScraperTest {
-
-
     @Autowired
     public UniversalScraper test;
 
@@ -45,6 +44,4 @@ public class UniversalScraperTest {
         System.out.print(test.toString(site4));
         Assert.noNullElements(articlesPC, "Error: Articles not Scraped");
     }
-
-
 }
