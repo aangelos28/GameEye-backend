@@ -27,8 +27,6 @@ import static org.hamcrest.Matchers.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles("test")
@@ -114,9 +112,8 @@ public class OrchestratorScrapeTest {
         elasticGames.save(elasticGame3);
         elasticGames.save(elasticGame4);
 
-        orchestratorMock = new WebScraperOrchestrator(scraper, mockNewsScrapper, elasticGames, rgs, newsWebsiteRepository, games, gameService, mlService);
+        orchestratorMock = new WebScraperOrchestrator(scraper, mockNewsScrapper, rgs, games, gameService, mlService);
     }
-
 
     @AfterEach
     public void emptyArticles() {

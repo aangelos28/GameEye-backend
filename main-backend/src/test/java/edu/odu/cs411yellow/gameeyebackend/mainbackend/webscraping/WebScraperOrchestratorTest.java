@@ -133,7 +133,7 @@ public class WebScraperOrchestratorTest {
         elasticGames.save(elasticGame3);
         elasticGames.save(elasticGame4);
 
-        orchestratorMock = new WebScraperOrchestrator(scraper, mockNewsScraper, elasticGames, referenceGameService, newsWebsiteRepository, games, gameService, mlService);
+        orchestratorMock = new WebScraperOrchestrator(scraper, mockNewsScraper, referenceGameService, games, gameService, mlService);
     }
 
     @AfterEach
@@ -239,8 +239,7 @@ public class WebScraperOrchestratorTest {
 
     @Test
     public void testMockGameRepo() {
-        GameRepository testRepo = orchestratorMock.games;
-        for (Game game : testRepo.findAll()) {
+        for (Game game : games.findAll()) {
             System.out.println(game.getTitle());
         }
     }
@@ -249,7 +248,7 @@ public class WebScraperOrchestratorTest {
     public void testGetGamesArticles() {
         String title = "Destiny 2: Beyond Light";
 
-        List<Article> target = orchestratorMock.games.findGameByTitle(title).getResources().getArticles();
+        List<Article> target = games.findGameByTitle(title).getResources().getArticles();
         for (Article a : target) {
             System.out.println(a.getTitle());
         }

@@ -4,15 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Resources;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.NewsWebsiteRepository;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ElasticGameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
-
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.GameService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.MachineLearningService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.ReferenceGameService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -22,30 +18,23 @@ import java.util.*;
 @Service
 public class WebScraperOrchestrator {
 
-    NewsWebsiteRepository newsWebsiteRepository;
-
     private final MockNewsScraper mockNewsScraper;
     private final UniversalScraper scraper;
 
-    final private String[] scraperNames = {"GameSpot", "Eurogamer", "PC Gamer", "IGN"};
-
-    @Qualifier("elasticsearchOperations")
-    ElasticGameRepository elastic;
+    private final String[] scraperNames = {"GameSpot", "Eurogamer", "PC Gamer", "IGN"};
 
     private final ReferenceGameService referenceGameService;
     private final GameService gameService;
-    GameRepository games;
     private final MachineLearningService mlService;
 
+    private final GameRepository games;
+
     @Autowired
-    public WebScraperOrchestrator(UniversalScraper scraper, MockNewsScraper mockNewsScraper, ElasticGameRepository elastic,
-                                  ReferenceGameService referenceGameService, NewsWebsiteRepository newsWebsiteRepository,
+    public WebScraperOrchestrator(UniversalScraper scraper, MockNewsScraper mockNewsScraper, ReferenceGameService referenceGameService,
                                   GameRepository games, GameService gameService, MachineLearningService mlService) {
         this.mockNewsScraper = mockNewsScraper;
-        this.elastic = elastic;
         this.referenceGameService = referenceGameService;
         this.mlService = mlService;
-        this.newsWebsiteRepository = newsWebsiteRepository;
         this.scraper = scraper;
         this.games = games;
         this.gameService = gameService;
