@@ -30,6 +30,6 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom{
                                                    articles)
                                     .filterArray(Criteria.where("watchedGame.gameId").is(gameId));
 
-        UpdateResult result = mongo.updateFirst(query, update, User.class);
+        mongo.updateFirst(query, update, User.class);
     }
 }
