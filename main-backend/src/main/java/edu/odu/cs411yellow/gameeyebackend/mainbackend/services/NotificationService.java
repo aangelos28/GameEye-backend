@@ -8,6 +8,7 @@ import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.WatchedGame;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.settings.NotificationSettings;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -22,12 +23,14 @@ public class NotificationService {
     private final UserService userService;
     private final GameService gameService;
     private final GameRepository games;
+    private final UserRepository users;
 
     @Autowired
-    NotificationService(UserService userService, GameService gameService, GameRepository games) {
+    NotificationService(UserService userService, GameService gameService, GameRepository games, UserRepository users) {
         this.userService = userService;
         this.gameService = gameService;
         this.games = games;
+        this.users = users;
     }
 
     public enum SubscriptionOperation {
@@ -127,6 +130,9 @@ public class NotificationService {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
+
+            // Add new article notifications to the relevant users
+            users.addArticleNotificationsToUsers(gameId, gameArticles);
         }
     }
 

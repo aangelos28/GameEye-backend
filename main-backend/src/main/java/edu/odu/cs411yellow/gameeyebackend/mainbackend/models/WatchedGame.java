@@ -52,6 +52,10 @@ public class WatchedGame {
         resourceNotifications.getArticleNotifications().removeArticles(articleIds);
     }
 
+    public void removeAllArticlesFromResources() {
+        resourceNotifications.getArticleNotifications().removeAllArticles();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

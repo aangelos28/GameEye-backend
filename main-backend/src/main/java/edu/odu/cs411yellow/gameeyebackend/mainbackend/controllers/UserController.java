@@ -210,17 +210,12 @@ public class UserController {
     public static class ArticleNotificationsRequest {
         public String gameId;
         public List<String> articleIds;
-
-        public ArticleNotificationsRequest(String gameId, List<String> articleIds) {
-            this.gameId = gameId;
-            this.articleIds = articleIds;
-        }
     }
 
     /**
      * Removes articles for a watched game from a user's notifications.
      */
-    @PutMapping(path = "/private/user/notifications/articles/remove/")
+    @PutMapping(path = "/private/user/notifications/articles/remove")
     public ResponseEntity<?> removeUserArticleNotifications(@RequestBody ArticleNotificationsRequest request) {
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         final FirebaseToken fbToken = (FirebaseToken) auth.getPrincipal();
@@ -235,6 +230,28 @@ public class UserController {
         }
 
         userService.removeUserArticleNotifications(userId, request.gameId, request.articleIds);
+
+        return ResponseEntity.ok("Article notifications removed.");
+    }
+
+    /**
+     * Removes all articles for a watched game from a user's notifications.
+     */
+    @PutMapping(path = "/private/user/notifications/articles/remove-all")
+    public ResponseEntity<?> removeAllUserArticleNotifications(@RequestBody ArticleNotificationsRequest request) {
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final FirebaseToken fbToken = (FirebaseToken) auth.getPrincipal();
+        final String userId = fbToken.getUid();
+
+        if (!userService.checkUserExists(userId)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        if (!gameService.existsById(request.gameId)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        userService.removeAllUserArticleNotifications(userId, request.gameId);
 
         return ResponseEntity.ok("Article notifications removed.");
     }
