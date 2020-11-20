@@ -1,8 +1,13 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.servicetests;
 
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
+import edu.odu.cs411yellow.gameeyebackend.common.security.FirebaseSecrets;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.NotificationService;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,13 +16,15 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -29,6 +36,24 @@ public class NotificationServiceTests {
 
     @Autowired
     private NotificationService notificationService;
+
+    @BeforeClass
+    public static void setupFirebase() {
+        FirebaseSecrets.read("firebase.json");
+
+        // Initialize firebase
+        try {
+            InputStream firebaseCredentials = new ByteArrayInputStream(FirebaseSecrets.getCredentials().getBytes(StandardCharsets.UTF_8));
+            FirebaseOptions options = new FirebaseOptions.Builder()
+                    .setCredentials(GoogleCredentials.fromStream(firebaseCredentials))
+                    .setDatabaseUrl("https://gameeye-8eb07.firebaseio.com")
+                    .build();
+            FirebaseApp.initializeApp(options);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Test
     public void testSendArticleNotifications() {
@@ -45,10 +70,10 @@ public class NotificationServiceTests {
 
         Article secondArticle = new Article();
         secondArticle.setIsImportant(false);
-        secondArticle.setTitle("Cyberpunk 2077: Guide to Night City");
-        secondArticle.setSnippet("A guide on how to navigate Cyberpunk 2077 Night City");
+        secondArticle.setTitle("Fallout: New Vegas - A Guide to The Mojave Wasteland");
+        secondArticle.setSnippet("A guide on how to navigate the Mojave Wasteland");
         articles.add(secondArticle);
-        articleGameIds.add(games.findGameByTitle("Cyberpunk 2077").getId());
+        articleGameIds.add(games.findGameByTitle("Fallout: New Vegas").getId());
 
         Article thirdArticle = new Article();
         thirdArticle.setIsImportant(false);

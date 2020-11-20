@@ -8,13 +8,11 @@ import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.WatchedGame;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.settings.NotificationSettings;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
-import jdk.jshell.SourceCodeAnalysis;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * Service for handling notification functionality.
@@ -47,7 +45,7 @@ public class NotificationService {
     public void sendArticleNotificationsAsync(final List<Article> articles, final List<String> articleGameIds) {
         // Get the unique game IDs, and ignore duplicates
         final Set<String> uniqueGameIds = new HashSet<>(articleGameIds);
-        final List<Game> articleGames = games.findGamesById(uniqueGameIds);
+        final List<Game> articleGames = games.findAllById(uniqueGameIds);
 
         // Create hashmap of game ids that map to games
         final Map<String, Game> articleGamesMap = new HashMap<>();
@@ -89,12 +87,12 @@ public class NotificationService {
                 // Create important notification
                 if (article.getIsImportant()) {
                     notificationTopic = String.format("%s_%s", gameId, "important");
-                    notificationTitle = String.format("%s: New Important Article", gameTitle);
+                    notificationTitle = String.format("%s | New Important Article", gameTitle);
                 }
                 // Create regular notification
                 else {
                     notificationTopic = String.format("%s_%s", gameId, "regular");
-                    notificationTitle = String.format("%s: New Article", gameTitle);
+                    notificationTitle = String.format("%s | New Article", gameTitle);
                 }
 
                 notificationBody = article.getTitle();
@@ -119,7 +117,7 @@ public class NotificationService {
                     notificationTopic = String.format("%s_%s", gameId, "regular");
                 }
 
-                notificationTitle = String.format("%s: New Articles", game.getTitle());
+                notificationTitle = String.format("%s | New Articles", game.getTitle());
                 notificationBody = "Multiple new articles found";
             }
 

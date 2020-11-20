@@ -15,7 +15,8 @@ public interface GameRepository extends MongoRepository<Game, String>, GameRepos
 
     Game findGameById(String id);
 
-    List<Game> findGamesById(Collection<String> ids);
+    @Override
+    List<Game> findAllById(Iterable<String> ids);
 
     Game findByIgdbId(String idgbIdb);
 

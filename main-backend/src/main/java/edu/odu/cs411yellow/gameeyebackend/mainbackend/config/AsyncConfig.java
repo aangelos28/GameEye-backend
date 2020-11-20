@@ -1,5 +1,6 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.config;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -12,6 +13,7 @@ import java.util.concurrent.Executor;
  */
 @Configuration
 @EnableAsync
+@ConditionalOnProperty(name = "async.enabled", havingValue = "true")
 public class AsyncConfig {
     /**
      * Creates async thread pool bean. Allows executing methods asynchronously.
