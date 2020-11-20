@@ -207,7 +207,7 @@ public class UserController {
         return ResponseEntity.ok("User profile deleted.");
     }
 
-    public static class ArticleNotificationsRequest {
+    private static class ArticleNotificationsRequest {
         public String gameId;
         public List<String> articleIds;
     }
@@ -234,11 +234,15 @@ public class UserController {
         return ResponseEntity.ok("Article notifications removed.");
     }
 
+    private static class RemoveAllArticleNotificationsRequest {
+        public String gameId;
+    }
+
     /**
      * Removes all articles for a watched game from a user's notifications.
      */
     @PutMapping(path = "/private/user/notifications/articles/remove-all")
-    public ResponseEntity<?> removeAllUserArticleNotifications(@RequestBody ArticleNotificationsRequest request) {
+    public ResponseEntity<?> removeAllUserArticleNotifications(@RequestBody RemoveAllArticleNotificationsRequest request) {
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         final FirebaseToken fbToken = (FirebaseToken) auth.getPrincipal();
         final String userId = fbToken.getUid();

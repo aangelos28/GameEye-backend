@@ -126,7 +126,7 @@ public class NotificationService {
 
             try {
                 // Send notification
-                sendTopicNotificationAsync(notificationTopic, notificationTitle, notificationBody, "");
+                sendTopicNotificationAsync(notificationTopic, notificationTitle, notificationBody, game.getLogoUrl());
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
