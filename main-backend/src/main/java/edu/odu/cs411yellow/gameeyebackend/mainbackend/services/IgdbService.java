@@ -112,6 +112,7 @@ public class IgdbService {
 
     public List<GameResponse> retrieveGameResponsesByIds(final List<String> ids, int limit) {
         String formattedIds = convertIdsToIgdbWhereClauseGameIds(ids);
+        System.out.println(formattedIds);
 
         String fieldsClause = "fields name, updated_at, genres.name, websites.url, websites.category, platforms.name, first_release_date; ";
         String whereClause = String.format("where id = %1$s;", formattedIds);
@@ -190,13 +191,15 @@ public class IgdbService {
                 .bodyToMono(new ParameterizedTypeReference<List<IdResponse>>() {})
                 .block();
 
-        List<String> ids = new ArrayList<>();
+        Set<String> ids = new HashSet<>();
 
         for (IdResponse id: idResponses) {
             ids.add(id.getGameId());
         }
 
-        return retrieveGameResponsesByIds(ids, limit);
+        List<String> uniqueIds = new ArrayList<>(ids);
+
+        return retrieveGameResponsesByIds(uniqueIds, limit);
     }
 
     public List<Game> convertGameResponsesToGames(List<GameResponse> gameResponses) {
@@ -246,14 +249,17 @@ public class IgdbService {
     public List<Game> retrieveNewReleases(long oldestReleaseDate, int limit) {
         List<GameResponse> gameResponses = retrieveNewReleaseGameResponses(oldestReleaseDate, limit);
 
-        List<String> ids = new ArrayList<>();
+        Set<String> ids = new HashSet<>();
 
         for (GameResponse response: gameResponses) {
             ids.add(response.igdbId);
         }
 
+        List<String> uniqueIds = new ArrayList<>(ids);
+
         List<Game> games = convertGameResponsesToGames(gameResponses);
-        List<CoverResponse> coverResponses = retrieveCoverResponsesByGameIds(ids, limit);
+        System.out.println("Size of games array in retrieveNewReleases " + games.size());
+        List<CoverResponse> coverResponses = retrieveCoverResponsesByGameIds(uniqueIds, limit);
         Map<String, String> logos = convertCoverResponsesToLogos(coverResponses);
         addLogosToGames(games, logos);
 
@@ -279,7 +285,7 @@ public class IgdbService {
 
     public String convertIdsToIgdbWhereClauseGameIds(final List<String> ids) {
         String names = "(";
-
+        int count = 0;
         Iterator it = ids.iterator();
         while (it.hasNext()) {
             names += it.next();
@@ -287,6 +293,8 @@ public class IgdbService {
             if (it.hasNext()) {
                 names += ", ";
             }
+            count++;
+            System.out.println("id iterator loop " + count);
         }
 
         names += ")";

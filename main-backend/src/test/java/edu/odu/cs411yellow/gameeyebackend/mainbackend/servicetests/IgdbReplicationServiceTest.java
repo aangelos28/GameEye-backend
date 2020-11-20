@@ -319,8 +319,8 @@ public class IgdbReplicationServiceTest {
 
         // Delete new games from elastic.
         for (Game game: preReplicationTestDbGames) {
-            if (gameRepository.existsByIgdbId(String.valueOf(game.getIgdbId()))) {
-                String gameId = gameRepository.findByIgdbId(String.valueOf(game.getIgdbId())).getId();
+            if (gameRepository.existsByIgdbId(game.getIgdbId())) {
+                String gameId = gameRepository.findByIgdbId(game.getIgdbId()).getId();
                 elasticRepository.deleteByGameId(gameId);
             }
         }

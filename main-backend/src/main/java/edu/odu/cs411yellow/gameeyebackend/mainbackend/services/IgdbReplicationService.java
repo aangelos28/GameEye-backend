@@ -271,12 +271,18 @@ public class IgdbReplicationService {
                 remainder -= limit;
 
                 List<Game> games = igdbService.retrieveNewReleases(currentOldestReleaseDate, limit);
-                igdbGameBuffer.addAll(games);
+
+                for (Game game: games) {
+                    if (igdbGameBuffer.indexOf(game) != -1) {
+                        igdbGameBuffer.add(game);
+                    }
+                }
 
                 logger.info(String.format("Retrieved %1$s games. %2$s games remaining.", games.size(), remainder));
             } else {
                 List<Game> games = igdbService.retrieveNewReleases(currentOldestReleaseDate, remainder);
-                igdbGameBuffer.addAll(games);
+                System.out.println("Games contains " + games.size());
+
                 logger.info(String.format("Retrieved %1$s games.", games.size()));
 
                 remainder -= games.size();
@@ -298,6 +304,7 @@ public class IgdbReplicationService {
                         if (gameService.existsByIgdbId(igdbGame.getIgdbId())) {
                             // Update game and elastic search if necessary
                             updateExistingGame(igdbGame);
+                            System.out.println("Updated game with title" + igdbGame.getTitle());
 
                             updatedGameCount++;
                         }
@@ -309,6 +316,8 @@ public class IgdbReplicationService {
                             // Add new game to elasticGameBuffer
                             ElasticGame elasticGame = new ElasticGame(igdbGame);
                             elasticGameBuffer.add(elasticGame);
+
+                            System.out.println("Created new game with title" + igdbGame.getTitle());
 
                             newElasticGameCount++;
                             currentElasticBufferCount++;

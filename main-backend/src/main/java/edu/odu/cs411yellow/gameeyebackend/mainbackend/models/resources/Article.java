@@ -1,7 +1,6 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources;
 
 import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 
 import java.util.Date;
