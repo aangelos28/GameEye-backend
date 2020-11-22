@@ -219,7 +219,6 @@ public class NotificationService {
 
         // Subscribe or unsubscribe user to game notifications
         final List<String> notificationTokens = user.getFcmTokens();
-        System.out.println(notificationTokens);
 
         TopicManagementResponse response;
         if (notificationSettings.getNotifyOnlyIfImportant()) {
