@@ -94,6 +94,7 @@ public class WebScraperOrchestrator {
         insertArticlesIntoDatabase(scrapedArticles);
 
         // Send article notifications
+        notificationService.sendArticleNotificationsAsync(scrapedArticles, articleGameIds);
 
         return scrapedArticles;
     }
@@ -108,16 +109,18 @@ public class WebScraperOrchestrator {
         List<Article> articleList = scraper.scrape(target);
         List<Article> scrapedArticles = new ArrayList<>();
         List<String> articleTitles = new ArrayList<>();
+        List<String> articleGameIds = new ArrayList<>();
 
         for (Article article : articleList) {
             if (!checkIrrelevantArticles(article)) {
-                List<String> ids = performArticleGameReferenceSearch(article);
-                String id = ids.get(ids.size() - 1);
+                List<String> gameIds = performArticleGameReferenceSearch(article);
+                String gameId = gameIds.get(gameIds.size() - 1);
 
                 // Add article to scrapedArticles if not a duplicate in db or scrapedArticles
-                if (!checkArticleDuplicates(id, article) && !scrapedArticles.contains(article)) {
+                if (!checkArticleDuplicates(gameId, article) && !scrapedArticles.contains(article)) {
                     scrapedArticles.add(article);
                     articleTitles.add(article.getTitle());
+                    articleGameIds.add(gameId);
                 }
 
             }
@@ -125,6 +128,9 @@ public class WebScraperOrchestrator {
 
         assignScrapedArticlesImportance(articleTitles, scrapedArticles);
         insertArticlesIntoDatabase(scrapedArticles);
+
+        // Send article notifications
+        notificationService.sendArticleNotificationsAsync(scrapedArticles, articleGameIds);
 
         return scrapedArticles;
     }
@@ -139,14 +145,15 @@ public class WebScraperOrchestrator {
         List<Article> articleList = mockNewsScraper.scrape("GameEye Mock News");
         List<Article> scrapedArticles = new ArrayList<>();
         List<String> articleTitles = new ArrayList<>();
+        List<String> articleGameIds = new ArrayList<>();
 
         for (Article article : articleList) {
             if (!checkIrrelevantArticles(article)) {
-                List<String> ids = performArticleGameReferenceSearch(article);
-                String id = ids.get(ids.size() - 1);
+                List<String> gameIds = performArticleGameReferenceSearch(article);
+                String gameId = gameIds.get(gameIds.size() - 1);
 
                 // Add article to scrapedArticles if not a duplicate in db or scrapedArticles
-                if (!checkArticleDuplicates(id, article) && !scrapedArticles.contains(article)) {
+                if (!checkArticleDuplicates(gameId, article) && !scrapedArticles.contains(article)) {
                     scrapedArticles.add(article);
                     articleTitles.add(article.getTitle());
                 }
@@ -155,6 +162,9 @@ public class WebScraperOrchestrator {
 
         assignScrapedArticlesImportance(articleTitles, scrapedArticles);
         insertArticlesIntoDatabase(scrapedArticles);
+
+        // Send article notifications
+        notificationService.sendArticleNotificationsAsync(scrapedArticles, articleGameIds);
 
         return scrapedArticles;
     }
