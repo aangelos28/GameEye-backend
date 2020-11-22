@@ -1,4 +1,4 @@
-package edu.odu.cs411yellow.gameeyebackend.mainbackend.webscrapers;
+package edu.odu.cs411yellow.gameeyebackend.mainbackend.webscraping;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.NewsWebsite;
@@ -25,7 +25,7 @@ public class UniversalScraper implements WebScraper {
     NewsWebsiteRepository newsWebsites;
 
     @Autowired
-    public UniversalScraper(NewsWebsiteRepository newsWebsites){
+    public UniversalScraper(NewsWebsiteRepository newsWebsites) {
         this.newsWebsites = newsWebsites;
     }
 
@@ -34,8 +34,8 @@ public class UniversalScraper implements WebScraper {
      */
     @Override
     public List<Article> scrape(String newsOutlet) {
-        String name = newsOutlet;
         List<Article> articles = new ArrayList<>();
+
         try {
             NewsWebsite newsSite = newsWebsites.findByName(newsOutlet);
 
@@ -44,15 +44,14 @@ public class UniversalScraper implements WebScraper {
 
             Elements items = rssFeed.select("item");
 
-            for (var i : items){
-                Article toAdd = createArticle(i,newsSite.getName());
+            for (var i : items) {
+                Article toAdd = createArticle(i, newsSite.getName());
                 articles.add(toAdd);
             }
-
-        }
-        catch(Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
+
         return articles;
     }
 
@@ -71,42 +70,38 @@ public class UniversalScraper implements WebScraper {
 
         //parse snippet
         if (websiteName.contentEquals("IGN")) {
-             snippet = i.select("description").text();
-        }
-
-        else if (websiteName.contentEquals("PC Gamer")){
+            snippet = i.select("description").text();
+        } else if (websiteName.contentEquals("PC Gamer")) {
             Document body = Jsoup.parse(i.selectFirst("title").nextElementSibling().text());
             Elements paragraph = body.select("p");
             snippet = paragraph.text();
-        }
-
-        else {
+        } else {
             Document body = Jsoup.parse(i.select("description").text());
             Elements paragraph = body.select("p");
             snippet = paragraph.text();
         }
 
-        if (snippet.length() > 255){
-            snippet = snippet.substring(0,255);
+        if (snippet.length() > 255) {
+            snippet = snippet.substring(0, 255);
         }
 
         return new Article("", title, url, websiteName, "",
                 snippet, publicationDate, publicationDate, false);
-
     }
 
 
     /**
      * Output to JSON format
+     *
      * @return JSON
      */
     //@Override
     public String toString(String name) {
-        ObjectMapper obj= new ObjectMapper();
-        String articlesStr="";
+        ObjectMapper obj = new ObjectMapper();
+        String articlesStr = "";
         List<Article> articles = scrape(name);
-        for (Article a:articles){
 
+        for (Article a : articles) {
             try {
                 String temp;
                 temp = obj.writerWithDefaultPrettyPrinter().writeValueAsString(a);
@@ -116,7 +111,7 @@ public class UniversalScraper implements WebScraper {
                 e.printStackTrace();
             }
         }
+
         return articlesStr;
     }
-
 }

@@ -115,7 +115,7 @@ public class WatchlistController {
 
         try {
             watchlistService.addWatchlistGame(userId, gameId);
-            notificationService.modifyUserGameSubscription(userId, gameId, NotificationService.SubscriptionOperation.SUBSCRIBE);
+            notificationService.modifyUserGameSubscriptionAsync(userId, gameId, NotificationService.SubscriptionOperation.SUBSCRIBE);
             return ResponseEntity.status(HttpStatus.CREATED).body("Added game to watchlist.");
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -138,7 +138,7 @@ public class WatchlistController {
 
         try {
             watchlistService.deleteWatchlistGameById(userId, gameId);
-            notificationService.modifyUserGameSubscription(userId, gameId, NotificationService.SubscriptionOperation.UNSUBSCRIBE);
+            notificationService.modifyUserGameSubscriptionAsync(userId, gameId, NotificationService.SubscriptionOperation.UNSUBSCRIBE);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body("Deleted game from watchlist.");
         } catch (Exception ex) {
             ex.printStackTrace();

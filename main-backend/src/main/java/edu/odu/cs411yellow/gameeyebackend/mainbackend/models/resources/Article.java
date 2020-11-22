@@ -80,16 +80,16 @@ public class Article {
         this.isImportant = false;
     }
 
-    public Article(Article a){
-        this.id = a.getId();
-        this.title = a.getTitle();
-        this.url = a.getUrl();
-        this.newsWebsiteName = a.getNewsWebsiteName();
-        this.thumbnailId = a.getThumbnailId();
-        this.snippet = a.getSnippet();
-        this.publicationDate = a.getPublicationDate();
-        this.lastUpdated = a.getLastUpdated();
-        this.isImportant = a.getIsImportant();
+    public Article(Article article){
+        this.id = article.getId();
+        this.title = article.getTitle();
+        this.url = article.getUrl();
+        this.newsWebsiteName = article.getNewsWebsiteName();
+        this.thumbnailId = article.getThumbnailId();
+        this.snippet = article.getSnippet();
+        this.publicationDate = article.getPublicationDate();
+        this.lastUpdated = article.getLastUpdated();
+        this.isImportant = article.getIsImportant();
     }
 
     public String getId() {
