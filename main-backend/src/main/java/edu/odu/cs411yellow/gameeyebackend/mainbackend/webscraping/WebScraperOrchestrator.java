@@ -1,12 +1,14 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.webscraping;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Resources;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.GameService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.MachineLearningService;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.NotificationService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.ReferenceGameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,15 +28,18 @@ public class WebScraperOrchestrator {
     private final ReferenceGameService referenceGameService;
     private final GameService gameService;
     private final MachineLearningService mlService;
+    private final NotificationService notificationService;
 
     private final GameRepository games;
 
     @Autowired
     public WebScraperOrchestrator(UniversalScraper scraper, MockNewsScraper mockNewsScraper, ReferenceGameService referenceGameService,
-                                  GameRepository games, GameService gameService, MachineLearningService mlService) {
+                                  GameRepository games, GameService gameService, MachineLearningService mlService,
+                                  NotificationService notificationService) {
         this.mockNewsScraper = mockNewsScraper;
         this.referenceGameService = referenceGameService;
         this.mlService = mlService;
+        this.notificationService = notificationService;
         this.scraper = scraper;
         this.games = games;
         this.gameService = gameService;
@@ -47,9 +52,10 @@ public class WebScraperOrchestrator {
     public List<Article> scrapeAll() {
         List<Article> scrapedArticles = new ArrayList<>();
         List<String> articleTitles = new ArrayList<>();
+        List<String> articleGameIds = new ArrayList<>();
 
-        for (String s : scraperNames) {
-            List<Article> articleList = scraper.scrape(s);
+        for (String scraper : scraperNames) {
+            List<Article> articleList = this.scraper.scrape(scraper);
 
             try {
                 for (Article article : articleList) {
@@ -72,19 +78,23 @@ public class WebScraperOrchestrator {
         List<Article> mockNewsArticles = mockNewsScraper.scrape(mockNewsScraper.getScraperName());
         for (Article article : mockNewsArticles) {
             if (!checkIrrelevantArticles(article)) {
-                List<String> ids = performArticleGameReferenceSearch(article);
-                String id = ids.get(ids.size() - 1);
+                List<String> gameIds = performArticleGameReferenceSearch(article);
+                String gameId = gameIds.get(gameIds.size() - 1);
 
                 // Add article to scrapedArticles if not a duplicate in db or scrapedArticles
-                if (!checkArticleDuplicates(id, article) && !scrapedArticles.contains(article)) {
+                if (!checkArticleDuplicates(gameId, article) && !scrapedArticles.contains(article)) {
                     scrapedArticles.add(article);
                     articleTitles.add(article.getTitle());
+                    articleGameIds.add(gameId);
                 }
             }
         }
 
         assignScrapedArticlesImportance(articleTitles, scrapedArticles);
         insertArticlesIntoDatabase(scrapedArticles);
+
+        // Send article notifications
+        notificationService.sendArticleNotificationsAsync(scrapedArticles, articleGameIds);
 
         return scrapedArticles;
     }
@@ -99,16 +109,18 @@ public class WebScraperOrchestrator {
         List<Article> articleList = scraper.scrape(target);
         List<Article> scrapedArticles = new ArrayList<>();
         List<String> articleTitles = new ArrayList<>();
+        List<String> articleGameIds = new ArrayList<>();
 
         for (Article article : articleList) {
             if (!checkIrrelevantArticles(article)) {
-                List<String> ids = performArticleGameReferenceSearch(article);
-                String id = ids.get(ids.size() - 1);
+                List<String> gameIds = performArticleGameReferenceSearch(article);
+                String gameId = gameIds.get(gameIds.size() - 1);
 
                 // Add article to scrapedArticles if not a duplicate in db or scrapedArticles
-                if (!checkArticleDuplicates(id, article) && !scrapedArticles.contains(article)) {
+                if (!checkArticleDuplicates(gameId, article) && !scrapedArticles.contains(article)) {
                     scrapedArticles.add(article);
                     articleTitles.add(article.getTitle());
+                    articleGameIds.add(gameId);
                 }
 
             }
@@ -116,6 +128,9 @@ public class WebScraperOrchestrator {
 
         assignScrapedArticlesImportance(articleTitles, scrapedArticles);
         insertArticlesIntoDatabase(scrapedArticles);
+
+        // Send article notifications
+        notificationService.sendArticleNotificationsAsync(scrapedArticles, articleGameIds);
 
         return scrapedArticles;
     }
@@ -130,14 +145,15 @@ public class WebScraperOrchestrator {
         List<Article> articleList = mockNewsScraper.scrape("GameEye Mock News");
         List<Article> scrapedArticles = new ArrayList<>();
         List<String> articleTitles = new ArrayList<>();
+        List<String> articleGameIds = new ArrayList<>();
 
         for (Article article : articleList) {
             if (!checkIrrelevantArticles(article)) {
-                List<String> ids = performArticleGameReferenceSearch(article);
-                String id = ids.get(ids.size() - 1);
+                List<String> gameIds = performArticleGameReferenceSearch(article);
+                String gameId = gameIds.get(gameIds.size() - 1);
 
                 // Add article to scrapedArticles if not a duplicate in db or scrapedArticles
-                if (!checkArticleDuplicates(id, article) && !scrapedArticles.contains(article)) {
+                if (!checkArticleDuplicates(gameId, article) && !scrapedArticles.contains(article)) {
                     scrapedArticles.add(article);
                     articleTitles.add(article.getTitle());
                 }
@@ -146,6 +162,9 @@ public class WebScraperOrchestrator {
 
         assignScrapedArticlesImportance(articleTitles, scrapedArticles);
         insertArticlesIntoDatabase(scrapedArticles);
+
+        // Send article notifications
+        notificationService.sendArticleNotificationsAsync(scrapedArticles, articleGameIds);
 
         return scrapedArticles;
     }

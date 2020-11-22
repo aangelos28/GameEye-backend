@@ -1,15 +1,19 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.services;
 
 import com.google.firebase.messaging.*;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Settings;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.User;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.WatchedGame;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.settings.NotificationSettings;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
 
 /**
  * Service for handling notification functionality.
@@ -18,15 +22,118 @@ import java.util.List;
 public class NotificationService {
     private final UserService userService;
     private final GameService gameService;
+    private final GameRepository games;
+    private final UserRepository users;
 
     @Autowired
-    NotificationService(UserService userService, GameService gameService) {
+    NotificationService(UserService userService, GameService gameService, GameRepository games, UserRepository users) {
         this.userService = userService;
         this.gameService = gameService;
+        this.games = games;
+        this.users = users;
     }
 
     public enum SubscriptionOperation {
         SUBSCRIBE, UNSUBSCRIBE
+    }
+
+    /**
+     * Sends notifications for new articles. Sends one notification for games that have multiple
+     * new articles.
+     *
+     * @param articles       List of new articles
+     * @param articleGameIds List of the reference game IDs for the new articles
+     */
+    @Async
+    public void sendArticleNotificationsAsync(final List<Article> articles, final List<String> articleGameIds) {
+        // Get the unique game IDs, and ignore duplicates
+        final Set<String> uniqueGameIds = new HashSet<>(articleGameIds);
+        final List<Game> articleGames = games.findAllById(uniqueGameIds);
+
+        // Create hashmap of game ids that map to games
+        final Map<String, Game> articleGamesMap = new HashMap<>();
+        for (Game game : articleGames) {
+            articleGamesMap.put(game.getId(), game);
+        }
+
+        // Create hashmap of game ids that map to a list of articles
+        final Map<String, List<Article>> groupedArticles = new HashMap<>();
+        for (int i = 0; i < articles.size(); ++i) {
+            Article article = articles.get(i);
+            String gameId = articleGameIds.get(i);
+
+            // Create group of articles for game
+            if (!groupedArticles.containsKey(gameId)) {
+                groupedArticles.put(gameId, new ArrayList<>());
+            }
+
+            // Add article to group
+            groupedArticles.get(gameId).add(article);
+        }
+
+        // Iterate over grouped articles and send notifications
+        for (Map.Entry<String, List<Article>> articleGroup : groupedArticles.entrySet()) {
+            String gameId = articleGroup.getKey();
+            Game game = articleGamesMap.get(gameId);
+            List<Article> gameArticles = articleGroup.getValue();
+
+            String notificationTopic;
+            String notificationTitle;
+            String notificationBody;
+
+            // One article
+            if (gameArticles.size() == 1) {
+                Article article = gameArticles.get(0);
+
+                String gameTitle = game.getTitle();
+
+                // Create important notification
+                if (article.getIsImportant()) {
+                    notificationTopic = String.format("%s_%s", gameId, "important");
+                    notificationTitle = String.format("%s | New Important Article", gameTitle);
+                }
+                // Create regular notification
+                else {
+                    notificationTopic = String.format("%s_%s", gameId, "regular");
+                    notificationTitle = String.format("%s | New Article", gameTitle);
+                }
+
+                notificationBody = article.getTitle();
+            }
+            // More than one article
+            else {
+                // Check if there is at least one important article
+                boolean atLeastOneImportantArticle = false;
+                for (Article article : gameArticles) {
+                    if (article.getIsImportant()) {
+                        atLeastOneImportantArticle = true;
+                        break;
+                    }
+                }
+
+                // If there is at least one important article, then send the notification
+                // in the important topic. If no articles are important, then send the
+                // notification in the regular topic.
+                if (atLeastOneImportantArticle) {
+                    notificationTopic = String.format("%s_%s", gameId, "important");
+                } else {
+                    notificationTopic = String.format("%s_%s", gameId, "regular");
+                }
+
+                notificationTitle = String.format("%s | New Articles", game.getTitle());
+                notificationBody = "Multiple new articles found";
+            }
+
+            try {
+                // Send notification
+                sendTopicNotificationAsync(notificationTopic, notificationTitle, notificationBody, game.getLogoUrl());
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+            // Add new article notifications to the relevant users
+            users.addArticleNotificationsToUsers(gameId, gameArticles);
+        }
     }
 
     /**
