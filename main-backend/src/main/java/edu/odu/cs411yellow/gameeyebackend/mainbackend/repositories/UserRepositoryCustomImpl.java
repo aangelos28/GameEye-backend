@@ -10,6 +10,8 @@ import org.springframework.data.mongodb.core.query.Update;
 
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+
 public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
     private final MongoOperations mongo;
@@ -26,7 +28,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
         query.addCriteria(criteria);
 
         Update update = new Update();
-        update.addToSet("watchList.$.resourceNotifications.articleNotifications.articleIds").each(articles);
+        update.addToSet("watchList.$.resourceNotifications.articleNotifications.articleIds").each(articles.stream().map(Article::getId).collect(toList()));
 
         mongo.updateMulti(query, update, User.class);
     }
