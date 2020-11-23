@@ -74,7 +74,7 @@ public class Article {
     }
 
     public Article() {
-        this.id = ObjectId.get().toHexString();;
+        this.id = ObjectId.get().toHexString();
         this.title = "";
         this.url = "";
         this.newsWebsiteName = "";
@@ -85,16 +85,16 @@ public class Article {
         this.isImportant = false;
     }
 
-    public Article(Article a){
-        this.id = a.getId();
-        this.title = a.getTitle();
-        this.url = a.getUrl();
-        this.newsWebsiteName = a.getNewsWebsiteName();
-        this.thumbnailId = a.getThumbnailId();
-        this.snippet = a.getSnippet();
-        this.publicationDate = a.getPublicationDate();
-        this.lastUpdated = a.getLastUpdated();
-        this.isImportant = a.getIsImportant();
+    public Article(Article article){
+        this.id = article.getId();
+        this.title = article.getTitle();
+        this.url = article.getUrl();
+        this.newsWebsiteName = article.getNewsWebsiteName();
+        this.thumbnailId = article.getThumbnailId();
+        this.snippet = article.getSnippet();
+        this.publicationDate = article.getPublicationDate();
+        this.lastUpdated = article.getLastUpdated();
+        this.isImportant = article.getIsImportant();
     }
 
     public String getId() {
@@ -175,14 +175,16 @@ public class Article {
         if (o == null || getClass() != o.getClass()) return false;
         Article that = (Article) o;
 
-        return Objects.equals(id, that.id)
+        /*return Objects.equals(id, that.id)
                 && Objects.equals(url, that.url)
                 && Objects.equals(title, that.title)
                 && Objects.equals(newsWebsiteName, that.newsWebsiteName)
                 && Objects.equals(thumbnailId, that.thumbnailId)
                 && Objects.equals(snippet, that.snippet)
                 && Objects.equals(publicationDate, that.publicationDate)
-                && Objects.equals(isImportant, that.isImportant);
+                && Objects.equals(isImportant, that.isImportant);*/
+
+        return Objects.equals(title, that.title) && Objects.equals(newsWebsiteName, that.newsWebsiteName);
     }
 
     @Override

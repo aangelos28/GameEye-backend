@@ -8,6 +8,7 @@ import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.WatchedGame;
 public class WatchedGameResponse extends WatchedGame {
     private String title;
     private String logoUrl;
+    private String releaseDate;
 
     private GameNotificationCounts notificationCounts;
 
@@ -38,5 +39,13 @@ public class WatchedGameResponse extends WatchedGame {
 
     public void setNotificationCounts(GameNotificationCounts notificationCounts) {
         this.notificationCounts = notificationCounts;
+    }
+
+    public String getReleaseDate() {
+        return releaseDate;
+    }
+
+    public void setReleaseDate(String releaseDate) {
+        this.releaseDate = releaseDate;
     }
 }

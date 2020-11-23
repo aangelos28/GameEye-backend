@@ -14,6 +14,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -51,7 +52,9 @@ public class ElasticGameCreationService {
                 Document doc = cursor.next();
                 ElasticGame elasticGame = new ElasticGame();
                 elasticGame.setGameId(doc.get("_id").toString());
-                elasticGame.setTitle((String) doc.get("title"));
+                elasticGame.setTitle(doc.get("title").toString());
+                elasticGame.setReleaseDate((Date) doc.get("releaseDate"));
+                elasticGame.setLogoUrl((String) doc.get("logoUrl"));
 
                 elasticGameBuffer.add(elasticGame);
 

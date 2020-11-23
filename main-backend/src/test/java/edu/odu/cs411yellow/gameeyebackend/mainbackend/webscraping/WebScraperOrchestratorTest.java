@@ -1,4 +1,4 @@
-package edu.odu.cs411yellow.gameeyebackend.mainbackend.webscrapers;
+package edu.odu.cs411yellow.gameeyebackend.mainbackend.webscraping;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Resources;
@@ -10,6 +10,7 @@ import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.GameService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.MachineLearningService;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.NotificationService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.ReferenceGameService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +31,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
@@ -38,7 +40,7 @@ import java.util.List;
 @TestPropertySource(locations = "classpath:application-test.properties")
 public class WebScraperOrchestratorTest {
 
-    private String[] scraperNames={"GameSpot","Eurogamer","PC Gamer", "IGN","GameEye Mock News"};
+    private String[] scraperNames = {"GameSpot", "Eurogamer", "PC Gamer", "IGN", "GameEye Mock News"};
 
     @Autowired
     MockNewsScraper mockNewsScraper;
@@ -79,39 +81,44 @@ public class WebScraperOrchestratorTest {
     @Autowired
     private MachineLearningService mlService;
 
+    @Autowired
+    private NotificationService notificationService;
+
     Article og;
 
-    @BeforeEach
-    public void init(){
+    private String mockScraperName = "GameEye Mock News";
 
-        Resources mock1Resources= new Resources();
+    @BeforeEach
+    public void init() {
+
+        Resources mock1Resources = new Resources();
         mockgame1 = new Game();
         mockgame1.setId("WebScraperOrchTest - MockGame1");
-        mockgame1.setTitle("Halo Infinite");
+        mockgame1.setTitle("Genshin Impact");
         mockgame1.setResources(mock1Resources);
 
-        Resources mock2Resources= new Resources();
+        Resources mock2Resources = new Resources();
         mockgame2 = new Game();
         mockgame2.setId("WebScraperOrchTest - MockGame2");
         mockgame2.setTitle("Cyberpunk 2077");
         mockgame2.setResources(mock2Resources);
 
 
-        Resources mock3Resources= new Resources();
+        Resources mock3Resources = new Resources();
         mockgame3 = new Game();
         mockgame3.setId("WebScraperOrchTest - MockGame3");
         mockgame3.setTitle("Doom Eternal");
         mockgame3.setResources(mock3Resources);
 
-        mockNewsScraper.scrape(mockNewsScraper.getScraperName());
-        mockArticles=mockNewsScraper.getArticles();
+        mockArticles = mockNewsScraper.scrape(mockScraperName);
 
-        og = new Article(mockArticles.get(2)); //"Destiny 2: Beyond Light adds ice"
-        List<Article> arts = new ArrayList<>(Arrays.asList(og));
+        og = new Article(mockArticles.get(8)); //"Destiny 2: Beyond Light adds ice"
+        List<Article> arts = new ArrayList<>(Collections.singletonList(og));
 
-        String title="Destiny 2: Beyond Light";
+        String title = "Destiny 2: Beyond Light";
         mockgame4 = new Game();
         mockgame4.setId("WebScraperOrchTest - MockGame4");
+        //mockgame4.setId();
         mockgame4.setTitle(title);
         mockgame4.getResources().setArticles(arts);
 
@@ -130,11 +137,11 @@ public class WebScraperOrchestratorTest {
         elasticGames.save(elasticGame3);
         elasticGames.save(elasticGame4);
 
-        orchestratorMock = new WebScraperOrchestrator(scraper, mockNewsScraper, elasticGames, referenceGameService, newsWebsiteRepository,games, gameService,mlService);
+        orchestratorMock = new WebScraperOrchestrator(scraper, mockNewsScraper, referenceGameService, games, gameService, mlService, notificationService);
     }
 
     @AfterEach
-    public void deleteTestGames(){
+    public void deleteTestGames() {
         games.deleteById(mockgame1.getId());
         games.deleteById(mockgame2.getId());
         games.deleteById(mockgame3.getId());
@@ -146,53 +153,55 @@ public class WebScraperOrchestratorTest {
         elasticGames.deleteByGameId(mockgame4.getId());
 
         mockArticles.clear();
-        mockNewsScraper.emptyArticles();
     }
 
     @Test
-    public void testInit(){
+    public void testInit() {
 
     }
 
     @Test
-    public void testCheckArticleDuplicates(){
+    public void testCheckArticleDuplicates() {
         String title = mockgame4.getTitle();
         String id = mockgame4.getId();
+        System.out.println(title + ": " + id);
 
         // Check that method returns true for a duplicate article already saved earlier in the test.
         Article dupe = new Article(og);
 
-        assertThat(orchestratorMock.checkArticleDuplicates(id,dupe), is(true));
+        assertThat(orchestratorMock.checkArticleDuplicates(id, dupe), is(true));
 
         // Check that method returns false for a unique articles
         Article unique = new Article(og);
         unique.setTitle("A unique game article title");
-        assertThat(orchestratorMock.checkArticleDuplicates(id,unique), is(false));
+        assertThat(orchestratorMock.checkArticleDuplicates(id, unique), is(false));
     }
 
     @Test
-    public void testCheckIrrelevantArticles(){
+    public void testCheckIrrelevantArticles() {
 
-        Article irrelevant = mockArticles.get(mockArticles.size()-1);    //"GameEye Launch"
-        Article nonIrrelevant = mockArticles.get(0);    //"GameEye Launch"
-
+        Article irrelevant = mockArticles.get(mockArticles.size() - 1);    //"Making sense of the SCAA’s new Flavor Wheel"
         boolean irr = orchestratorMock.checkIrrelevantArticles(irrelevant);
-        boolean nonIrr = orchestratorMock.checkIrrelevantArticles(nonIrrelevant);
+        System.out.println(irrelevant.getTitle());
+        System.out.println(irr);
 
-        assertThat(irr,is(true));
-        assertThat(nonIrr,is(false));
+        Article relevant = mockArticles.get(mockArticles.size() - 6);    //"Cyberpunk 2077 Delayed to 12/10/2077
+        boolean nonIrr = orchestratorMock.checkIrrelevantArticles(relevant);
+        System.out.println(relevant.getTitle());
+        System.out.println(nonIrr);
+
+
+        assertThat(irr, is(true));
+        assertThat(nonIrr, is(false));
     }
 
     @Test
-    public void testInsertDataIntoDatabase(){
+    public void testInsertDataIntoDatabase() {
         // Retrieve game before inserting articles
         Game preTestGame = games.findGameByTitle("Cyberpunk 2077");
         Resources preResources = preTestGame.getResources();
         List<Article> preArticles = preResources.getArticles();
 
-        mockArticles = orchestratorMock.scrape(mockNewsScraper);
-        //System.out.println(orchestratorMock.toString());
-        //List<Article> testArts = scrappyMock.getArticleCollection();
         orchestratorMock.insertArticlesIntoDatabase(mockArticles);
 
         // Retrieve game after inserting articles
@@ -200,10 +209,10 @@ public class WebScraperOrchestratorTest {
         Resources postResources = postTestGame.getResources();
         List<Article> postArticles = postResources.getArticles();
 
-        assertNotEquals(preResources,postResources);
-        assertNotEquals(preArticles,postArticles);
+        assertNotEquals(preResources, postResources);
+        assertNotEquals(preArticles, postArticles);
 
-        assertNotEquals(preArticles.size(),postArticles.size());
+        assertNotEquals(preArticles.size(), postArticles.size());
     }
 
    /* @Test
@@ -220,40 +229,39 @@ public class WebScraperOrchestratorTest {
     }*/
 
     @Test
-    public void testPerformAGRSForSingleGameMention(){
+    public void testPerformAGRSForSingleGameMention() {
 
         List<Article> articles = orchestratorMock.scrape(mockNewsScraper);
         List<String> gameIDs = orchestratorMock.performArticleGameReferenceSearch(articles.get(0));
 
         System.out.println(articles.get(0).getTitle());
-        for(String id:gameIDs){
-            System.out.println("Game ID(s): "+id);
-            System.out.println("Game: "+games.findGameByTitle(id));
+        for (String id : gameIDs) {
+            System.out.println("Game ID(s): " + id);
+            System.out.println("Game: " + games.findGameByTitle(id));
         }
     }
 
     @Test
-    public void testMockGameRepo(){
-        GameRepository testRepo = orchestratorMock.games;
-        for(Game game:testRepo.findAll()){
+    public void testMockGameRepo() {
+        for (Game game : games.findAll()) {
             System.out.println(game.getTitle());
         }
     }
 
     @Test
-    public void testGetGamesArticles(){
+    public void testGetGamesArticles() {
         String title = "Destiny 2: Beyond Light";
 
-        List <Article> target = orchestratorMock.games.findGameByTitle(title).getResources().getArticles();
-        for(Article a: target){
+        List<Article> target = games.findGameByTitle(title).getResources().getArticles();
+        for (Article a : target) {
             System.out.println(a.getTitle());
         }
     }
 
 
     @Test
-    public void testGetArticleImportance(){
-        List<String> titles = new ArrayList<String>();
+    public void testGetArticleImportance() {
+        List<String> titles = new ArrayList<>();
 
         String title1 = "Cyberpunk 2077 releases 12/10/2077";
         String title2 = "Doom Eternal: Where to find all runes";
@@ -269,32 +277,26 @@ public class WebScraperOrchestratorTest {
 
         List<Boolean> importScores = orchestratorMock.getArticleImportance(titles);
 
-        assertThat(importScores.get(0),is(true));
-        assertThat(importScores.get(1),is(false));
-        assertThat(importScores.get(2),is(false));
-        assertThat(importScores.get(3),is(true));
-        assertThat(importScores.get(4),is(true));
+        assertThat(importScores.get(0), is(true));
+        assertThat(importScores.get(1), is(false));
+        assertThat(importScores.get(2), is(false));
+        assertThat(importScores.get(3), is(true));
+        assertThat(importScores.get(4), is(true));
     }
 
     @Test
-    public void testAssignScrapedArticlesImportance(){
-        mockNewsScraper.emptyArticles();
-        mockArticles=orchestratorMock.scrape(mockNewsScraper);
-        List<String> titles = new ArrayList<String>();
+    public void testAssignScrapedArticlesImportance() {
+        List<String> titles = new ArrayList<>();
 
-        for(Article a:mockArticles)
-        {
+        for (Article a : mockArticles) {
             titles.add(a.getTitle());
+            System.out.println(a.getTitle());
         }
 
-        orchestratorMock.assignScrapedArticlesImportance(titles,mockArticles);
+        orchestratorMock.assignScrapedArticlesImportance(titles, mockArticles);
 
-        //List<Article> articles = orchestratorMock.getArticleCollection();
-
-        assertThat(mockArticles.get(0).getIsImportant(),is(false)); //Cyberpunk 2077: The most hair styles of any RPG
-        assertThat(mockArticles.get(1).getIsImportant(),is(true));  //New update will be released in December for Genshin Impact
-        assertThat(mockArticles.get(2).getIsImportant(),is(true));  //Destiny 2: Beyond Light adds ice
+        assertThat(mockArticles.get(6).getIsImportant(), is(false)); //Cyberpunk 2077: The most hair styles of any RPG
+        assertThat(mockArticles.get(7).getIsImportant(), is(true));  //New update will be released in December for Genshin Impact
+        assertThat(mockArticles.get(8).getIsImportant(), is(true));  //Destiny 2: Beyond Light adds ice
     }
 }
-
-
