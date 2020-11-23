@@ -41,7 +41,7 @@ public class IgdbReplicationServiceTest {
     ObjectMapper mapper = new ObjectMapper();
 
     @Test
-    public void testReplicateIgdbByRangeForNewGames() {
+    public void testReplicateIgdbByIdRangeForNewGames() {
         // Test for adding new games
         int minId = 1;
         int maxId = 10;
@@ -51,7 +51,7 @@ public class IgdbReplicationServiceTest {
         List<Game> preReplicationTestDbGames = new ArrayList<>();
 
         // Replicate new games to db.
-        String result = igdbReplicationService.replicateGamesByRange(minId, maxId, limit);
+        String result = igdbReplicationService.replicateGamesByIdRange(minId, maxId, limit);
 
         // Find new games from db.
         for (int igdbId = minId; igdbId < maxId-minId+2; igdbId++) {
@@ -96,17 +96,16 @@ public class IgdbReplicationServiceTest {
     }
 
     @Test
-    public void testReplicateIgdbByRangeForUpdatingExistingGames() {
+    public void testReplicateIgdbByIdRangeForUpdatingExistingGames() {
         // Test for adding new games
         int minId = 1;
         int maxId = 10;
         int limit = 10;
 
-        List<Game> igdbGames = igdbService.retrieveGamesByRangeWithLimit(minId, maxId, limit);
         List<Game> preReplicationTestDbGames = new ArrayList<>();
 
         // Replicate new games to db.
-        String status = igdbReplicationService.replicateGamesByRange(minId, maxId, limit);
+        String status = igdbReplicationService.replicateGamesByIdRange(minId, maxId, limit);
 
         // Find new games from db.
         for (int igdbId = minId; igdbId < maxId-minId+2; igdbId++) {
@@ -115,7 +114,7 @@ public class IgdbReplicationServiceTest {
 
         // Test for updating existing games. Ensure only required fields are overwritten.
         List<Game> postReplicationTestDbGames = new ArrayList<>();
-        igdbReplicationService.replicateGamesByRange(minId, maxId, limit);
+        igdbReplicationService.replicateGamesByIdRange(minId, maxId, limit);
 
         // Find updated games in db.
         for (int igdbId = minId; igdbId < maxId-minId+2; igdbId++) {
@@ -123,7 +122,7 @@ public class IgdbReplicationServiceTest {
         }
 
         // Compare IGDB games to new games written to db.
-        for (int igdbId = 0; igdbId < igdbGames.size(); igdbId++) {
+        for (int igdbId = 0; igdbId < preReplicationTestDbGames.size(); igdbId++) {
             Game preRepGame = preReplicationTestDbGames.get(igdbId);
             Game postRepGame = postReplicationTestDbGames.get(igdbId);
 
@@ -264,8 +263,6 @@ public class IgdbReplicationServiceTest {
             // The following fields should remain the same before/after replication
             assertThat(preRepGame.getId(), equalTo(postRepGame.getId()));
             assertThat(preRepGame.getIgdbId(), equalTo(postRepGame.getIgdbId()));
-            assertThat(preRepGame.getTitle(), equalTo(postRepGame.getTitle()));
-            assertThat(preRepGame.getReleaseDate(), equalTo(postRepGame.getReleaseDate()));
             assertThat(preRepGame.getResources(), equalTo(postRepGame.getResources()));
             assertThat(preRepGame.getWatchers(), equalTo(postRepGame.getWatchers()));
         }
@@ -309,8 +306,6 @@ public class IgdbReplicationServiceTest {
             // The following fields should remain the same before/after replication
             assertThat(preRepGame.getId(), equalTo(postRepGame.getId()));
             assertThat(preRepGame.getIgdbId(), equalTo(postRepGame.getIgdbId()));
-            assertThat(preRepGame.getTitle(), equalTo(postRepGame.getTitle()));
-            assertThat(preRepGame.getReleaseDate(), equalTo(postRepGame.getReleaseDate()));
             assertThat(preRepGame.getResources(), equalTo(postRepGame.getResources()));
             assertThat(preRepGame.getWatchers(), equalTo(postRepGame.getWatchers()));
 
@@ -328,6 +323,56 @@ public class IgdbReplicationServiceTest {
         // Delete new and updated games written to db.
         for (Game game: preReplicationTestDbGames) {
             gameRepository.deleteByIgdbId(String.valueOf(game.getIgdbId()));
+        }
+    }
+
+    @Test
+    public void testUpdateGamesCollection() {
+        // Test for adding new games
+        int minId = 1;
+        int maxId = 200;
+        int limit = 250;
+
+        List<Game> preReplicationTestDbGames = new ArrayList<>();
+
+        // Replicate new games to db.
+        String status = igdbReplicationService.replicateGamesByIdRange(minId, maxId, limit);
+
+        // Find new games from db.
+        preReplicationTestDbGames.addAll(gameRepository.findAll());
+
+        // Test for updating the games collection. Ensure only required fields are overwritten.
+        List<Game> postReplicationTestDbGames = new ArrayList<>();
+        igdbReplicationService.updateGamesCollection(limit);
+
+        // Find updated games in db.
+        postReplicationTestDbGames.addAll(gameRepository.findAll());
+
+        // Compare IGDB games to new games written to db.
+        for (int igdbId = 0; igdbId < preReplicationTestDbGames.size(); igdbId++) {
+            Game preRepGame = preReplicationTestDbGames.get(igdbId);
+            Game postRepGame = postReplicationTestDbGames.get(igdbId);
+
+            // The following fields should remain the same before/after replication
+            assertThat(preRepGame.getId(), equalTo(postRepGame.getId()));
+            assertThat(preRepGame.getIgdbId(), equalTo(postRepGame.getIgdbId()));
+            assertThat(preRepGame.getResources(), equalTo(postRepGame.getResources()));
+            assertThat(preRepGame.getWatchers(), equalTo(postRepGame.getWatchers()));
+        }
+
+        // Delete new games from elastic.
+        for (int currentId = minId; currentId < maxId-minId+1; currentId++) {
+            if (gameRepository.existsByIgdbId(String.valueOf(currentId))) {
+                String gameId = gameRepository.findByIgdbId(String.valueOf(currentId)).getId();
+                elasticRepository.deleteByGameId(gameId);
+            }
+        }
+
+        // Delete new and updated games written to db.
+        for (int igdbId = minId; igdbId < maxId-minId+1; igdbId++) {
+            if (gameRepository.existsByIgdbId(String.valueOf(igdbId))) {
+                gameRepository.deleteByIgdbId(String.valueOf(igdbId));
+            }
         }
     }
 }

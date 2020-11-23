@@ -38,21 +38,23 @@ public class IgdbDataRetrieval {
     public void replicateByIdRange(@ShellOption("--min-id") int minId,
                                    @ShellOption("--max-id") int maxId,
                                    @ShellOption("--limit")  int limit) {
+        System.out.println(String.format("Attempting to replicate IGDB game range %1$s-%2$s with API limit %3$s",
+                           minId, maxId, limit));
 
-    JsonObject request = new JsonObject();
-    request.addProperty("minId", minId);
-    request.addProperty("maxId", maxId);
-    request.addProperty("limit", limit);
+        JsonObject request = new JsonObject();
+        request.addProperty("minId", minId);
+        request.addProperty("maxId", maxId);
+        request.addProperty("limit", limit);
 
-    String response = this.webClient.post()
-            .uri("/private-admin/igdb/replicate/ids")
-            .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(request.toString())
-            .retrieve()
-            .bodyToMono(String.class)
-            .block();
+        String response = this.webClient.post()
+                .uri("/private-admin/igdb/replicate/ids")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(request.toString())
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
 
-        System.out.println(response);
+            System.out.println(response);
     }
 
     /**
@@ -82,6 +84,29 @@ public class IgdbDataRetrieval {
 
         String response = this.webClient.post()
                 .uri("/private-admin/igdb/replicate/titles")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(request.toString())
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+
+        System.out.println(response);
+    }
+
+    /**
+     * Updates all games in the games collection of the GameEye database.
+     *
+     * @param limit maximum number of games per API request.
+     */
+    @ShellMethod(value = "Update all games in the games collection.", key = "update-games")
+    public void updateGamesCollection(@ShellOption("--limit")  int limit) {
+        System.out.println("Attempting to update the games collection.");
+
+        JsonObject request = new JsonObject();
+        request.addProperty("limit", limit);
+
+        String response = this.webClient.post()
+                .uri("/private-admin/igdb/replicate/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(request.toString())
                 .retrieve()

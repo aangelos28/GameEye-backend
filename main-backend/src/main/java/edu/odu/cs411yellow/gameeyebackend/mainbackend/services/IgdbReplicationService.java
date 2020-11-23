@@ -1,7 +1,6 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.services;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.SourceUrls;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.elasticsearch.ElasticGame;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import org.bson.types.ObjectId;
@@ -31,7 +30,7 @@ public class IgdbReplicationService {
         this.gameRepository = gameRepository;
     }
 
-    public String replicateGamesByRange(int minId, int maxId, int limit) {
+    public String replicateGamesByIdRange(int minId, int maxId, int limit) {
         logger.info(String.format("Attempting to replicate %1$s games. IGDB ID range: %2$s-%3$s. Result limit per API request: %4$s.",
                                   (maxId - minId + 1), minId, maxId, limit));
 
@@ -165,12 +164,12 @@ public class IgdbReplicationService {
             if (remainder > limit) {
                 remainder -= limit;
 
-                igdbGameBuffer.addAll(igdbService.retrieveGamesByTitle(titles.subList(0, limit - 1), limit));
+                igdbGameBuffer.addAll(igdbService.retrieveGamesByTitles(titles.subList(0, limit - 1), limit));
                 titles.subList(0, limit - 1).clear();
 
                 logger.info(String.format("Retrieved %1$s games. %2$s games remaining.", limit, remainder));
             } else {
-                igdbGameBuffer.addAll(igdbService.retrieveGamesByTitle(titles, limit));
+                igdbGameBuffer.addAll(igdbService.retrieveGamesByTitles(titles, limit));
                 logger.info(String.format("Retrieved %1$s games.", titles.size()));
                 titles.clear();
 
@@ -281,7 +280,12 @@ public class IgdbReplicationService {
                 logger.info(String.format("Retrieved %1$s games. %2$s games remaining.", games.size(), remainder));
             } else {
                 List<Game> games = igdbService.retrieveNewReleases(currentOldestReleaseDate, remainder);
-                System.out.println("Games contains " + games.size());
+
+                for (Game game: games) {
+                    if (igdbGameBuffer.indexOf(game) != -1) {
+                        igdbGameBuffer.add(game);
+                    }
+                }
 
                 logger.info(String.format("Retrieved %1$s games.", games.size()));
 
@@ -304,7 +308,6 @@ public class IgdbReplicationService {
                         if (gameService.existsByIgdbId(igdbGame.getIgdbId())) {
                             // Update game and elastic search if necessary
                             updateExistingGame(igdbGame);
-                            System.out.println("Updated game with title" + igdbGame.getTitle());
 
                             updatedGameCount++;
                         }
@@ -316,8 +319,6 @@ public class IgdbReplicationService {
                             // Add new game to elasticGameBuffer
                             ElasticGame elasticGame = new ElasticGame(igdbGame);
                             elasticGameBuffer.add(elasticGame);
-
-                            System.out.println("Created new game with title" + igdbGame.getTitle());
 
                             newElasticGameCount++;
                             currentElasticBufferCount++;
@@ -366,27 +367,86 @@ public class IgdbReplicationService {
 
     private void updateExistingGame(Game igdbGame) {
         String gameId = gameRepository.findGameIdByIgdbId(igdbGame.getIgdbId());
-        String existingTitle = gameRepository.findTitleById(gameId);
 
-        // Check for IGDB title change
-        if (!existingTitle.equals(igdbGame.getTitle())) {
-            // Update existing game title with new IGDB title
-            gameRepository.updateGameTitle(gameId, igdbGame.getTitle());
-
-            // Update elastic game title
-            ElasticGame elasticGame = new ElasticGame();
-            elasticGame.setGameId(gameId);
-            elasticGame.setTitle(igdbGame.getTitle());
-
-            elasticService.updateTitle(elasticGame);
-        }
+        // Update existing game title with new IGDB title
+        gameRepository.updateGameTitle(gameId, igdbGame.getTitle());
 
         // Update logoUrl, platforms, release date, genres, and sourceUrls
         gameRepository.updateLogoPlatformsReleaseDateGenresSourceUrls(gameId,
-                                                                      igdbGame.getLogoUrl(),
-                                                                      igdbGame.getPlatforms(),
-                                                                      igdbGame.getGenres(),
-                                                                      igdbGame.getReleaseDate(),
-                                                                      igdbGame.getSourceUrls());
+                igdbGame.getLogoUrl(),
+                igdbGame.getPlatforms(),
+                igdbGame.getGenres(),
+                igdbGame.getReleaseDate(),
+                igdbGame.getSourceUrls());
+
+        // Update elastic game title, logoUrl, and releaseDate
+        ElasticGame elasticGame = new ElasticGame(igdbGame);
+        elasticGame.setGameId(gameId);
+
+        elasticService.updateTitleLogoReleaseDate(elasticGame);
+    }
+
+    public int bulkUpdateElasticSearch(List<Game> games) {
+        List<ElasticGame> elasticGames = new ArrayList<>();
+
+        for (Game game: games) {
+            String gameId = gameRepository.findGameIdByIgdbId(game.getIgdbId());
+            ElasticGame elasticGame = new ElasticGame(game);
+            elasticGame.setGameId(gameId);
+
+            elasticGames.add(elasticGame);
+        }
+
+        return elasticService.bulkUpdateElastic(elasticGames);
+    }
+
+    public String updateGamesCollection(int limit) {
+        List<String> ids = gameRepository.findAllIgdbIds();
+
+        logger.info(String.format("Attempting to updates the %1$s games in the games collection. Result limit per API request: %2$s.",
+                    ids.size(), limit));
+
+        int remainder = ids.size();
+        int igdbGameBufferSize = 500;
+
+        // Stores igdb games
+        List<Game> igdbGameBuffer = new ArrayList<>(igdbGameBufferSize);
+
+        int numberOfRequestsWithLimit = 1;
+        int updatedCount = 0;
+        while (remainder > 0) {
+            if (remainder > limit) {
+                remainder -= limit;
+
+                igdbGameBuffer.addAll(igdbService.retrieveGamesByIds(ids.subList(0, limit - 1), limit));
+                ids.subList(0, limit - 1).clear();
+
+                logger.info(String.format("Retrieved %1$s games. %2$s games remaining.", limit, remainder));
+            } else {
+                igdbGameBuffer.addAll(igdbService.retrieveGamesByIds(ids, limit));
+                logger.info(String.format("Retrieved %1$s games.", ids.size()));
+                ids.clear();
+
+                remainder = ids.size();
+                logger.info(String.format("%1$s games remaining.", remainder));
+            }
+
+            // Update games collection with new and updated games if greater than or equal to the igdbGameBufferSize
+            // Update games collection if remainder is negative, as there are no more games to retrieve.
+            if ((limit * numberOfRequestsWithLimit) >= igdbGameBufferSize || remainder <= 0) {
+                gameRepository.bulkUpdateGames(igdbGameBuffer);
+                int numUpdated = bulkUpdateElasticSearch(igdbGameBuffer);
+                updatedCount += numUpdated;
+
+                igdbGameBuffer.clear();
+            }
+
+            numberOfRequestsWithLimit++;
+        }
+
+        String status = String.format("Finished replicating %s games in the games collection.", updatedCount);
+        logger.info(status);
+
+        return status;
     }
 }

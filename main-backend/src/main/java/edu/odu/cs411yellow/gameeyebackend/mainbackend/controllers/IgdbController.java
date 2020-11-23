@@ -52,7 +52,7 @@ public class IgdbController {
     @PostMapping(path = "/private-admin/igdb/replicate/ids", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> replicateIgdbByRange(@RequestBody IdRangeRequest request) {
         try {
-            String result = igdbReplicationService.replicateGamesByRange(request.minId, request.maxId, request.limit);
+            String result = igdbReplicationService.replicateGamesByIdRange(request.minId, request.maxId, request.limit);
             return ResponseEntity.status(HttpStatus.CREATED).body(result);
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -81,6 +81,28 @@ public class IgdbController {
         } catch (Exception ex) {
             ex.printStackTrace();
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to replicate game.");
+        }
+    }
+
+    /**
+     * Request for updating games
+     */
+    public static class UpdateRequest {
+        public int limit;
+    }
+
+    /**
+     * Updates the games collection in the GameEye database with game data from IGDB.
+     * @param request HTTP request body containing a list of titles and a limit per API request.
+     */
+    @PostMapping(path = "/private-admin/igdb/replicate/update", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> replicateIgdbByRange(@RequestBody UpdateRequest request) {
+        try {
+            String result = igdbReplicationService.updateGamesCollection(request.limit);
+            return ResponseEntity.status(HttpStatus.CREATED).body(result);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to update games collection.");
         }
     }
 }

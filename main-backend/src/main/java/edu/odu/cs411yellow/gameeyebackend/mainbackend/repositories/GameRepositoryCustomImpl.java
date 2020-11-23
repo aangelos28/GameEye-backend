@@ -8,14 +8,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.data.mongodb.repository.support.MongoRepositoryFactory;
 
 import java.util.Date;
 import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Custom method implementations for game repository.
@@ -23,10 +27,12 @@ import java.util.List;
 public class GameRepositoryCustomImpl implements GameRepositoryCustom {
 
     private final MongoOperations mongo;
+    private final MongoTemplate template;
 
     @Autowired
-    public GameRepositoryCustomImpl(MongoOperations mongo) {
+    public GameRepositoryCustomImpl(MongoOperations mongo, MongoTemplate template) {
         this.mongo = mongo;
+        this.template = template;
     }
 
     /**
@@ -93,6 +99,23 @@ public class GameRepositoryCustomImpl implements GameRepositoryCustom {
         }
     }
 
+    private static class GameIgdbId {
+        private String igdbId;
+
+        @PersistenceConstructor
+        public GameIgdbId(String igdbId) {
+            this.igdbId = igdbId;
+        }
+
+        public String getIgdbId() {
+            return igdbId;
+        }
+
+        public void setIgdbId(String igdbId) {
+            this.igdbId = igdbId;
+        }
+    }
+
     @Override
     public String findGameIdByIgdbId(final String igdbId) {
         Query query = new Query(Criteria.where("igdbId").is(igdbId));
@@ -122,5 +145,37 @@ public class GameRepositoryCustomImpl implements GameRepositoryCustom {
         Update update = new Update().set("lastUpdated", new Date());
 
         mongo.updateFirst(query, update, Game.class);
+    }
+
+    @Override
+    public List<String> findAllIgdbIds() {
+        Query query = new Query();
+        query.fields().include("igdbId");
+
+        List<GameIgdbId> gameIds = mongo.findDistinct(query,"igdbId", "games",GameIgdbId.class);
+
+        return gameIds.stream().map(GameIgdbId::getIgdbId).collect(toList());
+    }
+
+    @Override
+    public void bulkUpdateGames(List<Game> games) {
+        BulkOperations ops = template.bulkOps(BulkOperations.BulkMode.UNORDERED, Game.class,"games");
+        for (Game game: games) {
+            Query query = new Query(Criteria.where("igdbId").is(game.getIgdbId()));
+            Update update = new Update()
+                    .set("title", game.getTitle())
+                    .set("logoUrl", game.getLogoUrl())
+                    .set("platforms", game.getPlatforms())
+                    .set("genres", game.getGenres())
+                    .set("releaseDate", game.getReleaseDate())
+                    .set("sourceUrls", game.getSourceUrls())
+                    .set("lastUpdated", new Date());
+
+            System.out.println("Title: " + game.getTitle() + " igdbId: " + game.getIgdbId());
+
+            ops.updateOne(query, update);
+        }
+
+        ops.execute();
     }
 }

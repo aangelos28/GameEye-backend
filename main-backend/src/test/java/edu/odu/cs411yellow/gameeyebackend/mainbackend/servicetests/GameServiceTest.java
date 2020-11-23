@@ -65,7 +65,7 @@ public class GameServiceTest {
         int maxId = 100152;
         int limit = 250;
 
-        String result = replicationService.replicateGamesByRange(minId, maxId, limit);
+        String result = replicationService.replicateGamesByIdRange(minId, maxId, limit);
         System.out.println(result);
 
         String gameIgdbId1 = "100000";

@@ -174,4 +174,10 @@ public class ElasticGameRepositoryTest {
         games.deleteByTitle(game3Title);
     }
 
+    @Test
+    public void testElasticGameBug() {
+        ElasticGame game = elasticGames.findByGameId("5fa261446ffacd4ab297dfb2");
+        System.out.println(game.getTitle());
+    }
+
 }

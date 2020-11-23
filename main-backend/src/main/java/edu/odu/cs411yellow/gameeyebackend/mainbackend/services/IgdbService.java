@@ -112,7 +112,6 @@ public class IgdbService {
 
     public List<GameResponse> retrieveGameResponsesByIds(final List<String> ids, int limit) {
         String formattedIds = convertIdsToIgdbWhereClauseGameIds(ids);
-        System.out.println(formattedIds);
 
         String fieldsClause = "fields name, updated_at, genres.name, websites.url, websites.category, platforms.name, first_release_date; ";
         String whereClause = String.format("where id = %1$s;", formattedIds);
@@ -230,13 +229,24 @@ public class IgdbService {
         return new Game(retrieveGameResponseById(id));
     }
 
-    public List<Game> retrieveGamesByTitle(List<String> titles, int limit) {
+    public List<Game> retrieveGamesByTitles(List<String> titles, int limit) {
         List<GameResponse> gameResponses = retrieveGameResponsesByTitles(titles, limit);
         List<String> ids = new ArrayList<>();
 
         for (GameResponse response: gameResponses) {
             ids.add(response.igdbId);
         }
+
+        List<CoverResponse> coverResponses = retrieveCoverResponsesByGameIds(ids, limit);
+        List<Game> games = convertGameResponsesToGames(gameResponses);
+        Map<String, String> logos = convertCoverResponsesToLogos(coverResponses);
+        addLogosToGames(games, logos);
+
+        return games;
+    }
+
+    public List<Game> retrieveGamesByIds(List<String> ids, int limit) {
+        List<GameResponse> gameResponses = retrieveGameResponsesByIds(ids, limit);
 
         List<CoverResponse> coverResponses = retrieveCoverResponsesByGameIds(ids, limit);
         List<Game> games = convertGameResponsesToGames(gameResponses);
@@ -258,7 +268,6 @@ public class IgdbService {
         List<String> uniqueIds = new ArrayList<>(ids);
 
         List<Game> games = convertGameResponsesToGames(gameResponses);
-        System.out.println("Size of games array in retrieveNewReleases " + games.size());
         List<CoverResponse> coverResponses = retrieveCoverResponsesByGameIds(uniqueIds, limit);
         Map<String, String> logos = convertCoverResponsesToLogos(coverResponses);
         addLogosToGames(games, logos);
@@ -267,39 +276,39 @@ public class IgdbService {
     }
 
     public String convertTitlesToIgdbWhereClauseNames(final List<String> titles) {
-        String names = "(";
+        StringBuilder names = new StringBuilder();
+        names.append("(");
 
         Iterator it = titles.iterator();
         while (it.hasNext()) {
-            names += "\"" + it.next() + "\"";
+            names.append("\"").append(it.next()).append("\"");
 
             if (it.hasNext()) {
-                names += ", ";
+                names.append(", ");
             }
         }
 
-        names += ")";
+        names.append(")");
 
-        return names;
+        return names.toString();
     }
 
     public String convertIdsToIgdbWhereClauseGameIds(final List<String> ids) {
-        String names = "(";
-        int count = 0;
+        StringBuilder formattedIds = new StringBuilder();
+        formattedIds.append("(");
+
         Iterator it = ids.iterator();
         while (it.hasNext()) {
-            names += it.next();
+            formattedIds.append(it.next());
 
             if (it.hasNext()) {
-                names += ", ";
+                formattedIds.append(", ");
             }
-            count++;
-            System.out.println("id iterator loop " + count);
         }
 
-        names += ")";
+        formattedIds.append(")");
 
-        return names;
+        return formattedIds.toString();
     }
 
     public List<Game> retrieveGamesByRangeWithLimit(int minId, int maxId, int limit) {
