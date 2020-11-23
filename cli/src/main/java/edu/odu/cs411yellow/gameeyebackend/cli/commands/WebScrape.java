@@ -20,23 +20,29 @@ public class WebScrape {
 
     /**
      * Initiate Scraping of RSS
-     *
      */
     @ShellMethod(value = "Initiate Force Scrape of RSSFeeds.", key = "Force-Scrape-RSS")
     public void forceScrapeAll() {
-        webClient.post().uri("/private-admin/webscraping/force");
-        String response = "Force Scrape All";
+        String response = this.webClient.post()
+                .uri("/private-admin/webscraping/force")
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+
         System.out.println(response);
     }
 
     /**
      * Initiate Scraping of RSS
-     *
      */
     @ShellMethod(value = "Initiate Force Scrape of MockNews.", key = "Force-Scrape-MockNews")
     public void forceScrapeMockNews() {
-        webClient.post().uri("/private-admin/webscraping/mockwebsite/force");
-        String response = "Force Scrape MockNews";
+        String response = this.webClient.post()
+                .uri("/private-admin/webscraping/mockwebsite/force")
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+
         System.out.println(response);
     }
 }
