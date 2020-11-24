@@ -1,6 +1,6 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.controllers;
 
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.webscraping.MockNewsScraper;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.webscraping.UniversalScraper;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.webscraping.WebScraperOrchestrator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +14,7 @@ public class WebScrapeController {
     WebScraperOrchestrator webScraperOrchestrator;
 
     @Autowired
-    MockNewsScraper mock;
+    UniversalScraper mock;
 
     @Autowired
     public WebScrapeController (WebScraperOrchestrator webScraperOrchestrator){
