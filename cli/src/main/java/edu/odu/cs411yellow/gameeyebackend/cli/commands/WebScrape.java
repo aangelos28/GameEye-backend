@@ -27,7 +27,7 @@ public class WebScrape {
                 .uri("/private-admin/webscraping/force")
                 .retrieve()
                 .bodyToMono(String.class)
-                .block();
+                .toString();
 
         System.out.println("Force Scrape of RSS feeds Performed");
     }
@@ -41,7 +41,7 @@ public class WebScrape {
                 .uri("/private-admin/webscraping/mockwebsite/force")
                 .retrieve()
                 .bodyToMono(String.class)
-                .block();
+                .toString();
 
         System.out.println("Force Scrape of Mock News Performed");
     }
