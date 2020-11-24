@@ -1,7 +1,6 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources;
 
 import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 
 import java.util.Date;
@@ -58,11 +57,7 @@ public class Article {
     public Article(String id, String title, String url, String newsWebsiteName, String thumbnailId, String snippet,
                    Date publicationDate, Date lastUpdated, boolean isImportant) {
 
-        if (id.equals("")) {
-            this.id = ObjectId.get().toHexString();
-        } else {
-            this.id = id;
-        }
+        this.id = id;
         this.title = title;
         this.url = url;
         this.newsWebsiteName = newsWebsiteName;

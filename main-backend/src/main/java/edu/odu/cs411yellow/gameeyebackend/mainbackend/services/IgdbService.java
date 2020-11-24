@@ -1,15 +1,11 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.services;
 
 import static edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel.GameResponse;
-import static edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel.CompanyResponse;
 import static edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel.CoverResponse;
-import static edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel.FindMaxIdResponse;
-
+import static edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel.IdResponse;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.security.IgdbTokenContainer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -17,10 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Service for calling IGDB REST API.
@@ -29,8 +22,6 @@ import java.util.List;
 public class IgdbService {
     private final WebClient webClient;
     IgdbTokenContainer token;
-
-    Logger logger = LoggerFactory.getLogger(IgdbService.class);
 
     @Autowired
     public IgdbService(WebClient.Builder webClientBuilder, @Value("${igdb.baseurl}") String igdbUrl,
@@ -43,22 +34,12 @@ public class IgdbService {
                 .build();
     }
 
-    public List<CompanyResponse> getCompanies() {
-        return this.webClient.post()
-                .uri("/companies")
-                .contentType(MediaType.TEXT_PLAIN)
-                .bodyValue("fields name; limit 10;")
-                .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<CompanyResponse>>() {})
-                .block();
-    }
-
-    public GameResponse getGameResponseById(int id) {
-        String fieldsClause = "fields name, updated_at, genres.name, websites.url, websites.category, platforms.name, first_release_date; ";
+    public GameResponse retrieveGameResponseById(int id) {
+        String fieldsClause = "fields name, updated_at, genres.name, websites.url, websites.category, platforms.name, first_release_date, summary; ";
         String whereClause = String.format("where id = %s;", id);
         String requestBody = String.format("%1$s%2$s", fieldsClause, whereClause);
 
-        List<GameResponse> gameResponses = webClient.post()
+        List<GameResponse> responses = webClient.post()
                 .uri("/games")
                 .contentType(MediaType.TEXT_PLAIN)
                 .bodyValue(requestBody)
@@ -66,15 +47,51 @@ public class IgdbService {
                 .bodyToMono(new ParameterizedTypeReference<List<GameResponse>>() {})
                 .block();
 
-        // Return game response in gameResponses list.
-        return gameResponses.get(0);
+        removeInvalidGames(responses);
+
+
+        GameResponse response = new GameResponse();
+
+        try {
+            response = responses.get(0);
+        } catch (NullPointerException n) {
+            System.out.println(String.format("IGDB game with id %s is not found.", id));
+        }
+
+        return response;
     }
 
-    public List<GameResponse> getGameResponsesWithSingleRequest(int minId, int maxId, int limit) {
+    public CoverResponse retrieveCoverResponseByGameId(String gameId) {
+        String fieldsClause = "fields url, game; ";
+        String whereClause = String.format("where game = %1$s;", gameId);
+        String limitClause = String.format("limit %s;", 1);
+        String requestBody = String.format("%1$s%2$s%3$s", fieldsClause, whereClause, limitClause);
+
+        List<CoverResponse> responses = webClient.post()
+                .uri("/covers")
+                .contentType(MediaType.TEXT_PLAIN)
+                .bodyValue(requestBody)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<List<CoverResponse>>() {
+                })
+                .block();
+
+        CoverResponse response = new CoverResponse();
+
+        try {
+            response = responses.get(0);
+        } catch (NullPointerException n) {
+            System.out.println(String.format("Cover image for IGDB game with id %s is not found.", gameId));
+        }
+
+        return response;
+    }
+
+    public List<GameResponse> retrieveGameResponsesByIdRange(int minId, int maxId, int limit) {
         int inclusiveMinId = minId - 1;
         int inclusiveMaxId = maxId + 1;
 
-        String fieldsClause = "fields name, updated_at, genres.name, websites.url, websites.category, platforms.name, first_release_date; ";
+        String fieldsClause = "fields name, updated_at, genres.name, websites.url, websites.category, platforms.name, first_release_date, summary; ";
         String whereClause = String.format("where id > %1$s & id < %2$s;", inclusiveMinId, inclusiveMaxId);
         String limitClause = String.format("limit %s;",limit);
         String requestBody = String.format("%1$s%2$s%3$s", fieldsClause, whereClause, limitClause);
@@ -87,10 +104,54 @@ public class IgdbService {
                 .bodyToMono(new ParameterizedTypeReference<List<GameResponse>>() {})
                 .block();
 
+        removeInvalidGames(gameResponses);
+
         return gameResponses;
     }
 
-    public List<CoverResponse> getCoverResponsesWithSingleRequest(int minId, int maxId, int limit) {
+    public List<GameResponse> retrieveGameResponsesByTitles(final List<String> titles, int limit) {
+        String names = convertTitlesToIgdbWhereClauseNames(titles);
+
+        String fieldsClause = "fields name, updated_at, genres.name, websites.url, websites.category, platforms.name, first_release_date, summary; ";
+        String whereClause = String.format("where name = %1$s;", names);
+        String limitClause = String.format("limit %s;",limit);
+        String requestBody = String.format("%1$s%2$s%3$s", fieldsClause, whereClause, limitClause);
+
+        List<GameResponse> gameResponses = webClient.post()
+                .uri("/games")
+                .contentType(MediaType.TEXT_PLAIN)
+                .bodyValue(requestBody)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<List<GameResponse>>() {})
+                .block();
+
+        removeInvalidGames(gameResponses);
+
+        return gameResponses;
+    }
+
+    public List<GameResponse> retrieveGameResponsesByIds(final List<String> ids, int limit) {
+        String formattedIds = convertIdsToIgdbWhereClauseGameIds(ids);
+
+        String fieldsClause = "fields name, updated_at, genres.name, websites.url, websites.category, platforms.name, first_release_date, summary; ";
+        String whereClause = String.format("where id = %1$s;", formattedIds);
+        String limitClause = String.format("limit %s;",limit);
+        String requestBody = String.format("%1$s%2$s%3$s", fieldsClause, whereClause, limitClause);
+
+        List<GameResponse> gameResponses = webClient.post()
+                .uri("/games")
+                .contentType(MediaType.TEXT_PLAIN)
+                .bodyValue(requestBody)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<List<GameResponse>>() {})
+                .block();
+
+        removeInvalidGames(gameResponses);
+
+        return gameResponses;
+    }
+
+    public List<CoverResponse> retrieveCoverResponsesByGameIdRange(int minId, int maxId, int limit) {
         int inclusiveMinId = minId - 1;
         int inclusiveMaxId = maxId + 1;
 
@@ -110,6 +171,58 @@ public class IgdbService {
         return coverResponses;
     }
 
+    public List<CoverResponse> retrieveCoverResponsesByGameIds(List<String> gameIds, int limit) {
+        String ids = convertIdsToIgdbWhereClauseGameIds(gameIds);
+
+        String fieldsClause = "fields url, game; ";
+        String whereClause = String.format("where game = %1$s; ", ids);
+        String limitClause = String.format("limit %s;",limit);
+        String requestBody = String.format("%1$s%2$s%3$s", fieldsClause, whereClause, limitClause);
+
+        List<CoverResponse> coverResponses = webClient.post()
+                .uri("/covers")
+                .contentType(MediaType.TEXT_PLAIN)
+                .bodyValue(requestBody)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<List<CoverResponse>>() {})
+                .block();
+
+        return coverResponses;
+    }
+
+    public List<GameResponse> retrieveNewReleaseGameResponses(long releaseDateUpperBound, int limit) {
+        String fieldsClause = "fields game, date; ";
+        String whereClause;
+
+        if (releaseDateUpperBound == 0) {
+            whereClause = "where human != \"TBD\";";
+        } else {
+            whereClause = String.format("where human != \"TBD\" & date < %s;", releaseDateUpperBound);
+        }
+
+        String sortClause = String.format("sort date desc;");
+        String limitClause = String.format("limit %s;",limit);
+        String requestBody = String.format("%1$s%2$s%3$s%4$s", fieldsClause, whereClause, sortClause, limitClause);
+
+        List<IdResponse> idResponses = webClient.post()
+                .uri("/release_dates")
+                .contentType(MediaType.TEXT_PLAIN)
+                .bodyValue(requestBody)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<List<IdResponse>>() {})
+                .block();
+
+        Set<String> ids = new HashSet<>();
+
+        for (IdResponse id: idResponses) {
+            ids.add(id.getGameId());
+        }
+
+        List<String> uniqueIds = new ArrayList<>(ids);
+
+        return retrieveGameResponsesByIds(uniqueIds, limit);
+    }
+
     public List<Game> convertGameResponsesToGames(List<GameResponse> gameResponses) {
         List<Game> games = new ArrayList<>();
 
@@ -124,128 +237,153 @@ public class IgdbService {
         return games;
     }
 
-    public Game getGameById(int id) {
-        return new Game(getGameResponseById(id));
+    public Map<String, String> convertCoverResponsesToLogos(List<CoverResponse> coverResponses) {
+        Map<String, String> logos = new HashMap<>();
+
+        for (CoverResponse cover: coverResponses) {
+            logos.put(cover.gameId, cover.logoUrl);
+        }
+
+        return logos;
     }
 
-    public List<Game> retrieveGamesByRangeWithLimit(int minId, int maxId, int limit) {
-        List<GameResponse> gameResponses = getGameResponsesWithSingleRequest(minId, maxId, limit);
-        List<CoverResponse> coverResponses = getCoverResponsesWithSingleRequest(minId, maxId, limit);
+    public Game retrieveGameById(int id) {
+        return new Game(retrieveGameResponseById(id));
+    }
 
-        List<Game> games = convertGameResponsesToGames(gameResponses);
+    public List<Game> retrieveGamesByTitles(List<String> titles, int limit) {
+        List<GameResponse> gameResponses = retrieveGameResponsesByTitles(titles, limit);
+        List<String> ids = new ArrayList<>();
 
-        // Add logos to games
-        for (Game game: games) {
-            for (CoverResponse cover: coverResponses) {
-                if (game.getIgdbId().equals(cover.gameId)) {
-                    game.setLogoUrl(cover.logoUrl);
-                    break;
-                }
-            }
+        for (GameResponse response: gameResponses) {
+            ids.add(response.igdbId);
         }
+
+        List<CoverResponse> coverResponses = retrieveCoverResponsesByGameIds(ids, limit);
+        List<Game> games = convertGameResponsesToGames(gameResponses);
+        Map<String, String> logos = convertCoverResponsesToLogos(coverResponses);
+        addLogosToGames(games, logos);
 
         return games;
     }
 
-    public int findMaxGameId(int requestRateLimitPerSecond, int nullResponseThreshold, int numDaysToBacktrack) throws InterruptedException {
-        // Start with initialTimestamp and decrement by day until valid response is returned
-        int approxMostRecentGameId = findMostRecentIdByDecrementingDateCreated(requestRateLimitPerSecond, numDaysToBacktrack);
+    public List<Game> retrieveGamesByIds(List<String> ids, int limit) {
+        List<GameResponse> gameResponses = retrieveGameResponsesByIds(ids, limit);
 
-        System.out.println(approxMostRecentGameId);
+        List<CoverResponse> coverResponses = retrieveCoverResponsesByGameIds(ids, limit);
+        List<Game> games = convertGameResponsesToGames(gameResponses);
+        Map<String, String> logos = convertCoverResponsesToLogos(coverResponses);
+        addLogosToGames(games, logos);
 
-        // Search for valid games by incrementing from valid id until nullResponseThreshold is exceeded
-        int maxId = findMaxIdByIncrementingId(approxMostRecentGameId, nullResponseThreshold, requestRateLimitPerSecond);
-
-        return maxId;
+        return games;
     }
 
-    private int findMostRecentIdByDecrementingDateCreated(int requestRateLimitPerSecond, int numDaysToBacktrack) throws InterruptedException {
-        Calendar calendar = Calendar.getInstance();
-        long initialTimestamp = calendar.getTimeInMillis() / 1000;
-        int oneDayInSeconds = 60 * 60 * 24;
-        int mostRecentGameId = 0;
+    public List<Game> retrieveNewReleases(long oldestReleaseDate, int limit) {
+        List<GameResponse> gameResponses = retrieveNewReleaseGameResponses(oldestReleaseDate, limit);
 
-        // Start with initialTimestamp and backtrack by one day until valid response
-        boolean isValidResponse = false;
-        long currentGameTimestamp = initialTimestamp;
-        long previousRequestTimestamp = 0;
-        while (!isValidResponse) {
-            String fieldsClause = "fields id, created_at; ";
-            String whereClause = String.format("where created_at > %s;", currentGameTimestamp);
-            String requestBody = String.format("%1$s%2$s", fieldsClause, whereClause);
+        Set<String> ids = new HashSet<>();
 
-            long differenceBetweenRequests;
-            long nextRequestTimestamp = calendar.getTimeInMillis();
-            differenceBetweenRequests = nextRequestTimestamp - previousRequestTimestamp;
-            if (differenceBetweenRequests < (1000 / requestRateLimitPerSecond)) {
-                Thread.sleep(Math.abs((1000 / requestRateLimitPerSecond) - differenceBetweenRequests));
-            }
+        for (GameResponse response: gameResponses) {
+            ids.add(response.igdbId);
+        }
 
-            logger.info(String.format("Attempting to find game created after %s.", (new Date(currentGameTimestamp * 1000)).toString()));
-            List<FindMaxIdResponse> response = webClient.post()
-                    .uri("/games")
-                    .contentType(MediaType.TEXT_PLAIN)
-                    .bodyValue(requestBody)
-                    .retrieve()
-                    .bodyToMono(new ParameterizedTypeReference<List<FindMaxIdResponse>>() {})
-                    .block();
+        List<String> uniqueIds = new ArrayList<>(ids);
 
-            previousRequestTimestamp = calendar.getTimeInMillis() / 1000;
+        List<Game> games = convertGameResponsesToGames(gameResponses);
+        List<CoverResponse> coverResponses = retrieveCoverResponsesByGameIds(uniqueIds, limit);
+        Map<String, String> logos = convertCoverResponsesToLogos(coverResponses);
+        addLogosToGames(games, logos);
 
-            if (!response.isEmpty()) {
-                mostRecentGameId = response.get(0).id;
-                logger.info(String.format("Current max id is %s.", mostRecentGameId));
-                isValidResponse = true;
-            }
-            else {
-                currentGameTimestamp = currentGameTimestamp - (oneDayInSeconds * numDaysToBacktrack);
+        return games;
+    }
+
+    public String convertTitlesToIgdbWhereClauseNames(final List<String> titles) {
+        StringBuilder names = new StringBuilder();
+        names.append("(");
+
+        Iterator it = titles.iterator();
+        while (it.hasNext()) {
+            names.append("\"").append(it.next()).append("\"");
+
+            if (it.hasNext()) {
+                names.append(", ");
             }
         }
 
-        return mostRecentGameId;
+        names.append(")");
+
+        return names.toString();
     }
 
-    private int findMaxIdByIncrementingId(int approxMaxId, int nullResponseThreshold, int requestRateLimitPerSecond) throws InterruptedException {
-        Calendar calendar = Calendar.getInstance();
-        long previousRequestTimestamp = 0;
-        int consecutiveNullResponses = 0;
-        int maxId = approxMaxId;
-        int currentMaxId = approxMaxId;
-        while (consecutiveNullResponses < nullResponseThreshold) {
-            String fieldsClause = "fields id, created_at; ";
-            String whereClause = String.format("where id = %s;", currentMaxId);
-            String requestBody = String.format("%1$s%2$s", fieldsClause, whereClause);
+    public String convertIdsToIgdbWhereClauseGameIds(final List<String> ids) {
+        StringBuilder formattedIds = new StringBuilder();
+        formattedIds.append("(");
 
-            long differenceBetweenRequests;
-            long nextRequestTimestamp = calendar.getTimeInMillis();
-            differenceBetweenRequests = nextRequestTimestamp - previousRequestTimestamp;
-            if (differenceBetweenRequests < (1000 / requestRateLimitPerSecond)) {
-                Thread.sleep(Math.abs((1000 / requestRateLimitPerSecond) - differenceBetweenRequests));
+        Iterator it = ids.iterator();
+        while (it.hasNext()) {
+            formattedIds.append(it.next());
+
+            if (it.hasNext()) {
+                formattedIds.append(", ");
             }
-
-            logger.info(String.format("Attempting to find game with id of %s.", currentMaxId));
-            List<FindMaxIdResponse> response = webClient.post()
-                    .uri("/games")
-                    .contentType(MediaType.TEXT_PLAIN)
-                    .bodyValue(requestBody)
-                    .retrieve()
-                    .bodyToMono(new ParameterizedTypeReference<List<FindMaxIdResponse>>() {})
-                    .block();
-
-            previousRequestTimestamp = calendar.getTimeInMillis();
-
-            if (!response.isEmpty()) {
-                maxId = response.get(0).id;
-                logger.info(String.format("Max id is %s.", maxId));
-                consecutiveNullResponses = 0;
-            }
-            else {
-                consecutiveNullResponses++;
-            }
-
-            currentMaxId++;
         }
 
-        return maxId;
+        formattedIds.append(")");
+
+        return formattedIds.toString();
+    }
+
+    public List<Game> retrieveGamesByRangeWithLimit(int minId, int maxId, int limit) {
+        List<GameResponse> gameResponses = retrieveGameResponsesByIdRange(minId, maxId, limit);
+        List<CoverResponse> coverResponses = retrieveCoverResponsesByGameIdRange(minId, maxId, limit);
+
+        List<Game> games = convertGameResponsesToGames(gameResponses);
+        Map<String, String> logos = convertCoverResponsesToLogos(coverResponses);
+
+        addLogosToGames(games, logos);
+
+        return games;
+    }
+
+    public void addLogosToGames(List<Game> games, Map<String, String> logos) {
+        // Add logos to games
+        for (int i = 0; i < games.size(); i++) {
+            String igdbId = games.get(i).getIgdbId();
+
+            if (logos.get(igdbId) != null) {
+                games.get(i).setLogoUrl(logos.get(igdbId));
+            }
+        }
+    }
+
+    public int findMaxGameId() {
+        String fieldsClause = "fields id; ";
+        String sortClause = "sort id desc; ";
+        String limitClause = "limit 1; ";
+
+        String requestBody = String.format("%1$s%2$s%3$s", fieldsClause, sortClause, limitClause);
+
+        List<GameResponse> gameResponses = webClient.post()
+                .uri("/games")
+                .contentType(MediaType.TEXT_PLAIN)
+                .bodyValue(requestBody)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<List<GameResponse>>() {})
+                .block();
+
+        GameResponse response = new GameResponse();
+
+        try {
+            response = gameResponses.get(0);
+        } catch (NullPointerException n) {
+            n.printStackTrace();
+        }
+
+        return Integer.parseInt(response.igdbId);
+    }
+
+    public void removeInvalidGames(List<GameResponse> responses) {
+        responses.removeIf(response -> response.firstReleaseDateInSeconds == 0
+                || response.summary.isEmpty());
     }
 }
