@@ -1,6 +1,7 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories;
 
 import com.mongodb.BasicDBObject;
+import com.mongodb.bulk.BulkWriteResult;
 import com.mongodb.client.model.Aggregates;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.SourceUrls;
@@ -158,7 +159,7 @@ public class GameRepositoryCustomImpl implements GameRepositoryCustom {
     }
 
     @Override
-    public void bulkUpdateGames(List<Game> games) {
+    public int bulkUpdateGames(List<Game> games) {
         BulkOperations ops = template.bulkOps(BulkOperations.BulkMode.UNORDERED, Game.class,"games");
         for (Game game: games) {
             Query query = new Query(Criteria.where("igdbId").is(game.getIgdbId()));
@@ -171,11 +172,9 @@ public class GameRepositoryCustomImpl implements GameRepositoryCustom {
                     .set("sourceUrls", game.getSourceUrls())
                     .set("lastUpdated", new Date());
 
-            System.out.println("Title: " + game.getTitle() + " igdbId: " + game.getIgdbId());
-
             ops.updateOne(query, update);
         }
 
-        ops.execute();
+        return ops.execute().getModifiedCount();
     }
 }

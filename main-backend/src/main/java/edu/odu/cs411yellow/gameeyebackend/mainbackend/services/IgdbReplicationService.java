@@ -41,17 +41,14 @@ public class IgdbReplicationService {
         int mongoBufferSize = 1000;
         int elasticBufferSize = 10000;
 
+        ReplicationCounters counters = new ReplicationCounters();
+
         // Stores igdb games, which may be new or existing in mongo and elastic
         List<Game> igdbGameBuffer = new ArrayList<>(igdbGameBufferSize);
         List<Game> mongoGameBuffer = new ArrayList<>(mongoBufferSize);
         List<ElasticGame> elasticGameBuffer = new ArrayList<>(elasticBufferSize);
 
         long numberOfRequestsWithLimit = 1;
-        int updatedGameCount = 0;
-        int newGameCount = 0;
-        int newElasticGameCount = 0;
-        int currentElasticBufferCount = 0;
-        int currentMongoBufferCount = 0;
         while (remainder > 0) {
             if (remainder > limit) {
                 currentMaxId = currentMinId + limit;
@@ -74,48 +71,8 @@ public class IgdbReplicationService {
             // Fill mongo/elastic buffers with new and updated games if greater than or equal to the igdbGameBufferSize
             // Fill mongo/elastic buffers if remainder is negative, as there are no more games to retrieve.
             if ((limit * numberOfRequestsWithLimit) >= igdbGameBufferSize || remainder <= 0) {
-                for (Game igdbGame: igdbGameBuffer) {
-                    // Check that the IGDB game is not null
-                    if (!igdbGame.getIgdbId().equals("")) {
-                        // Update an existing IGDB game in games collection
-                        if (gameService.existsByIgdbId(igdbGame.getIgdbId())) {
-                            // Update game and elastic search if necessary
-                            updateExistingGame(igdbGame);
-
-                            updatedGameCount++;
-                        }
-                        else {
-                            // Add new game to mongoGameBuffer
-                            igdbGame.setId(ObjectId.get().toString());
-                            mongoGameBuffer.add(igdbGame);
-
-                            // Add new game to elasticGameBuffer
-                            ElasticGame elasticGame = new ElasticGame(igdbGame);
-                            elasticGameBuffer.add(elasticGame);
-
-                            newElasticGameCount++;
-                            currentElasticBufferCount++;
-                            currentMongoBufferCount++;
-                            newGameCount++;
-                        }
-                    }
-
-                    // Save games to mongo if buffer is >= to buffer size
-                    if (currentMongoBufferCount >= mongoBufferSize) {
-                        gameService.saveAll(mongoGameBuffer);
-                        mongoGameBuffer.clear();
-
-                        currentMongoBufferCount = 0;
-                    }
-
-                    // Save games to elastic search buffer is >= to buffer size
-                    if (currentElasticBufferCount >= elasticBufferSize) {
-                        elasticService.saveAll(elasticGameBuffer);
-                        elasticGameBuffer.clear();
-
-                        currentElasticBufferCount = 0;
-                    }
-                }
+                processElasticAndMongoGames(igdbGameBuffer, mongoGameBuffer, elasticGameBuffer,
+                        mongoBufferSize, elasticBufferSize, counters);
 
                 igdbGameBuffer.clear();
             }
@@ -131,7 +88,7 @@ public class IgdbReplicationService {
         elasticGameBuffer.clear();
 
         String status = String.format("Finished replication. MongoDB status: Added %1$s new games and updated %2$s existing games. Elasticsearch status: Added %3$s new game titles.",
-                                       newGameCount, updatedGameCount, newElasticGameCount);
+                                       counters.newGameCount, counters.updatedGameCount, counters.newElasticGameCount);
 
         logger.info(status);
 
@@ -149,17 +106,14 @@ public class IgdbReplicationService {
         int mongoBufferSize = 1000;
         int elasticBufferSize = 10000;
 
+        ReplicationCounters counters = new ReplicationCounters();
+
         // Stores igdb games, which may be new or existing in mongo and elastic
         List<Game> igdbGameBuffer = new ArrayList<>(igdbGameBufferSize);
         List<Game> mongoGameBuffer = new ArrayList<>(mongoBufferSize);
         List<ElasticGame> elasticGameBuffer = new ArrayList<>(elasticBufferSize);
 
         long numberOfRequestsWithLimit = 1;
-        int updatedGameCount = 0;
-        int newGameCount = 0;
-        int newElasticGameCount = 0;
-        int currentElasticBufferCount = 0;
-        int currentMongoBufferCount = 0;
         while (remainder > 0) {
             if (remainder > limit) {
                 remainder -= limit;
@@ -180,48 +134,8 @@ public class IgdbReplicationService {
             // Fill mongo/elastic buffers with new and updated games if greater than or equal to the igdbGameBufferSize
             // Fill mongo/elastic buffers if remainder is negative, as there are no more games to retrieve.
             if ((limit * numberOfRequestsWithLimit) >= igdbGameBufferSize || remainder <= 0) {
-                for (Game igdbGame: igdbGameBuffer) {
-                    // Check that the IGDB game is not null
-                    if (!igdbGame.getIgdbId().equals("")) {
-                        // Update an existing IGDB game in games collection
-                        if (gameService.existsByIgdbId(igdbGame.getIgdbId())) {
-                            // Update game and elastic search if necessary
-                            updateExistingGame(igdbGame);
-
-                            updatedGameCount++;
-                        }
-                        else {
-                            // Add new game to mongoGameBuffer
-                            igdbGame.setId(ObjectId.get().toString());
-                            mongoGameBuffer.add(igdbGame);
-
-                            // Add new game to elasticGameBuffer
-                            ElasticGame elasticGame = new ElasticGame(igdbGame);
-                            elasticGameBuffer.add(elasticGame);
-
-                            newElasticGameCount++;
-                            currentElasticBufferCount++;
-                            currentMongoBufferCount++;
-                            newGameCount++;
-                        }
-                    }
-
-                    // Save games to mongo if buffer is >= to buffer size
-                    if (currentMongoBufferCount >= mongoBufferSize) {
-                        gameService.saveAll(mongoGameBuffer);
-                        mongoGameBuffer.clear();
-
-                        currentMongoBufferCount = 0;
-                    }
-
-                    // Save games to elastic search buffer is >= to buffer size
-                    if (currentElasticBufferCount >= elasticBufferSize) {
-                        elasticService.saveAll(elasticGameBuffer);
-                        elasticGameBuffer.clear();
-
-                        currentElasticBufferCount = 0;
-                    }
-                }
+                processElasticAndMongoGames(igdbGameBuffer, mongoGameBuffer, elasticGameBuffer,
+                                            mongoBufferSize, elasticBufferSize, counters);
 
                 igdbGameBuffer.clear();
             }
@@ -237,11 +151,57 @@ public class IgdbReplicationService {
         elasticGameBuffer.clear();
 
         String status = String.format("Finished replication. MongoDB status: Added %1$s new games and updated %2$s existing games. Elasticsearch status: Added %3$s new game titles.",
-                newGameCount, updatedGameCount, newElasticGameCount);
+                                       counters.newGameCount, counters.updatedGameCount, counters.newElasticGameCount);
 
         logger.info(status);
 
         return status;
+    }
+
+    public void processElasticAndMongoGames(List<Game> igdbGameBuffer, List<Game> mongoGameBuffer, List<ElasticGame> elasticGameBuffer,
+                                            int mongoBufferSize, int elasticBufferSize, ReplicationCounters counters) {
+        for (Game igdbGame: igdbGameBuffer) {
+            // Check that the IGDB game is not null
+            if (!igdbGame.getIgdbId().equals("")) {
+                // Update an existing IGDB game in games collection
+                if (gameService.existsByIgdbId(igdbGame.getIgdbId())) {
+                    // Update game and elastic search if necessary
+                    updateExistingGame(igdbGame);
+
+                    counters.updatedGameCount++;
+                }
+                else {
+                    // Add new game to mongoGameBuffer
+                    igdbGame.setId(ObjectId.get().toString());
+                    mongoGameBuffer.add(igdbGame);
+
+                    // Add new game to elasticGameBuffer
+                    ElasticGame elasticGame = new ElasticGame(igdbGame);
+                    elasticGameBuffer.add(elasticGame);
+
+                    counters.newElasticGameCount++;
+                    counters.currentElasticBufferCount++;
+                    counters.currentMongoBufferCount++;
+                    counters.newGameCount++;
+                }
+            }
+
+            // Save games to mongo if buffer is >= to buffer size
+            if (counters.currentMongoBufferCount >= mongoBufferSize) {
+                gameService.saveAll(mongoGameBuffer);
+                mongoGameBuffer.clear();
+
+                counters.currentMongoBufferCount = 0;
+            }
+
+            // Save games to elastic search buffer is >= to buffer size
+            if (counters.currentElasticBufferCount >= elasticBufferSize) {
+                elasticService.saveAll(elasticGameBuffer);
+                elasticGameBuffer.clear();
+
+                counters.currentElasticBufferCount = 0;
+            }
+        }
     }
 
     public String replicateNewReleases(final int num, int limit) {
@@ -272,7 +232,7 @@ public class IgdbReplicationService {
                 List<Game> games = igdbService.retrieveNewReleases(currentOldestReleaseDate, limit);
 
                 for (Game game: games) {
-                    if (igdbGameBuffer.indexOf(game) != -1) {
+                    if (igdbGameBuffer.contains(game)) {
                         igdbGameBuffer.add(game);
                     }
                 }
@@ -282,7 +242,7 @@ public class IgdbReplicationService {
                 List<Game> games = igdbService.retrieveNewReleases(currentOldestReleaseDate, remainder);
 
                 for (Game game: games) {
-                    if (igdbGameBuffer.indexOf(game) != -1) {
+                    if (igdbGameBuffer.contains(game)) {
                         igdbGameBuffer.add(game);
                     }
                 }
@@ -386,7 +346,7 @@ public class IgdbReplicationService {
         elasticService.updateTitleLogoReleaseDate(elasticGame);
     }
 
-    public int bulkUpdateElasticSearch(List<Game> games) {
+    public int updateElastic(List<Game> games) {
         List<ElasticGame> elasticGames = new ArrayList<>();
 
         for (Game game: games) {
@@ -403,7 +363,7 @@ public class IgdbReplicationService {
     public String updateGamesCollection(int limit) {
         List<String> ids = gameRepository.findAllIgdbIds();
 
-        logger.info(String.format("Attempting to updates the %1$s games in the games collection. Result limit per API request: %2$s.",
+        logger.info(String.format("Attempting to update the %1$s games in the games collection. Result limit per API request: %2$s.",
                     ids.size(), limit));
 
         int remainder = ids.size();
@@ -413,7 +373,8 @@ public class IgdbReplicationService {
         List<Game> igdbGameBuffer = new ArrayList<>(igdbGameBufferSize);
 
         int numberOfRequestsWithLimit = 1;
-        int updatedCount = 0;
+        int elasticUpdateCount = 0;
+        int mongoUpdateCount = 0;
         while (remainder > 0) {
             if (remainder > limit) {
                 remainder -= limit;
@@ -434,9 +395,8 @@ public class IgdbReplicationService {
             // Update games collection with new and updated games if greater than or equal to the igdbGameBufferSize
             // Update games collection if remainder is negative, as there are no more games to retrieve.
             if ((limit * numberOfRequestsWithLimit) >= igdbGameBufferSize || remainder <= 0) {
-                gameRepository.bulkUpdateGames(igdbGameBuffer);
-                int numUpdated = bulkUpdateElasticSearch(igdbGameBuffer);
-                updatedCount += numUpdated;
+                mongoUpdateCount += gameRepository.bulkUpdateGames(igdbGameBuffer);
+                elasticUpdateCount += updateElastic(igdbGameBuffer);
 
                 igdbGameBuffer.clear();
             }
@@ -444,9 +404,25 @@ public class IgdbReplicationService {
             numberOfRequestsWithLimit++;
         }
 
-        String status = String.format("Finished replicating %s games in the games collection.", updatedCount);
+        String status = String.format("Updated %1$s games in games collection and %2$s games in Elastic.", mongoUpdateCount, elasticUpdateCount);
         logger.info(status);
 
         return status;
+    }
+
+    public static class ReplicationCounters {
+        public int updatedGameCount;
+        public int newGameCount;
+        public int newElasticGameCount;
+        public int currentElasticBufferCount;
+        public int currentMongoBufferCount;
+
+        public ReplicationCounters() {
+            this.updatedGameCount = 0;
+            this.newGameCount = 0;
+            this.newElasticGameCount = 0;
+            this.currentElasticBufferCount = 0;
+            this.currentMongoBufferCount = 0;
+        }
     }
 }

@@ -22,5 +22,5 @@ public interface GameRepositoryCustom {
                                                                List<String> genres, Date releaseDate, SourceUrls sourceUrls);
     void updateLastUpdatedField(String gameId);
     List<String> findAllIgdbIds();
-    void bulkUpdateGames(List<Game> games);
+    int bulkUpdateGames(List<Game> games);
 }

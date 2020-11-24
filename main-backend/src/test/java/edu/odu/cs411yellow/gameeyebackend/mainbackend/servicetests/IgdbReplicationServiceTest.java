@@ -51,7 +51,7 @@ public class IgdbReplicationServiceTest {
         List<Game> preReplicationTestDbGames = new ArrayList<>();
 
         // Replicate new games to db.
-        String result = igdbReplicationService.replicateGamesByIdRange(minId, maxId, limit);
+        igdbReplicationService.replicateGamesByIdRange(minId, maxId, limit);
 
         // Find new games from db.
         for (int igdbId = minId; igdbId < maxId-minId+2; igdbId++) {
@@ -330,23 +330,20 @@ public class IgdbReplicationServiceTest {
     public void testUpdateGamesCollection() {
         // Test for adding new games
         int minId = 1;
-        int maxId = 200;
-        int limit = 250;
-
-        List<Game> preReplicationTestDbGames = new ArrayList<>();
+        int maxId = 100;
+        int limit = 150;
 
         // Replicate new games to db.
         String status = igdbReplicationService.replicateGamesByIdRange(minId, maxId, limit);
-
+        System.out.println(status);
         // Find new games from db.
-        preReplicationTestDbGames.addAll(gameRepository.findAll());
+        List<Game> preReplicationTestDbGames = new ArrayList<>(gameRepository.findAll());
 
         // Test for updating the games collection. Ensure only required fields are overwritten.
-        List<Game> postReplicationTestDbGames = new ArrayList<>();
         igdbReplicationService.updateGamesCollection(limit);
 
         // Find updated games in db.
-        postReplicationTestDbGames.addAll(gameRepository.findAll());
+        List<Game> postReplicationTestDbGames = new ArrayList<>(gameRepository.findAll());
 
         // Compare IGDB games to new games written to db.
         for (int igdbId = 0; igdbId < preReplicationTestDbGames.size(); igdbId++) {
