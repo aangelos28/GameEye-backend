@@ -68,9 +68,9 @@ public class GameServiceTest {
         String result = replicationService.replicateGamesByIdRange(minId, maxId, limit);
         System.out.println(result);
 
-        String gameIgdbId1 = "100000";
-        String gameIgdbId2 = "100083";
-        String gameIgdbId3 = "100152";
+        String gameIgdbId1 = "100004";
+        String gameIgdbId2 = "100060";
+        String gameIgdbId3 = "100111";
 
         Game game1 = gameRepository.findByIgdbId(gameIgdbId1);
         Game game2 = gameRepository.findByIgdbId(gameIgdbId2);

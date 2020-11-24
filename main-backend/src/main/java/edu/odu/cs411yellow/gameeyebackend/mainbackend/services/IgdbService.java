@@ -35,7 +35,7 @@ public class IgdbService {
     }
 
     public GameResponse retrieveGameResponseById(int id) {
-        String fieldsClause = "fields name, updated_at, genres.name, websites.url, websites.category, platforms.name, first_release_date, summary, involved_companies; ";
+        String fieldsClause = "fields name, updated_at, genres.name, websites.url, websites.category, platforms.name, first_release_date, summary; ";
         String whereClause = String.format("where id = %s;", id);
         String requestBody = String.format("%1$s%2$s", fieldsClause, whereClause);
 
@@ -91,7 +91,7 @@ public class IgdbService {
         int inclusiveMinId = minId - 1;
         int inclusiveMaxId = maxId + 1;
 
-        String fieldsClause = "fields name, updated_at, genres.name, websites.url, websites.category, platforms.name, first_release_date, summary, involved_companies; ";
+        String fieldsClause = "fields name, updated_at, genres.name, websites.url, websites.category, platforms.name, first_release_date, summary; ";
         String whereClause = String.format("where id > %1$s & id < %2$s;", inclusiveMinId, inclusiveMaxId);
         String limitClause = String.format("limit %s;",limit);
         String requestBody = String.format("%1$s%2$s%3$s", fieldsClause, whereClause, limitClause);
@@ -112,7 +112,7 @@ public class IgdbService {
     public List<GameResponse> retrieveGameResponsesByTitles(final List<String> titles, int limit) {
         String names = convertTitlesToIgdbWhereClauseNames(titles);
 
-        String fieldsClause = "fields name, updated_at, genres.name, websites.url, websites.category, platforms.name, first_release_date, summary, involved_companies; ";
+        String fieldsClause = "fields name, updated_at, genres.name, websites.url, websites.category, platforms.name, first_release_date, summary; ";
         String whereClause = String.format("where name = %1$s;", names);
         String limitClause = String.format("limit %s;",limit);
         String requestBody = String.format("%1$s%2$s%3$s", fieldsClause, whereClause, limitClause);
@@ -133,7 +133,7 @@ public class IgdbService {
     public List<GameResponse> retrieveGameResponsesByIds(final List<String> ids, int limit) {
         String formattedIds = convertIdsToIgdbWhereClauseGameIds(ids);
 
-        String fieldsClause = "fields name, updated_at, genres.name, websites.url, websites.category, platforms.name, first_release_date, summary, involved_companies; ";
+        String fieldsClause = "fields name, updated_at, genres.name, websites.url, websites.category, platforms.name, first_release_date, summary; ";
         String whereClause = String.format("where id = %1$s;", formattedIds);
         String limitClause = String.format("limit %s;",limit);
         String requestBody = String.format("%1$s%2$s%3$s", fieldsClause, whereClause, limitClause);
@@ -147,7 +147,6 @@ public class IgdbService {
                 .block();
 
         removeInvalidGames(gameResponses);
-
 
         return gameResponses;
     }
@@ -372,7 +371,6 @@ public class IgdbService {
                 .bodyToMono(new ParameterizedTypeReference<List<GameResponse>>() {})
                 .block();
 
-        removeInvalidGames(gameResponses);
         GameResponse response = new GameResponse();
 
         try {
@@ -385,8 +383,7 @@ public class IgdbService {
     }
 
     public void removeInvalidGames(List<GameResponse> responses) {
-        responses.removeIf(response -> response.summary.isEmpty()
-                || response.involvedCompanies.size() == 0
-                || response.firstReleaseDateInSeconds == 0);
+        responses.removeIf(response -> response.firstReleaseDateInSeconds == 0
+                || response.summary.isEmpty());
     }
 }

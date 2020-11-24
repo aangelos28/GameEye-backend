@@ -25,8 +25,6 @@ public class IgdbModel {
         public long firstReleaseDateInSeconds;
         @JsonProperty("summary")
         public String summary;
-        @JsonProperty("involved_companies")
-        public List<String> involvedCompanies;
 
         public GameResponse() {
             this.igdbId = "";
@@ -37,11 +35,10 @@ public class IgdbModel {
             this.sourceUrls = new ArrayList<>();
             this.firstReleaseDateInSeconds = 0;
             this.summary = "";
-            this.involvedCompanies = new ArrayList<>();
         }
 
         public GameResponse(String igdbId, String title, List<PlatformResponse> platforms, List<GenreResponse> genres, long lastUpdatedInSeconds,
-                            List<WebsiteResponse> sourceUrls, long firstReleaseDateInSeconds, String summary, List<String> involvedCompanies) {
+                            List<WebsiteResponse> sourceUrls, long firstReleaseDateInSeconds, String summary) {
             this.igdbId = igdbId;
             this.title = title;
             this.platforms = platforms;
@@ -50,7 +47,6 @@ public class IgdbModel {
             this.sourceUrls = sourceUrls;
             this.firstReleaseDateInSeconds = firstReleaseDateInSeconds;
             this.summary = summary;
-            this.involvedCompanies = involvedCompanies;
         }
 
         public List<String> getGenres() {
@@ -92,7 +88,6 @@ public class IgdbModel {
 
             return platforms;
         }
-
     }
 
     public static class GenreResponse {
@@ -227,7 +222,6 @@ public class IgdbModel {
         @JsonIgnore
         @JsonProperty("id")
         private String releaseId;
-
         @JsonProperty("date")
         private long releaseDate;
 
