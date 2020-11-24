@@ -9,10 +9,10 @@ import org.springframework.web.reactive.function.client.WebClient;
  * Contains CLI commands related to WebScrapeOrchestrator.
  */
 @ShellComponent
-public class WebScrape {
+public class WebScraping {
     WebClient webClient;
 
-    public WebScrape(@Value("${mainbackend.baseurl}") String baseUrl) {
+    public WebScraping(@Value("${mainbackend.baseurl}") String baseUrl) {
         this.webClient = WebClient.builder()
                 .baseUrl(baseUrl)
                 .build();
@@ -21,10 +21,10 @@ public class WebScrape {
     /**
      * Initiate Scraping of RSS
      */
-    @ShellMethod(value = "Initiate Force Scrape of RSSFeeds.", key = "Force-Scrape-All")
-    public void forceScrapeAll() {
+    @ShellMethod(value = "Initiate Force Scrape of RSSFeeds.")
+    public void scrapeAll() {
         String response = this.webClient.post()
-                .uri("/private-admin/webscraping/force")
+                .uri("/private-admin/webscraping/all/run")
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
@@ -36,9 +36,9 @@ public class WebScrape {
      * Initiate Scraping of RSS
      */
     @ShellMethod(value = "Initiate Force Scrape of MockNews.", key = "Force-Scrape-MockNews")
-    public void forceScrapeMockNews() {
+    public void scrapeMockNewsWebsite() {
         String response = this.webClient.post()
-                .uri("/private-admin/webscraping/mockwebsite/force")
+                .uri("/private-admin/webscraping/mocknewswebsite/run")
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
