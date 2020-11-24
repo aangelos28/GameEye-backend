@@ -27,7 +27,6 @@ public class WebScrapeController {
     @PostMapping(path = "/private-admin/webscraping/force")
     public ResponseEntity<?> performForceScrapeAll() {
         webScraperOrchestrator.scrapeAll();
-        System.out.println("Hello Small World!");
         return ResponseEntity.ok("Force Scrape of RSS feeds Performed");
     }
 
@@ -37,7 +36,6 @@ public class WebScrapeController {
     @PostMapping(path = "/private-admin/webscraping/mockwebsite/force")
     public ResponseEntity<?> performForceScrapeMockSite() {
         webScraperOrchestrator.scrape(mock);
-        System.out.println("Hello Small World!");
         return ResponseEntity.ok("Force Scrape of Mock News Performed");
     }
 

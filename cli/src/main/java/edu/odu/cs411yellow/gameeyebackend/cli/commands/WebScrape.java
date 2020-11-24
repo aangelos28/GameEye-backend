@@ -21,7 +21,7 @@ public class WebScrape {
     /**
      * Initiate Scraping of RSS
      */
-    @ShellMethod(value = "Initiate Force Scrape of RSSFeeds.", key = "Force-Scrape-RSS")
+    @ShellMethod(value = "Initiate Force Scrape of RSSFeeds.", key = "Force-Scrape-All")
     public void forceScrapeAll() {
         String response = this.webClient.post()
                 .uri("/private-admin/webscraping/force")
@@ -29,7 +29,7 @@ public class WebScrape {
                 .bodyToMono(String.class)
                 .block();
 
-        System.out.println(response);
+        System.out.println("Force Scrape of RSS feeds Performed");
     }
 
     /**
@@ -43,6 +43,6 @@ public class WebScrape {
                 .bodyToMono(String.class)
                 .block();
 
-        System.out.println(response);
+        System.out.println("Force Scrape of Mock News Performed");
     }
 }
