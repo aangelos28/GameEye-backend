@@ -35,7 +35,7 @@ public class WebScraping {
     /**
      * Initiate Scraping of RSS
      */
-    @ShellMethod(value = "Initiate Force Scrape of MockNews.", key = "Force-Scrape-MockNews")
+    @ShellMethod(value = "Initiate Force Scrape of MockNews.")
     public void scrapeMockNewsWebsite() {
         String response = this.webClient.post()
                 .uri("/private-admin/webscraping/mocknewswebsite/run")
