@@ -10,6 +10,8 @@ import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.stereotype.Service;
 
@@ -21,22 +23,28 @@ import java.util.List;
 public class ElasticGameCreationService {
     ElasticGameRepository elasticGames;
     MongoOperations mongo;
+    ElasticsearchOperations elasticOps;
 
     Logger logger = LoggerFactory.getLogger(ElasticGameCreationService.class);
 
     @Autowired
-    ElasticGameCreationService(ElasticGameRepository elasticGames, MongoOperations mongo) {
+    ElasticGameCreationService(ElasticGameRepository elasticGames, MongoOperations mongo,
+                               @Qualifier("elasticsearchOperations") ElasticsearchOperations elasticOps) {
         this.elasticGames = elasticGames;
         this.mongo = mongo;
+        this.elasticOps = elasticOps;
     }
 
     /**
      * Inserts the title and id of every game to ElasticSearch.
-     * Note: The ElasticSearch index should be empty.
+     * Deletes previous ElasticSearch games.
      *
      * @return Number of created elastic games
      */
     public long createElasticGamesFromGames() {
+        // Delete existing Elasticsearch games index
+        elasticOps.indexOps(ElasticGame.class).delete();
+
         final MongoCollection<Document> gamesCollection = mongo.getCollection(mongo.getCollectionName(Game.class));
 
         final FindIterable<Document> iterable = gamesCollection.find();
