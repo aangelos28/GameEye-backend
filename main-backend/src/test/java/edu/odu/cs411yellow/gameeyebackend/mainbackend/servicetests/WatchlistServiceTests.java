@@ -19,6 +19,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
 
+import java.util.Date;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
@@ -61,10 +62,13 @@ public class WatchlistServiceTests {
 
         Game game1 = new Game();
         game1.setTitle(game1Title);
+        game1.setReleaseDate(new Date());
         Game game2 = new Game();
         game2.setTitle(game2Title);
+        game2.setReleaseDate(new Date());
         Game game3 = new Game();
         game3.setTitle(game3Title);
+        game3.setReleaseDate(new Date());
 
         games.save(game1);
         games.save(game2);
