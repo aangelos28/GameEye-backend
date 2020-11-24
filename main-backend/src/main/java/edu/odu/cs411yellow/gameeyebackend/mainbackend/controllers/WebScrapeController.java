@@ -10,24 +10,30 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class WebScrapeController {
 
-    @Autowired
     WebScraperOrchestrator webScraperOrchestrator;
 
-    @Autowired
     UniversalScraper mock;
 
     @Autowired
-    public WebScrapeController (WebScraperOrchestrator webScraperOrchestrator){
+    public WebScrapeController (WebScraperOrchestrator webScraperOrchestrator,
+                                UniversalScraper mock){
         this.webScraperOrchestrator = webScraperOrchestrator;
+        this.mock = mock;
     }
 
     /**
      * Perform ForceScrape on All Sources
      */
     @PostMapping(path = "/private-admin/webscraping/force")
-    public ResponseEntity<?> performForceScrapeAll() {
-        webScraperOrchestrator.scrapeAll();
-        return ResponseEntity.ok("Force Scrape of RSS feeds Performed");
+    public ResponseEntity<String> performForceScrapeAll() {
+        try {
+            webScraperOrchestrator.scrapeAll();
+            return ResponseEntity.ok("Force Scrape of RSS feeds Performed");
+        }
+        catch(Exception e){
+//            System.out.println(e);
+            return ResponseEntity.ok("Force Scrape of RSS feeds FAILED");
+        }
     }
 
     /**
@@ -35,8 +41,14 @@ public class WebScrapeController {
      */
     @PostMapping(path = "/private-admin/webscraping/mockwebsite/force")
     public ResponseEntity<?> performForceScrapeMockSite() {
-        webScraperOrchestrator.scrape(mock);
-        return ResponseEntity.ok("Force Scrape of Mock News Performed");
+        try {
+            webScraperOrchestrator.scrape(mock);
+            return ResponseEntity.ok("Force Scrape of Mock News Performed");
+        }
+        catch(Exception e){
+//            System.out.println(e);
+            return ResponseEntity.ok("Force Scrape of Mock News FAILED");
+        }
     }
 
 }

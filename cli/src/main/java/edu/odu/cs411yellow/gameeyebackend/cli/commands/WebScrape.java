@@ -29,7 +29,7 @@ public class WebScrape {
                 .bodyToMono(String.class)
                 .block();
 
-        System.out.println("Force Scrape of RSS feeds Performed");
+        System.out.println(response);
     }
 
     /**
@@ -43,6 +43,6 @@ public class WebScrape {
                 .bodyToMono(String.class)
                 .block();
 
-        System.out.println("Force Scrape of Mock News Performed");
+        System.out.println(response);
     }
 }
