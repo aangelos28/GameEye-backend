@@ -1,5 +1,6 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
@@ -22,6 +23,8 @@ public class IgdbModel {
         public List<WebsiteResponse> sourceUrls;
         @JsonProperty("first_release_date")
         public long firstReleaseDateInSeconds;
+        @JsonProperty("summary")
+        public String summary;
 
         public GameResponse() {
             this.igdbId = "";
@@ -31,11 +34,11 @@ public class IgdbModel {
             this.genres = new ArrayList<>();
             this.sourceUrls = new ArrayList<>();
             this.firstReleaseDateInSeconds = 0;
+            this.summary = "";
         }
 
-        public GameResponse(String igdbId, String title, List<PlatformResponse> platforms,
-                            List<GenreResponse> genres, long lastUpdatedInSeconds,
-                            List<WebsiteResponse> sourceUrls, long firstReleaseDateInSeconds) {
+        public GameResponse(String igdbId, String title, List<PlatformResponse> platforms, List<GenreResponse> genres, long lastUpdatedInSeconds,
+                            List<WebsiteResponse> sourceUrls, long firstReleaseDateInSeconds, String summary) {
             this.igdbId = igdbId;
             this.title = title;
             this.platforms = platforms;
@@ -43,6 +46,7 @@ public class IgdbModel {
             this.genres = genres;
             this.sourceUrls = sourceUrls;
             this.firstReleaseDateInSeconds = firstReleaseDateInSeconds;
+            this.summary = summary;
         }
 
         public List<String> getGenres() {
@@ -84,7 +88,6 @@ public class IgdbModel {
 
             return platforms;
         }
-
     }
 
     public static class GenreResponse {
@@ -213,14 +216,42 @@ public class IgdbModel {
         }
     }
 
-    public static class FindMaxIdResponse {
-        public int id;
-        @JsonProperty("created_at")
-        public long createdAt;
+    public static class IdResponse {
+        @JsonProperty("game")
+        private String gameId;
+        @JsonIgnore
+        @JsonProperty("id")
+        private String releaseId;
+        @JsonProperty("date")
+        private long releaseDate;
 
-        public FindMaxIdResponse(int id, long createdAt) {
-            this.id = id;
-            this.createdAt = createdAt;
+        public IdResponse(String gameId, long releaseDate) {
+            this.gameId = gameId;
+            this.releaseDate = releaseDate;
+        }
+
+        public String getGameId() {
+            return gameId;
+        }
+
+        public void setGameId(String gameId) {
+            this.gameId = gameId;
+        }
+
+        public String getReleaseId() {
+            return releaseId;
+        }
+
+        public void setReleaseId(String releaseId) {
+            this.releaseId = releaseId;
+        }
+
+        public long getReleaseDate() {
+            return releaseDate;
+        }
+
+        public void setReleaseDate(long releaseDate) {
+            this.releaseDate = releaseDate;
         }
     }
 }

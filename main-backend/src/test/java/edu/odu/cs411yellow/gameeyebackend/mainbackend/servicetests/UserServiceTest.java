@@ -104,7 +104,7 @@ public class UserServiceTest {
 
         // Create game in mongo from IGDB
         int igdbId1 = 1;
-        Game game1 = new Game(igdbService.getGameResponseById(igdbId1));
+        Game game1 = new Game(igdbService.retrieveGameResponseById(igdbId1));
         game1.setId(ObjectId.get().toString());
         gameService.save(game1);
 

@@ -65,12 +65,12 @@ public class GameServiceTest {
         int maxId = 100152;
         int limit = 250;
 
-        String result = replicationService.replicateGamesByRange(minId, maxId, limit);
+        String result = replicationService.replicateGamesByIdRange(minId, maxId, limit);
         System.out.println(result);
 
-        String gameIgdbId1 = "100000";
-        String gameIgdbId2 = "100083";
-        String gameIgdbId3 = "100152";
+        String gameIgdbId1 = "100004";
+        String gameIgdbId2 = "100060";
+        String gameIgdbId3 = "100111";
 
         Game game1 = gameRepository.findByIgdbId(gameIgdbId1);
         Game game2 = gameRepository.findByIgdbId(gameIgdbId2);
@@ -140,7 +140,7 @@ public class GameServiceTest {
         Resources resources = new Resources(images, articles);
 
         int doomEternalId = 103298;
-        Game newGame = igdbService.getGameById(doomEternalId);
+        Game newGame = igdbService.retrieveGameById(doomEternalId);
         newGame.setResources(resources);
 
         gameRepository.insert(newGame);

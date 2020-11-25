@@ -78,13 +78,13 @@ public class GameService {
      * @param article Article object to save within a game document.
      * @param gameId Id of the game in which the article will be stored.
      */
-    public void addArticleToGame (Article article, String gameId){
+    public void addArticleToGame(Article article, String gameId){
         Game game = gameRepository.findGameById(gameId);
         game.addArticleResource(article);
         save(game);
     }
 
-    public boolean articleExistsByTitle (String articleTitle, String gameId) {
+    public boolean articleExistsByTitle(String articleTitle, String gameId) {
         Game game = gameRepository.findGameById(gameId);
         List<Article> articles = game.getResources().getArticles();
 

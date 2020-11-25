@@ -1,6 +1,5 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.modeltests;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.*;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.ImageResource;
@@ -86,7 +85,7 @@ public class GameTest {
         Resources resources = new Resources(images, articles);
 
         int doomEternalId = 103298;
-        insertedGame = igdbService.getGameById(doomEternalId);
+        insertedGame = igdbService.retrieveGameById(doomEternalId);
         insertedGame.setResources(resources);
 
         games.save(insertedGame);
@@ -126,9 +125,9 @@ public class GameTest {
     @Test
     public void testGameConstructorFromGameResponse () {
         int igdbId = 100;
-        IgdbModel.GameResponse gameResponse = igdbService.getGameResponseById(igdbId);
+        IgdbModel.GameResponse gameResponse = igdbService.retrieveGameResponseById(igdbId);
         Game convertedGame = new Game(gameResponse);
-        Game originalGame = igdbService.getGameById(igdbId);
+        Game originalGame = igdbService.retrieveGameById(igdbId);
 
         assertThat(originalGame, equalTo(convertedGame));
     }

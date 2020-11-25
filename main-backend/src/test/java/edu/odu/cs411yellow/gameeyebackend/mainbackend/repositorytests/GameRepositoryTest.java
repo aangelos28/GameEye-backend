@@ -82,7 +82,7 @@ public class GameRepositoryTest {
         Resources resources = new Resources(images, articles);
 
         int doomEternalId = 103298;
-        insertedGame = igdbService.getGameById(doomEternalId);
+        insertedGame = igdbService.retrieveGameById(doomEternalId);
         insertedGame.setResources(resources);
 
         games.save(insertedGame);

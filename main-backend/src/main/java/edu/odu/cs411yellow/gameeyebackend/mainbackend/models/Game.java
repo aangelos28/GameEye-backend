@@ -63,9 +63,9 @@ public class Game {
         this.igdbId = "";
         this.title = "";
         this.platforms = new ArrayList<>();
-        this.releaseDate = new Date();
+        this.releaseDate = null;
         this.logoUrl = "";
-        this.lastUpdated = new Date();
+        this.lastUpdated = null;
         this.genres = new ArrayList<>();
         this.sourceUrls = new SourceUrls();
         this.resources = new Resources();
@@ -77,7 +77,12 @@ public class Game {
         this.igdbId = game.igdbId;
         this.title = game.title;
         this.platforms = game.getPlatforms();
-        this.releaseDate = new Date(game.firstReleaseDateInSeconds * 1000);
+
+        if (game.firstReleaseDateInSeconds != 0) {
+            this.releaseDate = new Date(game.firstReleaseDateInSeconds * 1000);
+        } else {
+            this.releaseDate = null;
+        }
         String logoUrl = "";
 
         // Convert UNIX epoch timestamp from IGDB to year, month, day format
