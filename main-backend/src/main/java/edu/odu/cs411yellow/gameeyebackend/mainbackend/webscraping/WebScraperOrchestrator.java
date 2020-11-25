@@ -67,6 +67,7 @@ public class WebScraperOrchestrator {
                         if (!checkArticleDuplicates(id, article) && !scrapedArticles.contains(article)) {
                             scrapedArticles.add(article);
                             articleTitles.add(article.getTitle());
+                            articleGameIds.add(id);
                         }
                     }
                 }
