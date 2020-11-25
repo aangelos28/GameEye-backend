@@ -85,8 +85,16 @@ public class UniversalScraper implements WebScraper {
             snippet = snippet.substring(0, 255);
         }
 
-        return new Article("", title, url, websiteName, "",
-                snippet, publicationDate, publicationDate, false);
+        Article article = new Article();
+        article.setTitle(title);
+        article.setUrl(url);
+        article.setNewsWebsiteName(websiteName);
+        article.setSnippet(snippet);
+        article.setPublicationDate(publicationDate);
+        article.setLastUpdated(publicationDate);
+        article.setIsImportant(false);
+
+        return article;
     }
 
 

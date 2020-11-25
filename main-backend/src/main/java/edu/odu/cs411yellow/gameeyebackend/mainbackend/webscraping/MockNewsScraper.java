@@ -74,8 +74,16 @@ public class MockNewsScraper implements WebScraper {
             snippet = snippet.substring(0, 255);
         }
 
-        return new Article("", title, url, websiteName, "",
-                snippet, date, date, false);
+        Article article = new Article();
+        article.setTitle(title);
+        article.setUrl(url);
+        article.setNewsWebsiteName(websiteName);
+        article.setSnippet(snippet);
+        article.setPublicationDate(date);
+        article.setLastUpdated(date);
+        article.setIsImportant(false);
+
+        return article;
     }
 
     /**

@@ -90,11 +90,13 @@ public class WebScraperOrchestrator {
             }
         }
 
-        assignScrapedArticlesImportance(articleTitles, scrapedArticles);
-        insertArticlesIntoDatabase(scrapedArticles);
+        if (!scrapedArticles.isEmpty()) {
+            assignScrapedArticlesImportance(articleTitles, scrapedArticles);
+            insertArticlesIntoDatabase(scrapedArticles);
 
-        // Send article notifications
-        notificationService.sendArticleNotificationsAsync(scrapedArticles, articleGameIds);
+            // Send article notifications
+            notificationService.sendArticleNotificationsAsync(scrapedArticles, articleGameIds);
+        }
 
         return scrapedArticles;
     }
@@ -126,11 +128,13 @@ public class WebScraperOrchestrator {
             }
         }
 
-        assignScrapedArticlesImportance(articleTitles, scrapedArticles);
-        insertArticlesIntoDatabase(scrapedArticles);
+        if (!scrapedArticles.isEmpty()) {
+            assignScrapedArticlesImportance(articleTitles, scrapedArticles);
+            insertArticlesIntoDatabase(scrapedArticles);
 
-        // Send article notifications
-        notificationService.sendArticleNotificationsAsync(scrapedArticles, articleGameIds);
+            // Send article notifications
+            notificationService.sendArticleNotificationsAsync(scrapedArticles, articleGameIds);
+        }
 
         return scrapedArticles;
     }
@@ -156,15 +160,18 @@ public class WebScraperOrchestrator {
                 if (!checkArticleDuplicates(gameId, article) && !scrapedArticles.contains(article)) {
                     scrapedArticles.add(article);
                     articleTitles.add(article.getTitle());
+                    articleGameIds.add(gameId);
                 }
             }
         }
 
-        assignScrapedArticlesImportance(articleTitles, scrapedArticles);
-        insertArticlesIntoDatabase(scrapedArticles);
+        if (!scrapedArticles.isEmpty()) {
+            assignScrapedArticlesImportance(articleTitles, scrapedArticles);
+            insertArticlesIntoDatabase(scrapedArticles);
 
-        // Send article notifications
-        notificationService.sendArticleNotificationsAsync(scrapedArticles, articleGameIds);
+            // Send article notifications
+            notificationService.sendArticleNotificationsAsync(scrapedArticles, articleGameIds);
+        }
 
         return scrapedArticles;
     }
@@ -186,6 +193,8 @@ public class WebScraperOrchestrator {
      * @return Boolean: true if the article already exists
      */
     public Boolean checkArticleDuplicates(String id, Article article) {
+        System.out.println("Game id is " + id);
+
         Game gameInDB = games.findGameById(id);
 
         Resources gameResources;
