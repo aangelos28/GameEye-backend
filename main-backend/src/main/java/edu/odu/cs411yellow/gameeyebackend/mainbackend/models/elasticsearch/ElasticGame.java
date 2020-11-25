@@ -35,6 +35,7 @@ public class ElasticGame {
     /**
      * Release date of the game.
      */
+    @Field(type = FieldType.Date, format = DateFormat.custom, pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSZZZ")
     private Date releaseDate;
 
     /**
