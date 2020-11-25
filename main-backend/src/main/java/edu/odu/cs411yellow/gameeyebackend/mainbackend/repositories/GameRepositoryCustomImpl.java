@@ -1,9 +1,7 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.bulk.BulkWriteResult;
-import com.mongodb.client.model.Aggregates;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.SourceUrls;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Id;
@@ -15,7 +13,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.data.mongodb.repository.support.MongoRepositoryFactory;
 
 import java.util.Date;
 import java.util.List;
@@ -176,5 +173,12 @@ public class GameRepositoryCustomImpl implements GameRepositoryCustom {
         }
 
         return ops.execute().getModifiedCount();
+    }
+
+    @Override
+    public List<Article> findArticles(final String gameId) {
+        Query query = new Query(new Criteria("_id").is(gameId));
+
+        return mongo.findDistinct(query, "resources.articles",Game.class, Article.class);
     }
 }

@@ -12,8 +12,10 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
+/**
+ * Custom method implementations for user repository.
+ */
 public class UserRepositoryCustomImpl implements UserRepositoryCustom {
-
     private final MongoOperations mongo;
 
     @Autowired
@@ -22,6 +24,17 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
     }
 
     @Override
+    public void removeUserArticleNotifications(final String userId, final String gameId, List<String> articleIds) {
+        Object[] articles = articleIds.toArray();
+
+        Query query = new Query(Criteria.where("_id").is(userId));
+        Update update = new Update().pullAll("watchList.$[watchedGame].resourceNotifications.articleNotifications.articleIds",
+                                                   articles)
+                                    .filterArray(Criteria.where("watchedGame.gameId").is(gameId));
+
+        mongo.updateFirst(query, update, User.class);
+    }
+
     public void addArticleNotificationsToUsers(String gameId, List<Article> articles) {
         Criteria criteria = Criteria.where("watchList").elemMatch(Criteria.where("gameId").is(gameId));
         Query query = new Query();

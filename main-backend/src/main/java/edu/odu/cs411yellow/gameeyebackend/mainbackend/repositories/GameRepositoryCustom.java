@@ -1,6 +1,7 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.SourceUrls;
 import org.springframework.stereotype.Repository;
 
@@ -23,4 +24,5 @@ public interface GameRepositoryCustom {
     void updateLastUpdatedField(String gameId);
     List<String> findAllIgdbIds();
     int bulkUpdateGames(List<Game> games);
+    List<Article> findArticles(String gameId);
 }

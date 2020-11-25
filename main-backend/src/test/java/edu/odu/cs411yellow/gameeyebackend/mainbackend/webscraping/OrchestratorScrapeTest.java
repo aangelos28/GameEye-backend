@@ -85,20 +85,20 @@ public class OrchestratorScrapeTest {
         //orchestratorMock = new WebScraperOrchestrator(scraper, mock, elasticGames, rgs, newsWebsiteRepository, games, gameService);
 
         mockgame1 = new Game();
-        mockgame1.setId("5fa21ab86ece0e1877574053");
+        mockgame1.setId("WebScraperOrchTest - MockGame1");
         mockgame1.setTitle("Cyberpunk 2077");
         //cyber.setResources();
 
         mockgame2 = new Game();
-        mockgame2.setId("5f8a18f3d2ac2273ccbf4c66");
+        mockgame2.setId("WebScraperOrchTest - MockGame2");
         mockgame2.setTitle("Fallout 3");
 
         mockgame3 = new Game();
-        mockgame3.setId("5fa622897633227d28b06931");
+        mockgame3.setId("WebScraperOrchTest - MockGame3");
         mockgame3.setTitle("Watch Dogs: Legion");
 
         mockgame4 = new Game();
-        mockgame4.setId("5fa25fd86ffacd4ab297d3e1");
+        mockgame4.setId("WebScraperOrchTest - MockGame4");
         mockgame4.setTitle("Destiny 2: Beyond Light");
 
         games.save(mockgame1);
