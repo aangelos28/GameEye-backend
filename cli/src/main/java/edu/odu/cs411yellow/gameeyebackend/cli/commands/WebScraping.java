@@ -23,6 +23,7 @@ public class WebScraping {
      */
     @ShellMethod(value = "Initiate Force Scrape of RSSFeeds.")
     public void scrapeAll() {
+        System.out.println("Attempting to scrape RSS feeds of news websites.");
         String response = this.webClient.post()
                 .uri("/private-admin/webscraping/all/run")
                 .retrieve()

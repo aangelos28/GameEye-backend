@@ -27,8 +27,8 @@ public class WebScrapingController {
     @PostMapping(path = "/private-admin/webscraping/all/run")
     public ResponseEntity<String> scrapeAll() {
         try {
-            webScraperOrchestrator.scrapeAll();
-            return ResponseEntity.ok("Finished scraping all resources");
+            int numArticles = webScraperOrchestrator.scrapeAll().size();
+            return ResponseEntity.ok(String.format("Finished scraping all resources. Scraped %s articles.", numArticles));
         }
         catch(Exception e){
             e.printStackTrace();

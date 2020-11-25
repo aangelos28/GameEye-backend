@@ -67,7 +67,12 @@ public class MockNewsScraper implements WebScraper {
         url = "https://gameeye-mock-news.netlify.app" + parse[1];
 
         String pubDate = i.selectFirst("p").text();
-        Date date = format.parse(pubDate);
+        Date date;
+        if (!pubDate.isEmpty()) {
+            date = format.parse(pubDate);
+        } else {
+            date = new Date();
+        }
 
         String snippet = i.selectFirst("p").nextElementSibling().text();
         if (snippet.length() > 255) {
