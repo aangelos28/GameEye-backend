@@ -193,8 +193,6 @@ public class WebScraperOrchestrator {
      * @return Boolean: true if the article already exists
      */
     public Boolean checkArticleDuplicates(String id, Article article) {
-        System.out.println("Game id is " + id);
-
         Game gameInDB = games.findGameById(id);
 
         Resources gameResources;
