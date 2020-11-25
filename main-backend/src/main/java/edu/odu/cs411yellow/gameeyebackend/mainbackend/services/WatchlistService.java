@@ -52,7 +52,13 @@ public class WatchlistService {
             WatchedGameResponse watchedGameResponse = new WatchedGameResponse(watchedGame);
             watchedGameResponse.setTitle(game.getTitle());
             watchedGameResponse.setLogoUrl(game.getLogoUrl());
-            watchedGameResponse.setReleaseDate(game.getReleaseDate().toString());
+
+            if (game.getReleaseDate() != null) {
+                watchedGameResponse.setReleaseDate(game.getReleaseDate().toString());
+            } else {
+                watchedGameResponse.setReleaseDate("");
+            }
+
             watchedGameResponses.add(watchedGameResponse);
         }
 
