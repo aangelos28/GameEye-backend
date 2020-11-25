@@ -10,5 +10,7 @@ import java.util.List;
  */
 @Repository
 public interface UserRepositoryCustom {
+    void removeUserArticleNotifications(final String userId, final String gameId, List<String> articleIds);
     void addArticleNotificationsToUsers(String gameId, List<Article> articles);
+
 }

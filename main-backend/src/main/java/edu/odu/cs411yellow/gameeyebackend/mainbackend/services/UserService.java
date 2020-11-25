@@ -1,12 +1,14 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.services;
 
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Settings;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.User;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.UserStatus;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.WatchedGame;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.*;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.UserRepository;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -95,18 +97,8 @@ public class UserService {
      * @param gameId     Id of the watched game.
      * @param articleIds Ids of articles to remove.
      */
-    public void removeUserArticleNotifications(final String userId, String gameId, List<String> articleIds) {
-        User user = users.findUserById(userId);
-
-        List<WatchedGame> watchedGames = user.getWatchList();
-        for (WatchedGame game : watchedGames) {
-            if (game.getGameId().equals(gameId)) {
-                game.removeArticlesFromResources(articleIds);
-                break;
-            }
-        }
-
-        users.save(user);
+    public void removeUserArticleNotifications(final String userId, final String gameId, List<String> articleIds) {
+        users.removeUserArticleNotifications(userId, gameId, articleIds);
     }
 
     /**

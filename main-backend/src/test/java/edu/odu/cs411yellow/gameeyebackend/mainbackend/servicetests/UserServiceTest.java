@@ -120,9 +120,14 @@ public class UserServiceTest {
 
         // Add articles to user notifications for given game
         userService.addUserArticleNotifications(userId, game1.getId(), articleIds);
+        System.out.println("State of " + userId + " before article removal:");
+        System.out.println(userService.getUser(userId).toString());
+
 
         // Remove articles from user notifications for given game
-        userService.removeUserArticleNotifications(userId, game1.getId(),articleIds);
+        userService.removeUserArticleNotifications(userId, game1.getId(), articleIds);
+        System.out.println("State of " + userId + " after article removal:");
+        System.out.println(userService.getUser(userId).toString());
 
         // Check that there are no articles in notifications for given game
         User user = userService.getUser(userId);

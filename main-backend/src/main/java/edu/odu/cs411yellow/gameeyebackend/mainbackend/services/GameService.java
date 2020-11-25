@@ -27,8 +27,8 @@ public class GameService {
         return gameRepository.findGameById(gameId).getLogoUrl();
     }
 
-    public List<Article> getArticles(String gameId) {
-        return gameRepository.findGameById(gameId).getResources().getArticles();
+    public List<Article> findArticles(String gameId) {
+        return gameRepository.findArticles(gameId);
     }
 
     public List<Game> getTopGames(int maxResults) {

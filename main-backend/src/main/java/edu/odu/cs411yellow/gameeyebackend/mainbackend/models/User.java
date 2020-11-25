@@ -1,5 +1,7 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -95,5 +97,20 @@ public class User {
 
     public void setFcmTokens(List<String> fcmTokens) {
         this.fcmTokens = fcmTokens;
+    }
+
+    @Override
+    public String toString() {
+        ObjectMapper obj= new ObjectMapper();
+        String result = "";
+
+        try {
+            result = obj.writerWithDefaultPrettyPrinter().writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            result = "JsonProcessingException";
+        }
+
+        return result;
     }
 }
