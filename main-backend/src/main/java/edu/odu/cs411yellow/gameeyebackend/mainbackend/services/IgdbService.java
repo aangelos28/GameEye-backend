@@ -47,9 +47,6 @@ public class IgdbService {
                 .bodyToMono(new ParameterizedTypeReference<List<GameResponse>>() {})
                 .block();
 
-        removeInvalidGames(responses);
-
-
         GameResponse response = new GameResponse();
 
         try {
