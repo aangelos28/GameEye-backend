@@ -48,10 +48,14 @@ public class GameController {
     private static class GameTitleAutocompletionResponse {
         public String title;
         public String id;
+        public String releaseDate;
+        public String logoUrl;
 
-        public GameTitleAutocompletionResponse(String title, String id) {
+        public GameTitleAutocompletionResponse(String title, String id, String releaseDate, String logoUrl) {
             this.title = title;
             this.id = id;
+            this.releaseDate = releaseDate;
+            this.logoUrl = logoUrl;
         }
     }
 
@@ -79,7 +83,8 @@ public class GameController {
         final List<GameTitleAutocompletionResponse> autocompletionResults = new ArrayList<>();
         for (SearchHit<ElasticGame> searchHit : searchHits) {
             ElasticGame game = searchHit.getContent();
-            autocompletionResults.add(new GameTitleAutocompletionResponse(game.getTitle(), game.getGameId()));
+
+            autocompletionResults.add(new GameTitleAutocompletionResponse(game.getTitle(), game.getGameId(), game.getReleaseDate().toString(), game.getLogoUrl()));
         }
 
         return ResponseEntity.ok(autocompletionResults);

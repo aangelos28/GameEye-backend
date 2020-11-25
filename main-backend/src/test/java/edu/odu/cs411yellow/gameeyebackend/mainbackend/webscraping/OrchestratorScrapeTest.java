@@ -1,7 +1,6 @@
-package edu.odu.cs411yellow.gameeyebackend.mainbackend.webscrapers;
+package edu.odu.cs411yellow.gameeyebackend.mainbackend.webscraping;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Resources;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.elasticsearch.ElasticGame;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ElasticGameRepository;
@@ -9,6 +8,7 @@ import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepositor
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.NewsWebsiteRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.GameService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.MachineLearningService;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.NotificationService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.ReferenceGameService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,24 +22,19 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles("test")
 @TestPropertySource(locations = "classpath:application-test.properties")
 public class OrchestratorScrapeTest {
-
     //private String[] scraperNames={"GameSpot","Eurogamer","PC Gamer", "IGN","GameEye Mock News"};
-    private String[] scraperNames={"GameSpot","Eurogamer", "PC Gamer","IGN"};
+    private String[] scraperNames = {"GameSpot", "Eurogamer", "PC Gamer", "IGN"};
 
     @Autowired
     MockNewsScraper mockNewsScrapper;
@@ -76,15 +71,17 @@ public class OrchestratorScrapeTest {
     @Autowired
     MachineLearningService mlService;
 
+    @Autowired
+    NotificationService notificationService;
+
     private Game mockgame1;
     private Game mockgame2;
     private Game mockgame3;
     private Game mockgame4;
 
 
-
     @BeforeEach
-    public void init(){
+    public void init() {
         //orchestratorMock = new WebScraperOrchestrator(scraper, mock, elasticGames, rgs, newsWebsiteRepository, games, gameService);
 
         mockgame1 = new Game();
@@ -119,12 +116,11 @@ public class OrchestratorScrapeTest {
         elasticGames.save(elasticGame3);
         elasticGames.save(elasticGame4);
 
-        orchestratorMock = new WebScraperOrchestrator(scraper, mockNewsScrapper, elasticGames, rgs, newsWebsiteRepository, games, gameService, mlService);
+        orchestratorMock = new WebScraperOrchestrator(scraper, mockNewsScrapper, rgs, games, gameService, mlService, notificationService);
     }
 
-
     @AfterEach
-    public void emptyArticles(){
+    public void emptyArticles() {
         articles.clear();
         games.deleteById(mockgame1.getId());
         games.deleteById(mockgame2.getId());
@@ -138,11 +134,11 @@ public class OrchestratorScrapeTest {
     }
 
     @Test
-    public void testForceScrape(){
+    public void testForceScrape() {
         articles = orchestratorMock.scrapeAll();
 
-        List<Article> totalCollection=new ArrayList<Article>();
-        for(String s: scraperNames){
+        List<Article> totalCollection = new ArrayList<>();
+        for (String s : scraperNames) {
             totalCollection.addAll(scraper.scrape(s));
         }
 
@@ -150,41 +146,40 @@ public class OrchestratorScrapeTest {
 
 
         //assertEquals(totalCollection.size(),orchestratorMock.getAllArticles().size());
-        assertThat(articles.size(),is(greaterThan(0)));
-        assertThat(articles.size(),is(lessThanOrEqualTo(totalCollection.size())));
+        assertThat(articles.size(), is(greaterThan(0)));
+        assertThat(articles.size(), is(lessThanOrEqualTo(totalCollection.size())));
     }
 
     @Test
-    public void testForceScrapeMockNews(){
+    public void testForceScrapeMockNews() {
 
-        articles=orchestratorMock.scrape(mockNewsScrapper);
+        articles = orchestratorMock.scrape(mockNewsScrapper);
         System.out.println();
-        for(Article a:articles)
-        {
+        for (Article a : articles) {
             System.out.println(a.getTitle());
         }
 
         int collectionSize = mockNewsScrapper.scrape(mockScraperName).size();
 
         //assertEquals(mock.getArticles().size(),orchestratorMock.getAllArticles().size());
-        assertThat(articles.size(),is(greaterThan(0)));
-        assertThat(articles.size(),is(lessThanOrEqualTo(collectionSize)));
+        assertThat(articles.size(), is(greaterThan(0)));
+        assertThat(articles.size(), is(lessThanOrEqualTo(collectionSize)));
     }
 
     @Test
-    public void testForceScrapeGameSpot(){
+    public void testForceScrapeGameSpot() {
         articles = orchestratorMock.scrape("GameSpot");
         //System.out.println(orchestratorMock.toString());
         int collectionSize = scraper.scrape("GameSpot").size();
 
         //assertEquals(scraper.toString(),orchestratorMock.toString());
         //assertEquals(scraper.getArticles(), orchestratorMock.getArticleCollection());
-        assertThat(articles.size(),is(greaterThan(0)));
-        assertThat(articles.size(),is(lessThanOrEqualTo(collectionSize)));
+        assertThat(articles.size(), is(greaterThan(0)));
+        assertThat(articles.size(), is(lessThanOrEqualTo(collectionSize)));
     }
 
     @Test
-    public void testForceScrapeIGN(){
+    public void testForceScrapeIGN() {
         articles = orchestratorMock.scrape("IGN");
         System.out.println(orchestratorMock.toString());
 
@@ -192,32 +187,32 @@ public class OrchestratorScrapeTest {
 
         //assertEquals(scraper.toString(),orchestratorMock.toString());
         //assertEquals(scraper.getArticles(), orchestratorMock.getArticleCollection());
-        assertThat(articles.size(),is(greaterThan(0)));
-        assertThat(articles.size(),is(lessThanOrEqualTo(collectionSize)));
+        assertThat(articles.size(), is(greaterThan(0)));
+        assertThat(articles.size(), is(lessThanOrEqualTo(collectionSize)));
     }
 
     @Test
-    public void testForceScrapePCGamer(){
-        articles=orchestratorMock.scrape("PC Gamer");
+    public void testForceScrapePCGamer() {
+        articles = orchestratorMock.scrape("PC Gamer");
         //System.out.println(orchestratorMock.toString());
         int collectionSize = scraper.scrape("PC Gamer").size();
 
         //assertEquals(scraper.toString(),orchestratorMock.toString());
         //assertEquals(scraper.getArticles(), orchestratorMock.getArticleCollection());
-        assertThat(articles.size(),is(greaterThan(0)));
-        assertThat(articles.size(),is(lessThanOrEqualTo(collectionSize)));
+        assertThat(articles.size(), is(greaterThan(0)));
+        assertThat(articles.size(), is(lessThanOrEqualTo(collectionSize)));
     }
 
     @Test
-    public void testForceScrapeEuroGamer(){
-        articles=orchestratorMock.scrape("Eurogamer");
+    public void testForceScrapeEuroGamer() {
+        articles = orchestratorMock.scrape("Eurogamer");
         //System.out.println(orchestratorMock.toString());
         int collectionSize = scraper.scrape("Eurogamer").size();
 
 
         //assertEquals(scraper.toString(),orchestratorMock.toString());
         //assertEquals(scraper.getArticles(), orchestratorMock.getArticleCollection());
-        assertThat(articles.size(),is(greaterThan(0)));
-        assertThat(articles.size(),is(lessThanOrEqualTo(collectionSize)));
+        assertThat(articles.size(), is(greaterThan(0)));
+        assertThat(articles.size(), is(lessThanOrEqualTo(collectionSize)));
     }
 }

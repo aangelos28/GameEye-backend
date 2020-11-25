@@ -36,7 +36,7 @@ public class NotificationController {
     public ResponseEntity<?> sendTargetedNotification(@RequestBody TargetedNotificationRequest request) {
         try {
             for (String userId : request.userIds) {
-                notifcationService.sendTargetedNotification(userId, request.title, request.body, request.imageUrl);
+                notifcationService.sendTargetedNotificationAsync(userId, request.title, request.body, request.imageUrl);
             }
 
             return ResponseEntity.ok("Sent notification.");
@@ -61,7 +61,7 @@ public class NotificationController {
     @PostMapping(path = "/private-admin/notification/topic/send", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> sendTopicNotification(@RequestBody TopicNotificationRequest request) {
         try {
-            notifcationService.sendTopicNotification(request.topic, request.title, request.body, request.imageUrl);
+            notifcationService.sendTopicNotificationAsync(request.topic, request.title, request.body, request.imageUrl);
 
             return ResponseEntity.ok("Sent notification.");
         } catch (Exception ex) {

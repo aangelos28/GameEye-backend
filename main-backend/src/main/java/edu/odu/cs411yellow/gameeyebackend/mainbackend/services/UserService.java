@@ -102,6 +102,26 @@ public class UserService {
     }
 
     /**
+     * Remove all articles for a watched game from a user's notifications.
+     *
+     * @param userId Id of the user
+     * @param gameId Id of the watched game
+     */
+    public void removeAllUserArticleNotifications(final String userId, String gameId) {
+        User user = users.findUserById(userId);
+
+        List<WatchedGame> watchedGames = user.getWatchList();
+        for (WatchedGame game : watchedGames) {
+            if (game.getGameId().equals(gameId)) {
+                game.removeAllArticlesFromResources();
+                break;
+            }
+        }
+
+        users.save(user);
+    }
+
+    /**
      * Adds articles for a watched game from a user's notifications.
      *
      * @param userId     Id of the user notifications to modify.

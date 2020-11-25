@@ -30,8 +30,11 @@ public class ArticleNotifications {
 
     public void removeArticles(List<String> articleIds) {
         for (String id: articleIds) {
-            boolean result = this.articleIds.remove(id);
+            this.articleIds.remove(id);
         }
     }
 
+    public void removeAllArticles() {
+        this.articleIds.clear();
+    }
 }

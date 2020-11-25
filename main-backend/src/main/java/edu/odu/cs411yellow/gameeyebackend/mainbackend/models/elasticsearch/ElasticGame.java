@@ -6,6 +6,8 @@ import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.elasticsearch.annotations.*;
 import org.springframework.data.elasticsearch.core.completion.Completion;
 
+import java.util.Date;
+
 /**
  * Represents a game title document in ElasticSearch.
  * Used for autocompletion suggestions.
@@ -30,16 +32,30 @@ public class ElasticGame {
     @Field(type = FieldType.Text, analyzer = "autocomplete_index", searchAnalyzer = "autocomplete_search")
     private String title;
 
+    /**
+     * Release date of the game.
+     */
+    private Date releaseDate;
+
+    /**
+     * Url of the logo of the game.
+     */
+    private String logoUrl;
+
     @PersistenceConstructor
-    public ElasticGame(String id, String gameId, String title) {
+    public ElasticGame(String id, String gameId, String title, Date releaseDate, String logoUrl) {
         this.id = id;
         this.gameId = gameId;
         this.title = title;
+        this.releaseDate = releaseDate;
+        this.logoUrl = logoUrl;
     }
 
     public ElasticGame(Game game) {
         this.gameId = game.getId();
         this.title = game.getTitle();
+        this.releaseDate = game.getReleaseDate();
+        this.logoUrl = game.getLogoUrl();
     }
 
     public ElasticGame() {
@@ -69,5 +85,21 @@ public class ElasticGame {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public Date getReleaseDate() {
+        return releaseDate;
+    }
+
+    public void setReleaseDate(Date releaseDate) {
+        this.releaseDate = releaseDate;
+    }
+
+    public String getLogoUrl() {
+        return logoUrl;
+    }
+
+    public void setLogoUrl(String logoUrl) {
+        this.logoUrl = logoUrl;
     }
 }

@@ -1,6 +1,5 @@
-package edu.odu.cs411yellow.gameeyebackend.mainbackend.webscrapers;
+package edu.odu.cs411yellow.gameeyebackend.mainbackend.webscraping;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.NewsWebsite;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.NewsWebsiteRepository;
@@ -11,7 +10,6 @@ import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,14 +18,14 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class MockNewsScraper implements WebScraper{
+public class MockNewsScraper implements WebScraper {
 
     NewsWebsiteRepository newsWebsites;
 
-    final private String name="GameEye Mock News";
+    final private String name = "GameEye Mock News";
 
     @Autowired
-    public MockNewsScraper(NewsWebsiteRepository newsWebsites){
+    public MockNewsScraper(NewsWebsiteRepository newsWebsites) {
         this.newsWebsites = newsWebsites;
     }
 
@@ -37,21 +35,21 @@ public class MockNewsScraper implements WebScraper{
     public List<Article> scrape(String name) {
         List<Article> articles = new ArrayList<>();
         String url = newsWebsites.findByName(name).getSiteUrl();
+
         try {
             NewsWebsite mockNews = newsWebsites.findByName(name);
 
             Document RssFeed = Jsoup.parse(Jsoup.connect(url).get().select("ul").toString());
 
             Elements items = RssFeed.select("div");
-            for (var i : items){
-
-                Article toAdd = createArticle(i,mockNews.getName());
+            for (var i : items) {
+                Article toAdd = createArticle(i, mockNews.getName());
                 articles.add(toAdd);
             }
-        }
-        catch(Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
+
         return articles;
     }
 
@@ -65,20 +63,19 @@ public class MockNewsScraper implements WebScraper{
         //Parse Link
         String url = i.select("a").toString();
         String delims = "\"";
-        String [] parse = url.split(delims);
+        String[] parse = url.split(delims);
         url = "https://gameeye-mock-news.netlify.app" + parse[1];
 
         String pubDate = i.selectFirst("p").text();
         Date date = format.parse(pubDate);
 
         String snippet = i.selectFirst("p").nextElementSibling().text();
-        if (snippet.length() > 255){
-            snippet = snippet.substring(0,255);
+        if (snippet.length() > 255) {
+            snippet = snippet.substring(0, 255);
         }
 
         return new Article("", title, url, websiteName, "",
                 snippet, date, date, false);
-
     }
 
     /**
@@ -86,7 +83,7 @@ public class MockNewsScraper implements WebScraper{
      *
      * @return String
      */
-    public String getScraperName(){ return name; }
-
-
+    public String getScraperName() {
+        return name;
+    }
 }

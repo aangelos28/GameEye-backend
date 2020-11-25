@@ -1,4 +1,4 @@
-package edu.odu.cs411yellow.gameeyebackend.mainbackend.webscrapers;
+package edu.odu.cs411yellow.gameeyebackend.mainbackend.webscraping;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import org.junit.jupiter.api.Test;
@@ -15,8 +15,6 @@ import java.util.List;
 @SpringBootTest
 @ActiveProfiles("test")
 public class MockNewsScraperTest {
-
-
     @Autowired
     MockNewsScraper MNtest;
 
@@ -25,14 +23,11 @@ public class MockNewsScraperTest {
 
         List<Article> articles = MNtest.scrape(MNtest.getScraperName());
         //System.out.print(MNtest.toString());
-        for(Article a:articles)
-        {
+        for (Article a : articles) {
             System.out.println(a);
         }
 
         Assert.noNullElements(articles, "Error: Articles not Scraped");
 
     }
-
-
 }
