@@ -6,10 +6,9 @@ import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Resources;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.GameService;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.MachineLearningService;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.NotificationService;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.ReferenceGameService;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -19,18 +18,15 @@ import java.util.*;
 
 @Service
 public class WebScraperOrchestrator {
-
     private final MockNewsScraper mockNewsScraper;
     private final UniversalScraper scraper;
-
     private final String[] scraperNames = {"GameSpot", "Eurogamer", "PC Gamer", "IGN"};
-
     private final ReferenceGameService referenceGameService;
     private final GameService gameService;
     private final MachineLearningService mlService;
     private final NotificationService notificationService;
-
     private final GameRepository games;
+    Logger logger = LoggerFactory.getLogger(WebScraperOrchestrator.class);
 
     @Autowired
     public WebScraperOrchestrator(UniversalScraper scraper, MockNewsScraper mockNewsScraper, ReferenceGameService referenceGameService,
@@ -50,6 +46,8 @@ public class WebScraperOrchestrator {
      * and inserts them into the database
      */
     public List<Article> scrapeAll() {
+        logger.info("Attempting to scrape new articles for each news website.");
+
         List<Article> scrapedArticles = new ArrayList<>();
         List<String> articleTitles = new ArrayList<>();
         List<String> articleGameIds = new ArrayList<>();
@@ -67,6 +65,7 @@ public class WebScraperOrchestrator {
                         if (!checkArticleDuplicates(id, article) && !scrapedArticles.contains(article)) {
                             scrapedArticles.add(article);
                             articleTitles.add(article.getTitle());
+                            articleGameIds.add(id);
                         }
                     }
                 }
@@ -90,11 +89,15 @@ public class WebScraperOrchestrator {
             }
         }
 
-        assignScrapedArticlesImportance(articleTitles, scrapedArticles);
-        insertArticlesIntoDatabase(scrapedArticles);
+        if (!scrapedArticles.isEmpty()) {
+            assignScrapedArticlesImportance(articleTitles, scrapedArticles);
+            insertArticlesIntoDatabase(scrapedArticles);
 
-        // Send article notifications
-        notificationService.sendArticleNotificationsAsync(scrapedArticles, articleGameIds);
+            // Send article notifications
+            notificationService.sendArticleNotificationsAsync(scrapedArticles, articleGameIds);
+        }
+
+        logger.info(String.format("Finished scraping %s new articles.", scrapedArticles.size()));
 
         return scrapedArticles;
     }
@@ -106,6 +109,8 @@ public class WebScraperOrchestrator {
      * @param target String ID for a scraper
      */
     public List<Article> scrape(String target) {
+        logger.info(String.format("Attempting to scrape new articles using the %s web scraper.", target));
+
         List<Article> articleList = scraper.scrape(target);
         List<Article> scrapedArticles = new ArrayList<>();
         List<String> articleTitles = new ArrayList<>();
@@ -126,11 +131,15 @@ public class WebScraperOrchestrator {
             }
         }
 
-        assignScrapedArticlesImportance(articleTitles, scrapedArticles);
-        insertArticlesIntoDatabase(scrapedArticles);
+        if (!scrapedArticles.isEmpty()) {
+            assignScrapedArticlesImportance(articleTitles, scrapedArticles);
+            insertArticlesIntoDatabase(scrapedArticles);
 
-        // Send article notifications
-        notificationService.sendArticleNotificationsAsync(scrapedArticles, articleGameIds);
+            // Send article notifications
+            notificationService.sendArticleNotificationsAsync(scrapedArticles, articleGameIds);
+        }
+
+        logger.info(String.format("Finished scraping %s new articles.", scrapedArticles.size()));
 
         return scrapedArticles;
     }
@@ -142,6 +151,8 @@ public class WebScraperOrchestrator {
      * @param target WebScraper object for Mock News Website
      */
     public List<Article> scrape(WebScraper target) {
+        logger.info("Attempting to scrape new articles from the GameEye Mock News website");
+
         List<Article> articleList = mockNewsScraper.scrape("GameEye Mock News");
         List<Article> scrapedArticles = new ArrayList<>();
         List<String> articleTitles = new ArrayList<>();
@@ -156,15 +167,20 @@ public class WebScraperOrchestrator {
                 if (!checkArticleDuplicates(gameId, article) && !scrapedArticles.contains(article)) {
                     scrapedArticles.add(article);
                     articleTitles.add(article.getTitle());
+                    articleGameIds.add(gameId);
                 }
             }
         }
 
-        assignScrapedArticlesImportance(articleTitles, scrapedArticles);
-        insertArticlesIntoDatabase(scrapedArticles);
+        if (!scrapedArticles.isEmpty()) {
+            assignScrapedArticlesImportance(articleTitles, scrapedArticles);
+            insertArticlesIntoDatabase(scrapedArticles);
 
-        // Send article notifications
-        notificationService.sendArticleNotificationsAsync(scrapedArticles, articleGameIds);
+            // Send article notifications
+            notificationService.sendArticleNotificationsAsync(scrapedArticles, articleGameIds);
+        }
+
+        logger.info(String.format("Finished scraping %s new articles.", scrapedArticles.size()));
 
         return scrapedArticles;
     }
@@ -175,7 +191,10 @@ public class WebScraperOrchestrator {
      */
     @Scheduled(cron = "0 0 8,20 * * *")    //Schedules method to run at 8:00 AM and 8:00PM
     public void biDailyScrape() {
-        scrapeAll();
+        System.out.println("Initiating bi-daily scrape.");
+        int numArticles = scrapeAll().size();
+
+        logger.info(String.format("Finished scraping %s new articles.", numArticles));
     }
 
     /**

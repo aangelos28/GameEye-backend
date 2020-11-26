@@ -84,7 +84,14 @@ public class GameController {
         for (SearchHit<ElasticGame> searchHit : searchHits) {
             ElasticGame game = searchHit.getContent();
 
-            autocompletionResults.add(new GameTitleAutocompletionResponse(game.getTitle(), game.getGameId(), game.getReleaseDate().toString(), game.getLogoUrl()));
+            String releaseDate;
+            if (game.getReleaseDate() == null) {
+                releaseDate = "";
+            } else {
+                releaseDate = game.getReleaseDate().toString();
+            }
+
+            autocompletionResults.add(new GameTitleAutocompletionResponse(game.getTitle(), game.getGameId(), releaseDate, game.getLogoUrl()));
         }
 
         return ResponseEntity.ok(autocompletionResults);

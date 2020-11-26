@@ -52,7 +52,13 @@ public class WatchlistService {
             WatchedGameResponse watchedGameResponse = new WatchedGameResponse(watchedGame);
             watchedGameResponse.setTitle(game.getTitle());
             watchedGameResponse.setLogoUrl(game.getLogoUrl());
-            watchedGameResponse.setReleaseDate(game.getReleaseDate().toString());
+
+            if (game.getReleaseDate() != null) {
+                watchedGameResponse.setReleaseDate(game.getReleaseDate().toString());
+            } else {
+                watchedGameResponse.setReleaseDate("");
+            }
+
             watchedGameResponses.add(watchedGameResponse);
         }
 
@@ -78,7 +84,11 @@ public class WatchlistService {
             WatchedGameShortResponse watchedGameResponse = new WatchedGameShortResponse();
             watchedGameResponse.setId(gameId);
             watchedGameResponse.setTitle(game.getTitle());
-            watchedGameResponse.setReleaseDate(game.getReleaseDate().toString());
+            if (game.getReleaseDate() != null) {
+                watchedGameResponse.setReleaseDate(game.getReleaseDate().toString());
+            } else {
+                watchedGameResponse.setReleaseDate("");
+            }
             watchedGameResponses.add(watchedGameResponse);
         }
 
@@ -101,7 +111,11 @@ public class WatchlistService {
         final WatchedGameResponse watchedGameResponse = new WatchedGameResponse(watchedGame);
         watchedGameResponse.setTitle(game.getTitle());
         watchedGameResponse.setLogoUrl(game.getLogoUrl());
-        watchedGameResponse.setReleaseDate(game.getReleaseDate().toString());
+        if (game.getReleaseDate() != null) {
+            watchedGameResponse.setReleaseDate(game.getReleaseDate().toString());
+        } else {
+            watchedGameResponse.setReleaseDate("");
+        }
 
         return watchedGameResponse;
     }
@@ -132,8 +146,11 @@ public class WatchlistService {
         final WatchedGameResponse watchedGameResponse = new WatchedGameResponse(targetGame);
         watchedGameResponse.setTitle(game.getTitle());
         watchedGameResponse.setLogoUrl(game.getLogoUrl());
-        watchedGameResponse.setReleaseDate(game.getReleaseDate().toString());
-
+        if (game.getReleaseDate() != null) {
+            watchedGameResponse.setReleaseDate(game.getReleaseDate().toString());
+        } else {
+            watchedGameResponse.setReleaseDate("");
+        }
 
         return watchedGameResponse;
     }
@@ -155,7 +172,11 @@ public class WatchlistService {
         final WatchedGameShortResponse watchedGameResponse = new WatchedGameShortResponse();
         watchedGameResponse.setId(gameId);
         watchedGameResponse.setTitle(game.getTitle());
-        watchedGameResponse.setReleaseDate(game.getReleaseDate().toString());
+        if (game.getReleaseDate() != null) {
+            watchedGameResponse.setReleaseDate(game.getReleaseDate().toString());
+        } else {
+            watchedGameResponse.setReleaseDate("");
+        }
 
         return watchedGameResponse;
     }
@@ -186,7 +207,11 @@ public class WatchlistService {
         final WatchedGameShortResponse watchedGameResponse = new WatchedGameShortResponse();
         watchedGameResponse.setId(game.getId());
         watchedGameResponse.setTitle(game.getTitle());
-        watchedGameResponse.setReleaseDate(game.getReleaseDate().toString());
+        if (game.getReleaseDate() != null) {
+            watchedGameResponse.setReleaseDate(game.getReleaseDate().toString());
+        } else {
+            watchedGameResponse.setReleaseDate("");
+        }
 
         return watchedGameResponse;
     }

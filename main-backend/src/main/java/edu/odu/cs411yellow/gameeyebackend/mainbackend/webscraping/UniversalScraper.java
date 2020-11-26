@@ -66,7 +66,12 @@ public class UniversalScraper implements WebScraper {
 
         //parse date
         String pubDate = i.select("pubDate").text();
-        Date publicationDate = format.parse(pubDate);
+        Date publicationDate;
+        if (!pubDate.isEmpty()) {
+            publicationDate = format.parse(pubDate);
+        } else {
+            publicationDate = new Date();
+        }
 
         //parse snippet
         if (websiteName.contentEquals("IGN")) {
@@ -85,8 +90,16 @@ public class UniversalScraper implements WebScraper {
             snippet = snippet.substring(0, 255);
         }
 
-        return new Article("", title, url, websiteName, "",
-                snippet, publicationDate, publicationDate, false);
+        Article article = new Article();
+        article.setTitle(title);
+        article.setUrl(url);
+        article.setNewsWebsiteName(websiteName);
+        article.setSnippet(snippet);
+        article.setPublicationDate(publicationDate);
+        article.setLastUpdated(publicationDate);
+        article.setIsImportant(false);
+
+        return article;
     }
 
 
