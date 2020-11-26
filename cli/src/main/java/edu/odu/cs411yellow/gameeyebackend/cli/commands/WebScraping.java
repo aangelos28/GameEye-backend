@@ -19,11 +19,11 @@ public class WebScraping {
     }
 
     /**
-     * Initiate Scraping of RSS
+     * Initiate Scraping of RSS of news websites.
      */
-    @ShellMethod(value = "Initiate Force Scrape of RSSFeeds.")
+    @ShellMethod(value = "Initiate Force Scrape of RSSFeeds.", key = "scrape-all")
     public void scrapeAll() {
-        System.out.println("Attempting to scrape RSS feeds of news websites.");
+        System.out.println("Attempting to scrape new articles for each news website.");
         String response = this.webClient.post()
                 .uri("/private-admin/webscraping/all/run")
                 .retrieve()
@@ -34,10 +34,11 @@ public class WebScraping {
     }
 
     /**
-     * Initiate Scraping of RSS
+     * Initiate Scraping of RSS feed of mock news website.
      */
-    @ShellMethod(value = "Initiate Force Scrape of MockNews.")
+    @ShellMethod(value = "Initiate Force Scrape of MockNews.", key = "scrape-mock-news")
     public void scrapeMockNewsWebsite() {
+        System.out.println("Attempting to scrape new articles from the GameEye Mock News website.");
         String response = this.webClient.post()
                 .uri("/private-admin/webscraping/mocknewswebsite/run")
                 .retrieve()

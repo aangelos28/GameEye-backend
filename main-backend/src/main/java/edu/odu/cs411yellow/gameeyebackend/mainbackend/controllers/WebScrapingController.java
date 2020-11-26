@@ -3,6 +3,7 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.controllers;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.webscraping.UniversalScraper;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.webscraping.WebScraperOrchestrator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,11 +29,11 @@ public class WebScrapingController {
     public ResponseEntity<String> scrapeAll() {
         try {
             int numArticles = webScraperOrchestrator.scrapeAll().size();
-            return ResponseEntity.ok(String.format("Finished scraping all resources. Scraped %s articles.", numArticles));
+            return ResponseEntity.ok(String.format("Finished scraping %s new articles.", numArticles));
         }
         catch(Exception e){
             e.printStackTrace();
-            return ResponseEntity.ok("FAILED scraping all resources");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("FAILED scraping all resources");
         }
     }
 
@@ -42,12 +43,12 @@ public class WebScrapingController {
     @PostMapping(path = "/private-admin/webscraping/mocknewswebsite/run")
     public ResponseEntity<?> scrapeMockNewsWebsite() {
         try {
-            webScraperOrchestrator.scrape(universalScraper);
-            return ResponseEntity.ok("Finished scraping the mock news website");
+            int numArticles = webScraperOrchestrator.scrape(universalScraper).size();
+            return ResponseEntity.ok(String.format("Finished scraping %s new articles from GameEye Mock News.", numArticles));
         }
         catch(Exception e){
             e.printStackTrace();
-            return ResponseEntity.ok("FAILED scraping the mock news website");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("FAILED scraping the mock news website");
         }
     }
 
