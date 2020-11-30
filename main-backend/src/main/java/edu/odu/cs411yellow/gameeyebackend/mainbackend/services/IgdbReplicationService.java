@@ -82,13 +82,6 @@ public class IgdbReplicationService {
             numberOfRequestsWithLimit++;
         }
 
-        // Save all remaining games to mongo and elastic
-        gameService.saveAll(mongoGameBuffer);
-        mongoGameBuffer.clear();
-
-        elasticService.saveAll(elasticGameBuffer);
-        elasticGameBuffer.clear();
-
         String status = String.format("Finished replication. MongoDB status: Added %1$s new games and updated %2$s existing games. Elasticsearch status: Added %3$s new game titles.",
                                        counters.newGameCount, counters.updatedGameCount, counters.newElasticGameCount);
 
@@ -144,13 +137,6 @@ public class IgdbReplicationService {
 
             numberOfRequestsWithLimit++;
         }
-
-        // Save all remaining games to mongo and elastic
-        gameService.saveAll(mongoGameBuffer);
-        mongoGameBuffer.clear();
-
-        elasticService.saveAll(elasticGameBuffer);
-        elasticGameBuffer.clear();
 
         String status = String.format("Finished replication. MongoDB status: Added %1$s new games and updated %2$s existing games. Elasticsearch status: Added %3$s new game titles.",
                                        counters.newGameCount, counters.updatedGameCount, counters.newElasticGameCount);
@@ -302,13 +288,6 @@ public class IgdbReplicationService {
                 igdbGameBuffer.clear();
             }
         }
-
-        // Save all remaining games to mongo and elastic
-        gameService.saveAll(mongoGameBuffer);
-        mongoGameBuffer.clear();
-
-        elasticService.saveAll(elasticGameBuffer);
-        elasticGameBuffer.clear();
 
         String status = String.format("Finished replication. MongoDB status: Added %1$s new games and updated %2$s existing games. Elasticsearch status: Added %3$s new game titles.",
                 newGameCount, updatedGameCount, newElasticGameCount);
