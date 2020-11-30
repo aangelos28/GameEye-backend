@@ -20,9 +20,12 @@ public interface GameRepositoryCustom {
     void updateGameTitle(String id, String title);
     String findGameIdByIgdbId(String igdbId);
     void updateLogoPlatformsReleaseDateGenresSourceUrls(String id, String logoUrl, List<String> platforms,
-                                                               List<String> genres, Date releaseDate, SourceUrls sourceUrls);
+                                                        List<String> genres, Date releaseDate, SourceUrls sourceUrls);
     void updateLastUpdatedField(String gameId);
     List<String> findAllIgdbIds();
     int bulkUpdateGames(List<Game> games);
     List<Article> findArticles(String gameId);
+    String deleteArticlesFromGameById(String gameId);
+    String deleteArticlesFromGameByTitle(String title);
+    String deleteArticlesFromAllGames();
 }

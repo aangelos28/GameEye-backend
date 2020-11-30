@@ -1,6 +1,8 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories;
 
+import com.mongodb.client.result.UpdateResult;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.User;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.SourceUrls;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -180,5 +183,42 @@ public class GameRepositoryCustomImpl implements GameRepositoryCustom {
         Query query = new Query(new Criteria("_id").is(gameId));
 
         return mongo.findDistinct(query, "resources.articles",Game.class, Article.class);
+    }
+
+    @Override
+    public String deleteArticlesFromGameById(String gameId) {
+        Query query = new Query(Criteria.where("_id").is(gameId));
+        Update update = new Update()
+                .set("resources.articles", new ArrayList<>())
+                .set("lastUpdated", new Date());
+
+        mongo.updateFirst(query, update, Game.class);
+
+        return String.format("Deleted all articles from game with id %s.", gameId);
+    }
+
+    @Override
+    public String deleteArticlesFromGameByTitle(String title) {
+        Query query = new Query(Criteria.where("title").is(title));
+        Update update = new Update()
+                .set("resources.articles", new ArrayList<>())
+                .set("lastUpdated", new Date());
+
+        UpdateResult result = mongo.updateMulti(query, update, Game.class);
+
+        return String.format("Deleted all articles from %1$s games.", result.getModifiedCount());
+    }
+
+    @Override
+    public String deleteArticlesFromAllGames() {
+        Query query = new Query();
+        Update update = new Update()
+                .set("resources.articles", new ArrayList<>())
+                .set("lastUpdated", new Date());
+
+        UpdateResult result = mongo.updateMulti(query, update, Game.class);
+
+        return String.format("Deleted all articles from %1$s games out of %2$s total games.",
+                              result.getModifiedCount(), result.getMatchedCount());
     }
 }
