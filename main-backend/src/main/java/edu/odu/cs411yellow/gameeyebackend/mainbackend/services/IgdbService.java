@@ -101,8 +101,6 @@ public class IgdbService {
                 .bodyToMono(new ParameterizedTypeReference<List<GameResponse>>() {})
                 .block();
 
-        removeInvalidGames(gameResponses);
-
         return gameResponses;
     }
 
@@ -122,8 +120,6 @@ public class IgdbService {
                 .bodyToMono(new ParameterizedTypeReference<List<GameResponse>>() {})
                 .block();
 
-        removeInvalidGames(gameResponses);
-
         return gameResponses;
     }
 
@@ -142,8 +138,6 @@ public class IgdbService {
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<List<GameResponse>>() {})
                 .block();
-
-        removeInvalidGames(gameResponses);
 
         return gameResponses;
     }
@@ -194,7 +188,7 @@ public class IgdbService {
         if (releaseDateUpperBound == 0) {
             whereClause = "where human != \"TBD\";";
         } else {
-            whereClause = String.format("where human != \"TBD\" & date < %s;", releaseDateUpperBound);
+            whereClause = String.format("where human != \"TBD\" & date <= %s;", releaseDateUpperBound);
         }
 
         String sortClause = String.format("sort date desc;");
@@ -217,7 +211,9 @@ public class IgdbService {
 
         List<String> uniqueIds = new ArrayList<>(ids);
 
-        return retrieveGameResponsesByIds(uniqueIds, limit);
+        List<GameResponse> gameResponses = retrieveGameResponsesByIds(uniqueIds, limit);
+
+        return gameResponses;
     }
 
     public List<Game> convertGameResponsesToGames(List<GameResponse> gameResponses) {
@@ -250,6 +246,7 @@ public class IgdbService {
 
     public List<Game> retrieveGamesByTitles(List<String> titles, int limit) {
         List<GameResponse> gameResponses = retrieveGameResponsesByTitles(titles, limit);
+        removeInvalidGames(gameResponses);
         List<String> ids = new ArrayList<>();
 
         for (GameResponse response: gameResponses) {
@@ -264,7 +261,19 @@ public class IgdbService {
         return games;
     }
 
-    public List<Game> retrieveGamesByIds(List<String> ids, int limit) {
+    public List<Game> retrieveValidGamesByIds(List<String> ids, int limit) {
+        List<GameResponse> gameResponses = retrieveGameResponsesByIds(ids, limit);
+        removeInvalidGames(gameResponses);
+
+        List<CoverResponse> coverResponses = retrieveCoverResponsesByGameIds(ids, limit);
+        List<Game> games = convertGameResponsesToGames(gameResponses);
+        Map<String, String> logos = convertCoverResponsesToLogos(coverResponses);
+        addLogosToGames(games, logos);
+
+        return games;
+    }
+
+    public List<Game> retrieveAllGamesByIds(List<String> ids, int limit) {
         List<GameResponse> gameResponses = retrieveGameResponsesByIds(ids, limit);
 
         List<CoverResponse> coverResponses = retrieveCoverResponsesByGameIds(ids, limit);
@@ -277,6 +286,7 @@ public class IgdbService {
 
     public List<Game> retrieveNewReleases(long oldestReleaseDate, int limit) {
         List<GameResponse> gameResponses = retrieveNewReleaseGameResponses(oldestReleaseDate, limit);
+        removeInvalidGames(gameResponses);
 
         Set<String> ids = new HashSet<>();
 
@@ -332,6 +342,8 @@ public class IgdbService {
 
     public List<Game> retrieveGamesByRangeWithLimit(int minId, int maxId, int limit) {
         List<GameResponse> gameResponses = retrieveGameResponsesByIdRange(minId, maxId, limit);
+        removeInvalidGames(gameResponses);
+
         List<CoverResponse> coverResponses = retrieveCoverResponsesByGameIdRange(minId, maxId, limit);
 
         List<Game> games = convertGameResponsesToGames(gameResponses);
@@ -380,7 +392,7 @@ public class IgdbService {
     }
 
     public void removeInvalidGames(List<GameResponse> responses) {
-        responses.removeIf(response -> response.firstReleaseDateInSeconds == 0
+        responses.removeIf(response -> response.firstReleaseDateInSeconds <= 0
                 || response.summary.isEmpty());
     }
 }

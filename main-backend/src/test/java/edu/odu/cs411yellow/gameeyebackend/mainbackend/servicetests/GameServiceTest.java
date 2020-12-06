@@ -3,14 +3,9 @@ package edu.odu.cs411yellow.gameeyebackend.mainbackend.servicetests;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.*;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.ImageResource;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ElasticGameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ImageRepository;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.NewsWebsiteRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.GameService;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.IgdbReplicationService;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.IgdbService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,65 +33,32 @@ public class GameServiceTest {
     private GameService gameService;
 
     @Autowired
-    private IgdbReplicationService replicationService;
-
-    @Autowired
     private IgdbService igdbService;
 
     @Autowired
     private GameRepository gameRepository;
 
-    @Autowired
-    private NewsWebsiteRepository news;
-
-    @Autowired
-    private ImageRepository imageRepository;
-
-    @Autowired
-    private ElasticGameRepository elasticRepository;
-
-    @BeforeEach
-    public void insertGames() {
-    }
-
     @Test
     public void testGetLogoUrl() {
-        int minId = 100000;
-        int maxId = 100152;
-        int limit = 250;
+        final String game1Title = "Vampire: The Masquerade - Bloodlines - GameServiceTest";
+        final String igdbId1 = "11";
+        final String logoUrl1 = "//images.igdb.com/igdb/image/upload/t_thumb/co1nkj.jpg";
 
-        String result = replicationService.replicateGamesByIdRange(minId, maxId, limit);
-        System.out.println(result);
+        Game game1 = new Game();
+        game1.setTitle(game1Title);
+        game1.setIgdbId(igdbId1);
+        game1.setLogoUrl(logoUrl1);
 
-        String gameIgdbId1 = "100004";
-        String gameIgdbId2 = "100060";
-        String gameIgdbId3 = "100111";
+        gameRepository.save(game1);
+        game1 = gameRepository.findByIgdbId(igdbId1);
 
-        Game game1 = gameRepository.findByIgdbId(gameIgdbId1);
-        Game game2 = gameRepository.findByIgdbId(gameIgdbId2);
-        Game game3 = gameRepository.findByIgdbId(gameIgdbId3);
-
-        String logoUrl1 = gameService.getLogoUrl(game1.getId());
-        String logoUrl2 = gameService.getLogoUrl(game2.getId());
-        String logoUrl3 = gameService.getLogoUrl(game3.getId());
+        String retrievedLogoUrl = gameService.getLogoUrl(game1.getId());
 
         // Check that logoUrls match
-        assertThat(logoUrl1, is(game1.getLogoUrl()));
-        assertThat(logoUrl2, is(game2.getLogoUrl()));
-        assertThat(logoUrl3, is(game3.getLogoUrl()));
+        assertThat(retrievedLogoUrl, is(game1.getLogoUrl()));
 
         // Check that logoUrls contain ".jpg"
-        assertThat(logoUrl1, containsString(".jpg"));
-        assertThat(logoUrl2, containsString(".jpg"));
-        assertThat(logoUrl3, containsString(".jpg"));
-
-        // Delete new games from elastic.
-        for (int currentId = minId; currentId < maxId + 1; currentId++) {
-            if (gameRepository.existsByIgdbId(String.valueOf(currentId))) {
-                String gameId = gameRepository.findByIgdbId(String.valueOf(currentId)).getId();
-                elasticRepository.deleteByGameId(gameId);
-            }
-        }
+        assertThat(retrievedLogoUrl, containsString(".jpg"));
 
         gameRepository.deleteAll();
     }

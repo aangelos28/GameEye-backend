@@ -63,14 +63,14 @@ public class IgdbDataRetrieval {
      * @param file input file containing a list of titles formatted in JSON.
      * @param limit limit maximum number of games per API request.
      */
-    @ShellMethod(value = "Replicate a set of games by titles. --file for *.json file and --limit for request limit.", key = "replicate-by-titles")
+    @ShellMethod(value = "Replicate a set of games by titles.", key = "replicate-by-titles")
     public void replicateByTitles(@ShellOption("--file") String file,
                                   @ShellOption("--limit") int limit) throws IOException {
         File inputFile = new File(file);
         ObjectMapper mapper = new ObjectMapper();
         GameTitles titles = mapper.readValue(inputFile, GameTitles.class);
 
-        System.out.println(String.format("Attempting to replicate %s games.", titles.titles.size()));
+        System.out.println(String.format("Attempting to replicate %1$s games with API limit %2$s.", titles.titles.size(), limit));
 
         JsonObject request = new JsonObject();
         JsonArray titleArray = new JsonArray();
@@ -100,13 +100,38 @@ public class IgdbDataRetrieval {
      */
     @ShellMethod(value = "Update all games in the games collection.", key = "update-games")
     public void updateGamesCollection(@ShellOption("--limit")  int limit) {
-        System.out.println("Attempting to update the games collection.");
+        System.out.println(String.format("Attempting to update the games collection with API limit %s.", limit));
 
         JsonObject request = new JsonObject();
         request.addProperty("limit", limit);
 
         String response = this.webClient.post()
                 .uri("/private-admin/igdb/replicate/update")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(request.toString())
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+
+        System.out.println(response);
+    }
+
+    /**
+     * Replicates new game releases from IGDB.
+     * @param num   number of new game releases to replicate.
+     * @param limit maximum number of games per API request.
+     */
+    @ShellMethod(value = "Replicates new game releases from IGDB.", key = "replicate-new-releases")
+    public void replicateNewReleases(@ShellOption("--num") int num,
+                                     @ShellOption("--limit")  int limit) {
+        System.out.println(String.format("Attempting to replicate %1$s new releases with API limit %2$s.", num, limit));
+
+        JsonObject request = new JsonObject();
+        request.addProperty("newReleases", num);
+        request.addProperty("limit", limit);
+
+        String response = this.webClient.post()
+                .uri("/private-admin/igdb/replicate/new")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(request.toString())
                 .retrieve()

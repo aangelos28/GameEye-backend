@@ -19,7 +19,6 @@ import java.util.List;
 
 @Service
 public class MockNewsScraper implements WebScraper {
-
     NewsWebsiteRepository newsWebsites;
 
     final private String name = "GameEye Mock News";

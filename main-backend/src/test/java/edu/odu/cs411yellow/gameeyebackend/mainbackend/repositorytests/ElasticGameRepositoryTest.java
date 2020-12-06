@@ -32,11 +32,17 @@ public class ElasticGameRepositoryTest {
 
     @Test
     public void testInsertElasticGames() {
-        final String game1Title = "Baldur's Gate II: Shadows of Amn";
-        final String game2Title = "Vampire: The Masquerade - Bloodlines";
-        final String game3Title = "Fallout 3";
-        final String game4Title = "Fallout 2";
-        final String game5Title = "Fallout: New Vegas";
+        final String game1Title = "Baldur's Gate II: Shadows of Amn - ElasticGameRepositoryTest";
+        final String game2Title = "Vampire: The Masquerade - Bloodlines - ElasticGameRepositoryTest";
+        final String game3Title = "Fallout 3 - ElasticGameRepositoryTest";
+        final String game4Title = "Fallout 2 - ElasticGameRepositoryTest";
+        final String game5Title = "Fallout: New Vegas - ElasticGameRepositoryTest";
+
+        final String igdbId1 = "1";
+        final String igdbId2 = "2";
+        final String igdbId3 = "3";
+        final String igdbId4 = "4";
+        final String igdbId5 = "5";
 
         // Insert test games
         // Delete test games if already present
@@ -48,14 +54,23 @@ public class ElasticGameRepositoryTest {
 
         Game game1 = new Game();
         game1.setTitle(game1Title);
+        game1.setIgdbId(igdbId1);
+
         Game game2 = new Game();
         game2.setTitle(game2Title);
+        game2.setIgdbId(igdbId2);
+
         Game game3 = new Game();
         game3.setTitle(game3Title);
+        game3.setIgdbId(igdbId3);
+
         Game game4 = new Game();
         game4.setTitle(game4Title);
+        game4.setIgdbId(igdbId4);
+
         Game game5 = new Game();
         game5.setTitle(game5Title);
+        game5.setIgdbId(igdbId5);
 
         games.save(game1);
         games.save(game2);
@@ -119,9 +134,13 @@ public class ElasticGameRepositoryTest {
 
     @Test
     public void testAutocomplete() {
-        final String game1Title = "Baldur's Gate II: Shadows of Amn";
-        final String game2Title = "Fallout 3";
-        final String game3Title = "Vampire: The Masquerade - Bloodlines";
+        final String game1Title = "Baldur's Gate II: Shadows of Amn - ElasticGameRepositoryTest";
+        final String game2Title = "Fallout 3 - ElasticGameRepositoryTest";
+        final String game3Title = "Vampire: The Masquerade - Bloodlines - ElasticGameRepositoryTest";
+
+        final String igdbId1 = "1";
+        final String igdbId2 = "2";
+        final String igdbId3 = "3";
 
         // Insert test games
         // Delete test games if already present
@@ -131,10 +150,15 @@ public class ElasticGameRepositoryTest {
 
         Game game1 = new Game();
         game1.setTitle(game1Title);
+        game1.setIgdbId(igdbId1);
+
         Game game2 = new Game();
         game2.setTitle(game2Title);
+        game2.setIgdbId(igdbId2);
+
         Game game3 = new Game();
         game3.setTitle(game3Title);
+        game3.setIgdbId(igdbId3);
 
         games.save(game1);
         games.save(game2);

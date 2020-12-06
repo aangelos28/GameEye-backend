@@ -184,7 +184,5 @@ public class UserServiceTest {
         // Ensure that the user is deleted
         assertThat(userService.checkUserExists(userId), is(false));
     }
-
-
 }
 

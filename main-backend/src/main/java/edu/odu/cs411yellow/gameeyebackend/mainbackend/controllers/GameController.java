@@ -1,11 +1,10 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.controllers;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Image;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.elasticsearch.ElasticGame;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.ElasticGameRepository;
-import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.NewsWebsiteRepository;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.GameService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,12 +14,9 @@ import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
@@ -31,6 +27,7 @@ import java.util.List;
 public class GameController {
     ElasticGameRepository elasticGames;
     GameService gameService;
+    GameRepository gameRepository;
 
     Logger logger = LoggerFactory.getLogger(GameController.class);
 
@@ -60,9 +57,10 @@ public class GameController {
     }
 
     @Autowired
-    public GameController(ElasticGameRepository elasticGames, GameService gameService) {
+    public GameController(ElasticGameRepository elasticGames, GameService gameService, GameRepository gameRepository) {
         this.elasticGames = elasticGames;
         this.gameService = gameService;
+        this.gameRepository = gameRepository;
     }
 
     /**
@@ -167,6 +165,57 @@ public class GameController {
 
         return ResponseEntity.ok(articles);
     }
+
+    /**
+     * Delete all articles for a given game id.
+     *
+     * @param id id of the game for which articles will be deleted.
+     */
+    @DeleteMapping(path = "/private-admin/game/articles/delete/id/{id}")
+    public ResponseEntity<?> deleteArticlesFromGameById(@PathVariable String id) {
+        if (!gameService.existsById(id)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Game with specified id does not exist.");
+        }
+
+        String status = gameRepository.deleteArticlesFromGameById(id);
+
+        return ResponseEntity.ok(status);
+    }
+
+    /**
+     * Delete all articles for a given game title
+     *
+     * @param title title of the game for which articles will be deleted.
+     */
+    @DeleteMapping(path = "/private-admin/game/articles/delete/title/{title}")
+    public ResponseEntity<?> deleteArticlesFromGameByTitle(@PathVariable String title) {
+        String status;
+
+        try {
+            status = gameRepository.deleteArticlesFromGameByTitle(title);
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Game with specified title does not exist.");
+        }
+
+        return ResponseEntity.ok(status);
+    }
+
+    /**
+     * Delete all articles from all games.
+     */
+    @DeleteMapping(path = "/private-admin/game/articles/delete/all")
+    public ResponseEntity<?> deleteAllArticlesFromGameByTitle() {
+        String status;
+
+        try {
+            status = gameRepository.deleteArticlesFromAllGames();
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+        return ResponseEntity.ok(status);
+    }
+
 
     public static class TopGamesRequest {
         public int maxResults;

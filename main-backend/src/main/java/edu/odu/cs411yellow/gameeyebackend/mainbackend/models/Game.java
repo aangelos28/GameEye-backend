@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import static edu.odu.cs411yellow.gameeyebackend.mainbackend.models.IgdbModel.GameResponse;
+
+import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -226,7 +228,7 @@ public class Game {
     @Override
     public String toString() {
         ObjectMapper obj= new ObjectMapper();
-        String result = "";
+        String result;
 
         try {
             result = obj.writerWithDefaultPrettyPrinter().writeValueAsString(this);
