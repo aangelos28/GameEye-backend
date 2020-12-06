@@ -21,7 +21,6 @@ import java.util.Objects;
  */
 @Document("games")
 public class Game {
-    @BsonProperty("id")
     @Id
     private String id;
 

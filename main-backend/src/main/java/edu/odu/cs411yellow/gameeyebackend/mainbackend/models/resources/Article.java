@@ -13,7 +13,6 @@ import java.util.Objects;
  * Represents a news article resource.
  */
 public class Article {
-    @BsonProperty("id")
     private String id;
 
     /**

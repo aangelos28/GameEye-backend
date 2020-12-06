@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.Objects;
 
 public class ImageResource {
-    @BsonProperty("id")
     private String id;
 
     private String title;
