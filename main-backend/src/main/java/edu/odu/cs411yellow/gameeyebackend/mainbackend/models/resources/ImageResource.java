@@ -1,12 +1,14 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources;
 
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.SourceUrls;
+import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.springframework.data.annotation.PersistenceConstructor;
 
 import java.util.Date;
 import java.util.Objects;
 
 public class ImageResource {
+    @BsonProperty("id")
     private String id;
 
     private String title;

@@ -12,8 +12,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.lang.Thread.sleep;
-
 @Service
 public class IgdbReplicationService {
     IgdbService igdbService;
@@ -74,7 +72,7 @@ public class IgdbReplicationService {
             // Fill mongo/elastic buffers if remainder is negative, as there are no more games to retrieve.
             if ((limit * numberOfRequestsWithLimit) >= igdbGameBufferSize || remainder <= 0) {
                 processElasticAndMongoGames(igdbGameBuffer, mongoGameBuffer, elasticGameBuffer,
-                        mongoBufferSize, elasticBufferSize, counters);
+                        mongoBufferSize, elasticBufferSize, counters, remainder);
 
                 igdbGameBuffer.clear();
             }
@@ -122,7 +120,7 @@ public class IgdbReplicationService {
                 logger.info(String.format("Retrieved %1$s games.", titles.size()));
                 titles.clear();
 
-                remainder = titles.size();
+                remainder = 0;
                 logger.info(String.format("%1$s games remaining.", remainder));
             }
 
@@ -130,7 +128,7 @@ public class IgdbReplicationService {
             // Fill mongo/elastic buffers if remainder is negative, as there are no more games to retrieve.
             if ((limit * numberOfRequestsWithLimit) >= igdbGameBufferSize || remainder <= 0) {
                 processElasticAndMongoGames(igdbGameBuffer, mongoGameBuffer, elasticGameBuffer,
-                                            mongoBufferSize, elasticBufferSize, counters);
+                                            mongoBufferSize, elasticBufferSize, counters, remainder);
 
                 igdbGameBuffer.clear();
             }
@@ -147,7 +145,7 @@ public class IgdbReplicationService {
     }
 
     public void processElasticAndMongoGames(List<Game> igdbGameBuffer, List<Game> mongoGameBuffer, List<ElasticGame> elasticGameBuffer,
-                                            int mongoBufferSize, int elasticBufferSize, ReplicationCounters counters) {
+                                            int mongoBufferSize, int elasticBufferSize, ReplicationCounters counters, int remainder) {
         for (Game igdbGame: igdbGameBuffer) {
             // Check that the IGDB game is not null
             if (!igdbGame.getIgdbId().equals("")) {
@@ -175,7 +173,7 @@ public class IgdbReplicationService {
             }
 
             // Save games to mongo if buffer is >= to buffer size
-            if (counters.currentMongoBufferCount >= mongoBufferSize) {
+            if (counters.currentMongoBufferCount >= mongoBufferSize || remainder <= 0) {
                 gameService.saveAll(mongoGameBuffer);
                 mongoGameBuffer.clear();
 
@@ -183,7 +181,7 @@ public class IgdbReplicationService {
             }
 
             // Save games to elastic search buffer is >= to buffer size
-            if (counters.currentElasticBufferCount >= elasticBufferSize) {
+            if (counters.currentElasticBufferCount >= elasticBufferSize || remainder <= 0) {
                 elasticService.saveAll(elasticGameBuffer);
                 elasticGameBuffer.clear();
 
@@ -360,7 +358,7 @@ public class IgdbReplicationService {
                 logger.info(String.format("Retrieved %1$s games.", ids.size()));
                 ids.clear();
 
-                remainder = ids.size();
+                remainder = 0;
                 logger.info(String.format("%1$s games remaining.", remainder));
             }
 

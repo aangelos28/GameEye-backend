@@ -51,8 +51,13 @@ public class WatchlistServiceTests {
 
         // Add games to the user's watchlist
         final String game1Title = "Fallout 3";
+        final String igdbId1 = "1";
+
         final String game2Title = "Fallout 2";
+        final String igdbId2 = "2";
+
         final String game3Title = "Fallout: New Vegas";
+        final String igdbId3 = "3";
 
         // Insert test games
         // Delete games if they exist
@@ -62,12 +67,17 @@ public class WatchlistServiceTests {
 
         Game game1 = new Game();
         game1.setTitle(game1Title);
+        game1.setIgdbId(igdbId1);
         game1.setReleaseDate(new Date());
+
         Game game2 = new Game();
         game2.setTitle(game2Title);
+        game2.setIgdbId(igdbId2);
         game2.setReleaseDate(new Date());
+
         Game game3 = new Game();
         game3.setTitle(game3Title);
+        game3.setIgdbId(igdbId3);
         game3.setReleaseDate(new Date());
 
         games.save(game1);

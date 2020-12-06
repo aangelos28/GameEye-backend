@@ -4,11 +4,11 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import edu.odu.cs411yellow.gameeyebackend.common.security.FirebaseSecrets;
+import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.Game;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources.Article;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.repositories.GameRepository;
 import edu.odu.cs411yellow.gameeyebackend.mainbackend.services.NotificationService;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,7 +21,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -50,6 +54,25 @@ public class NotificationServiceTests {
         catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @BeforeEach
+    public void insertTestGames() {
+        // Create test games
+        Game game1 = new Game();
+        game1.setTitle("Fallout 3");
+        game1.setIgdbId("1");
+
+        Game game2 = new Game();
+        game2.setTitle("Fallout: New Vegas");
+        game2.setIgdbId("2");
+
+        Game game3 = new Game();
+        game3.setTitle("Watch Dogs: Legion");
+        game3.setIgdbId("3");
+
+        // Insert test games
+        games.saveAll(Arrays.asList(game1, game2, game3));
     }
 
     @Test
@@ -87,5 +110,14 @@ public class NotificationServiceTests {
         articleGameIds.add(games.findGameByTitle("Watch Dogs: Legion").getId());
 
         notificationService.sendArticleNotificationsAsync(articles, articleGameIds);
+    }
+
+    @AfterEach
+    public void deleteTestGames() {
+        games.deleteByTitle("Fallout 3");
+        games.deleteByTitle("Fallout: New Vegas");
+        games.deleteByTitle("Watch Dogs: Legion");
+
+        assertThat(games.findAll().size(), is(0));
     }
 }

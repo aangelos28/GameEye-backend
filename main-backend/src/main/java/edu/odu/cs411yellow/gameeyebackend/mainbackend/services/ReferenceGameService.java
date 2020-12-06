@@ -27,7 +27,6 @@ public class ReferenceGameService {
      * @return List of IDs of referenced games.
      */
     public List<String> getReferencedGames(Article article) {
-
         String articleTitle = article.getTitle();
         SearchHits<ElasticGame> referencedGames = elasticGames.autocompleteGameTitle(articleTitle, 25);
         List<String> matchingIDs = new ArrayList<>();

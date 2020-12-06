@@ -243,7 +243,7 @@ public class IgdbReplicationServiceTest {
 
         // Find new games from db.
         for (Game game: igdbGames) {
-            preReplicationTestDbGames.add(gameRepository.findByIgdbId(String.valueOf(game.getIgdbId())));
+            preReplicationTestDbGames.add(gameRepository.findByIgdbId(game.getIgdbId()));
         }
 
         // Test for updating existing games. Ensure only required fields are overwritten.
@@ -252,7 +252,7 @@ public class IgdbReplicationServiceTest {
 
         // Find updated games in db.
         for (Game game: igdbGames) {
-            postReplicationTestDbGames.add(gameRepository.findByIgdbId(String.valueOf(game.getIgdbId())));
+            postReplicationTestDbGames.add(gameRepository.findByIgdbId(game.getIgdbId()));
         }
 
         // Compare IGDB games to new games written to db.
@@ -334,8 +334,8 @@ public class IgdbReplicationServiceTest {
         int limit = 150;
 
         // Replicate new games to db.
-        String status = igdbReplicationService.replicateGamesByIdRange(minId, maxId, limit);
-        System.out.println(status);
+        igdbReplicationService.replicateGamesByIdRange(minId, maxId, limit);
+
         // Find new games from db.
         List<Game> preReplicationTestDbGames = new ArrayList<>(gameRepository.findAll());
 

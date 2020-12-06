@@ -1,5 +1,8 @@
 package edu.odu.cs411yellow.gameeyebackend.mainbackend.models.resources;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.PersistenceConstructor;
 
@@ -10,6 +13,7 @@ import java.util.Objects;
  * Represents a news article resource.
  */
 public class Article {
+    @BsonProperty("id")
     private String id;
 
     /**
@@ -176,5 +180,20 @@ public class Article {
     @Override
     public int hashCode() {
         return Objects.hash(id, url, newsWebsiteName, thumbnailId, snippet, publicationDate, isImportant);
+    }
+
+    @Override
+    public String toString() {
+        ObjectMapper obj= new ObjectMapper();
+        String result;
+
+        try {
+            result = obj.writerWithDefaultPrettyPrinter().writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            result = "JsonProcessingException";
+        }
+
+        return result;
     }
 }

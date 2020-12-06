@@ -139,16 +139,19 @@ public class GameRepositoryTest {
         Game preGame1 = new Game();
         preGame1.setId("GameRepositoryTest - Id1");
         preGame1.setTitle("GameRepositoryTest - Title1");
+        preGame1.setIgdbId("1");
         preGame1.getResources().setArticles(articles);
 
         Game preGame2 = new Game();
         preGame2.setId("GameRepositoryTest - Id2");
         preGame2.setTitle("GameRepositoryTest - Title2");
+        preGame2.setIgdbId("2");
         preGame2.getResources().setArticles(articles);
 
         Game preGame3 = new Game();
         preGame3.setId("GameRepositoryTest - Id3");
         preGame3.setTitle("GameRepositoryTest - Title3");
+        preGame3.setIgdbId("3");
         preGame3.getResources().setArticles(articles);
 
         // Insert all 3 games.
@@ -190,16 +193,19 @@ public class GameRepositoryTest {
         Game preGame1 = new Game();
         preGame1.setId("GameRepositoryTest - Id1");
         preGame1.setTitle("GameRepositoryTest - Title1");
+        preGame1.setIgdbId("1");
         preGame1.getResources().setArticles(articles);
 
         Game preGame2 = new Game();
         preGame2.setId("GameRepositoryTest - Id2");
         preGame2.setTitle("GameRepositoryTest - Title2");
+        preGame2.setIgdbId("2");
         preGame2.getResources().setArticles(articles);
 
         Game preGame3 = new Game();
         preGame3.setId("GameRepositoryTest - Id3");
         preGame3.setTitle("GameRepositoryTest - Title3");
+        preGame3.setIgdbId("3");
         preGame3.getResources().setArticles(articles);
 
         // Insert all 3 games.
@@ -240,14 +246,17 @@ public class GameRepositoryTest {
 
         Game preGame1 = new Game();
         preGame1.setTitle("GameRepositoryTest - Game1");
+        preGame1.setIgdbId("1");
         preGame1.getResources().setArticles(articles);
 
         Game preGame2 = new Game();
         preGame2.setTitle("GameRepositoryTest - Game2");
+        preGame2.setIgdbId("2");
         preGame2.getResources().setArticles(articles);
 
         Game preGame3 = new Game();
         preGame3.setTitle("GameRepositoryTest - Game3");
+        preGame3.setIgdbId("3");
         preGame3.getResources().setArticles(articles);
 
         // Insert all 3 games.
