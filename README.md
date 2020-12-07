@@ -8,6 +8,9 @@ This is the project for the GameEye backend. The project is composed of multiple
 * Java 11
 
 ## Installation
+NOTE: Configuration files with secret credentials are required to run the backend.
+Please contact Angelos Angelopoulos (aangelos28@gmail.com) to get them.
+
 Open the project with IntelliJ IDEA. If everything went smoothly, IntelliJ should have recognized
 the subprojects as modules. You can check this under `File > Project Struture`.
 
