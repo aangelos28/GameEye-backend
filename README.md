@@ -9,8 +9,8 @@ This is the project for the GameEye backend. The project is composed of multiple
 ## Requirements
 * Java 11
 
-## Architectural Diagram
-![Mandelbrot](https://raw.githubusercontent.com/aangelos28/GameEye-website/master/assets/img/deliverables/MFCDiagram.jpg | width=1000)
+## GameEye Architectural Diagram
+<img src="https://raw.githubusercontent.com/aangelos28/GameEye-website/master/assets/img/deliverables/MFCDiagram.jpg" width="1000">
 
 ## Installation
 NOTE: Configuration files with secret credentials are required to run the backend.
