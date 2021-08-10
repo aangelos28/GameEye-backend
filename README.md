@@ -1,4 +1,6 @@
 # GameEye Backend
+Video game news tracker using web scraping from popular websites with scoring powered by machine learning.
+
 This is the project for the GameEye backend. The project is composed of multiple subprojects:
 * Main backend (primary backend of GameEye)
 * CLI (command line interface for interacting with the backend)
@@ -6,6 +8,9 @@ This is the project for the GameEye backend. The project is composed of multiple
 
 ## Requirements
 * Java 11
+
+## Architectural Diagram
+![Mandelbrot](https://raw.githubusercontent.com/aangelos28/GameEye-website/master/assets/img/deliverables/MFCDiagram.jpg | width=1000)
 
 ## Installation
 NOTE: Configuration files with secret credentials are required to run the backend.
